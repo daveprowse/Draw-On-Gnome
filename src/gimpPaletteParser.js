@@ -16,14 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * SPDX-FileCopyrightText: 2019 Abakkk
+ * SPDX-FileCopyrightText: 2024 Dave Prowse
  * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileContributor: Modified by Dave Prowse
  */
-
-/* jslint esversion: 6 (2019) */
-/* eslint version: 9.16 (2024) */
-/* exported parseFile */
-
 
 
 
@@ -68,19 +63,19 @@ function parse(contents) {
     lines.forEach((line, index) => {
         if (!line || line.startsWith('#'))
             return;
-        
+
         line = line.split('#')[0].trim();
-        
+
         let [, color, displayName] = line.split(/(^[\d\s]+)/);
-        
+
         let values = color.trim().split(/\D+/gi).filter(value => value >= 0 && value <= 255);
         if (values.length < 3)
             return;
-        
+
         let string = `rgb(${values[0]},${values[1]},${values[2]})`;
         if (displayName.trim())
             string += `:${displayName.trim()}`;
-        
+
         columns[index % columns.length].push(string);
     });
 
@@ -91,10 +86,10 @@ export function parseFile(file) {
     const decoder = new TextDecoder('utf-8');
     if (!file.query_exists(null))
         return [];
-    
+
     let [, contents] = file.load_contents(null);
     if (contents instanceof Uint8Array)
         contents = decoder.decode(contents);
-    
+
     return parse(contents);
 }

@@ -16,65 +16,175 @@ Thank you to all the contributors! 😎
 - Multi-monitor support
 - Save your work with `Ctrl+S`!!
 
+## Requirements
+
+- GNOME Shell 47+
+- Linux distribution with GNOME desktop environment
+
 ## Installation
 
-> Note: We are working on getting the extension approved by GNOME so that it will be listed on https://extensions.gnome.org (E.G.O.) 
+### Option 1: Download from GitHub Releases (Recommended)
+
+1. Go to the [Releases page](https://github.com/daveprowse/Draw-On-Gnome/releases)
+2. Download the latest `draw-on-gnome-extension.zip` file
+3. Extract the zip file:
+   ```bash
+   unzip draw-on-gnome-extension.zip
+   ```
+4. Install the extension:
+   ```bash
+   cp -r draw-on-gnome@daveprowse.github.io ~/.local/share/gnome-shell/extensions/
+   ```
+5. Restart GNOME Shell:
+   - On X11: Press `Alt+F2`, type `r`, and press Enter
+   - On Wayland: Log out and log back in
+6. Enable the extension:
+   ```bash
+   gnome-extensions enable draw-on-gnome@daveprowse.github.io
+   ```
+
+### Option 2: Install from Source
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/daveprowse/Draw-On-Gnome.git
+   cd Draw-On-Gnome
+   ```
+
+2. Build and install:
+   ```bash
+   make install
+   ```
+
+3. Restart GNOME Shell and enable the extension as described above.
+
+### Option 3: Extensions Website
+
+> Note: We are working on getting the extension approved by GNOME so that it will be listed on https://extensions.gnome.org (E.G.O.)
 
 > Stay tuned! Click [here](https://daveprowse.github.io/Draw-On-Gnome/blog/) for updates.
 
----
+## Usage
 
-1. Copy the following command to a *Bash* terminal and press `enter` to run it:
+1. Press `Super + Alt + D` to enter drawing mode
+2. Use your mouse or touchpad to draw on the screen
+3. Press `Ctrl + F1` to see all available keyboard shortcuts
+4. Right-click to access the context menu with tools and options
+5. Press `Super + Alt + D` again to exit drawing mode
 
+## Development
+
+### Prerequisites
+
+- Node.js 18+ and npm
+- GLib development tools (`glib2.0-dev` on Ubuntu/Debian)
+- TypeScript (for type checking)
+
+### Setup
+
+1. Clone the repository:
    ```bash
-   bash <(wget -qO- https://raw.githubusercontent.com/daveprowse/scripts/refs/heads/main/dog-install.sh)
+   git clone https://github.com/daveprowse/Draw-On-Gnome.git
+   cd Draw-On-Gnome
    ```
 
-   The script will attempt to identify your version of GNOME and install the correct version of the extension automatically.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-   > Note: Currently, the script will identify GNOME v48 through v40 and back all the way to v3.xx.
+3. Set up development environment:
+   ```bash
+   npm run dev-install
+   ```
 
-   > **IMPORTANT!!** Always check scripts before running them! If you are uncomfortable running the script, or cannot run the script, then install manually with an option listed in the [Documentation](https://daveprowse.github.io/Draw-On-Gnome/installation/).
+### Building the Extension
 
-2. Logout and log back in.
+To build the extension for distribution:
 
-3. Enable the extension:
+```bash
+npm run build
+```
 
-- In the GUI
-  - Open the GNOME Extensions App:
+This will create a `build/draw-on-gnome@daveprowse.github.io.zip` file ready for installation.
 
-      `gnome-extensions-app`
+### Development Workflow
 
-  - Locate Draw On GNOME and enable it.
+1. **Start development mode:**
+   ```bash
+   npm run watch
+   ```
 
+2. **Lint code:**
+   ```bash
+   npm run lint
+   ```
 
-- In the CLI:
+3. **Type check:**
+   ```bash
+   npm run type-check
+   ```
 
-  ```console
-  gnome-extensions enable draw-on-gnome@daveprowse.github.io
-  ```
+4. **Generate documentation:**
+   ```bash
+   npm run docs
+   ```
 
+### Available npm Scripts
 
-   > Note: You can install the Gnome Extensions App with the package `gnome-shell-extensions-prefs` within your Linux distribution.
+- `npm run build` - Build the extension package
+- `npm run dev` - Compile schemas for development
+- `npm run dev-install` - Set up development symlink
+- `npm run install-extension` - Build and install locally
+- `npm run watch` - Watch for changes and recompile
+- `npm run lint` - Lint and fix code
+- `npm run type-check` - Run TypeScript type checking
+- `npm run docs` - Generate JSDoc documentation
+- `npm run version-bump [major|minor|patch]` - Bump version
+- `npm run clean` - Clean build artifacts
 
-4. Now go forth and use the tool by pressing `Super + Alt + D`.
+### Project Structure
 
-   > Note: You can discover the keyboard shortcuts by pressing `Ctrl + F1`.
+```
+src/
+├── extension.js          # Main extension entry point
+├── prefs.js             # Preferences dialog
+├── area.js              # Drawing area implementation
+├── areamanager.js       # Area management
+├── elements.js          # Drawing elements
+├── files.js             # File operations
+├── helper.js            # Helper utilities
+├── menu.js              # Context menu
+├── shortcuts.js         # Keyboard shortcuts
+├── utils.js             # Utility functions
+├── gimpPaletteParser.js # GIMP palette parser
+├── stylesheet.css       # Extension styles
+├── ui/                  # UI components
+│   ├── about.js
+│   ├── drawingpage.js
+│   └── preferencespage.js
+└── schemas/             # GSettings schemas
+    └── *.gschema.xml
+```
 
-It's back to the drawing board my friends! Enjoy! 😎
+## Contributing
 
----
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Manual Installs
+## Documentation
 
-📖 For manual installation procedures (git clone and tarball) see the **[Documentation](https://daveprowse.github.io/Draw-On-Gnome/installation/)**.
+📖 For detailed documentation see **[Draw On Gnome Documentation](https://daveprowse.github.io/Draw-On-Gnome/)**.
 
 > Documentation is generated using Material for Mkdocs. Check it out:
 > [![Built with Material for MkDocs](https://img.shields.io/badge/Material_for_MkDocs-526CFE?style=for-the-badge&logo=MaterialForMkDocs&logoColor=white)](https://squidfunk.github.io/mkdocs-material/)
 
----
+## Credits
 
 Thanks to the original author and past maintainers:
 
 - Forked from: https://github.com/zhrexl/DrawOnYourScreen2
 - Original work: https://codeberg.org/som/DrawOnYourScreen
+
+## License
+
+This project is licensed under the GNU General Public License v3.0 - see the [COPYING](COPYING) file for details.

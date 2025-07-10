@@ -16,13 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * SPDX-FileCopyrightText: 2019 Abakkk
+ * SPDX-FileCopyrightText: 2024 Dave Prowse
  * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileContributor: Modified by Dave Prowse
  */
-
-/* eslint version: 9.16 (2024) */
-
-// The setting keys of the "org.gnome.shell.extensions.draw-on-gnome" schema.
 
 export const GLOBAL_KEYBINDINGS = [
     'toggle-drawing', 'toggle-modal', 'erase-drawings',
@@ -35,9 +31,9 @@ export const INTERNAL_KEYBINDINGS = [
     'undo', 'redo', 'delete-last-element', 'smooth-last-element',
     'select-none-shape', 'select-line-shape', 'select-arrow-shape', 'select-ellipse-shape', 'select-rectangle-shape', 'select-polygon-shape', 'select-polyline-shape',
     'select-text-shape', 'select-image-shape', 'select-move-tool', 'select-resize-tool', 'select-mirror-tool',
-    'switch-fill', 'switch-fill-rule', 'switch-color-palette', 'switch-color-palette-reverse', 'pick-color',
+    'switch-fill', 'switch-fill-rule', 'switch-color-palette', 'switch-color-palette-reverse', 'pick-color', 'cycle-colors', 'cycle-colors-reverse',
     'increment-line-width', 'increment-line-width-more', 'decrement-line-width', 'decrement-line-width-more',
-     'switch-linejoin', 'switch-linecap', 'switch-dash',
+    'switch-linejoin', 'switch-linecap', 'switch-dash',
     'switch-font-family', 'switch-font-family-reverse', 'switch-font-weight', 'switch-font-style', 'switch-text-alignment',
     'switch-image-file', 'switch-image-file-reverse', 'paste-image-files',
     'toggle-panel-and-dock-visibility', 'toggle-background', 'toggle-grid', 'toggle-square-area',

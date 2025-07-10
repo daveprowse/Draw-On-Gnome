@@ -1,0 +1,18 @@
+{
+    "source": {
+        "include": ["./src/"],
+        "includePattern": "\\.(js)$",
+        "exclude": ["node_modules/", "build/"]
+    },
+    "opts": {
+        "destination": "./docs/"
+    },
+    "plugins": ["plugins/markdown"],
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    },
+    "markdown": {
+        "parser": "gfm"
+    }
+}

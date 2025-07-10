@@ -2,7 +2,7 @@
  * Copyright 2019 Abakkk
  * Copyright 2023 zhrexl
  * Copyright 2024 Dave Prowse
- 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -17,11 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * SPDX-FileCopyrightText: 2019 Abakkk
+ * SPDX-FileCopyrightText: 2023 zhrexl
+ * SPDX-FileCopyrightText: 2024 Dave Prowse
  * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileContributor: Modified by Dave Prowse
  */
-
-/* eslint version: 9.16 (2024) */
 
 import GObject from 'gi://GObject';
 
@@ -63,7 +62,7 @@ class Indicator extends SystemIndicator {
         this.toggle = new FeatureToggle();
         this.quickSettingsItems.push(this.toggle);
         this._addIndicator();
-        
+
         //Place the toggles above the background apps entry
         // if (GS_VERSION >= 44) {
         //   this.quickSettingsItems.forEach((item) => {
@@ -71,7 +70,7 @@ class Indicator extends SystemIndicator {
         //       QuickSettingsMenu._backgroundApps.quickSettingsItems[0]);
         //   });
         // }
-        
+
          this.connect('destroy', () => {
             this.quickSettingsItems.forEach(item => item.destroy());
         });
@@ -86,8 +85,8 @@ class Indicator extends SystemIndicator {
 export default class DrawOnGnomeExtension extends Extension {
 
     constructor(metadata) {
-        super(metadata);        
-        
+        super(metadata);
+
     }
 
     create_toggle() {
@@ -109,10 +108,10 @@ export default class DrawOnGnomeExtension extends Extension {
         this.drawingSettings = this.getSettings(this.metadata['settings-schema'] + '.drawing');
         this.areaManager = new AreaManager.AreaManager(this);
         this.areaManager.enable();
-        
+
         this.toggle = null;
         this.create_toggle();
-        
+
         this.getSettings().connect('changed', this._onSettingsChanged.bind(this));
 
         this.FILES = new Files(this);
@@ -121,14 +120,14 @@ export default class DrawOnGnomeExtension extends Extension {
     disable() {
         if (this.toggle)
             this.toggle.destroy();
-        
+
         this.areaManager.disable();
         delete this.areaManager;
         delete this.settings;
         delete this.internalShortcutSettings;
         this.FILES = null;
         this.drawingSettings = null;
-        this.toggle = null; 
+        this.toggle = null;
         this.areaManager = null;
         this.internalShortcutSettings = null;
     }
@@ -139,7 +138,7 @@ export default class DrawOnGnomeExtension extends Extension {
         this.drawingtoggle.set_checked(false);
         this.areaManager.toggleDrawing();
     }
-    
+
     _onSettingsChanged() {
         this.create_toggle()
     }

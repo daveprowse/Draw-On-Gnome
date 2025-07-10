@@ -2,14 +2,14 @@
     "uuid": "draw-on-gnome@daveprowse.github.io",
     "name": "Draw On Gnome",
     "description": "Annotation tool for the GNOME desktop. This is a fork of the original DrawOnYourScreen by abakkk.",
-    "url": "https://github.com/daveprowse/Draw-On-Gnome",    
-    "gettext-domain": "draw-on-gnome", 
+    "url": "https://github.com/daveprowse/Draw-On-Gnome",
+    "gettext-domain": "draw-on-gnome",
     "settings-schema": "org.gnome.shell.extensions.draw-on-gnome",
     "data-dir": "draw-on-gnome",
     "persistent-file-name": "persistent",
-    "shell-version": [                
+    "shell-version": [
         "48"
-    ],    
-    "version-name": "1.3",
-    "version": 1    
+    ],
+    "version-name": "2.0.0",
+    "version": 200
 }

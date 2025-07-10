@@ -16,13 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * SPDX-FileCopyrightText: 2019 Abakkk
+ * SPDX-FileCopyrightText: 2024 Dave Prowse
  * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileContributor: Modified by Dave Prowse
  */
-
-/* jslint esversion: 6 (2019) */
-/* eslint version: 9.16 (2024) */
-/* exported Tool, DrawingArea */
 
 import Cairo from 'cairo';
 import System from 'system';
@@ -51,7 +47,7 @@ import * as Elements from './elements.js'
 import { Image } from './files.js'
 import * as Menu from './menu.js'
 
-import Gtk from 'gi://Gtk?version=4.0';
+import Meta from 'gi://Meta';
 
 const MOTION_TIME = 1; // ms, time accuracy for free drawing, max is about 33 ms. The lower it is, the smoother the drawing is.
 const TEXT_CURSOR_TIME = 600; // ms
@@ -497,7 +493,7 @@ export const DrawingArea = GObject.registerClass({
             if (this.currentElement.points.length == 2)
                 // Translators: %s is a key label
                 this.emit('show-osd', this._extension.FILES.ICONS.ARC, _("Press <i>%s</i> to get\na fourth control point")
-                    .format(Gtk.accelerator_get_label(Clutter.KEY_Return, 0)), "", -1, true);
+                    .format(Meta.accelerator_name(0, Clutter.KEY_Return)), "", -1, true);
             this.currentElement.addPoint();
             this.updatePointerCursor(true);
             this._redisplay();
@@ -725,7 +721,7 @@ export const DrawingArea = GObject.registerClass({
             let icon = this._extension.FILES.ICONS[this.currentTool == Shape.POLYGON ? 'TOOL_POLYGON' : 'TOOL_POLYLINE'];
             // Translators: %s is a key label
             this.emit('show-osd', icon, _("Press <i>%s</i> to mark vertices")
-                .format(Gtk.accelerator_get_label(Clutter.KEY_Return, 0)), "", -1, true);
+                .format(Meta.accelerator_name(0, Clutter.KEY_Return)), "", -1, true);
         }
         // Wayland supports two cursors so its important to disconnect motionhandler to avoid broken two cursors drawing
         if (this.motionHandler) {
@@ -803,7 +799,7 @@ export const DrawingArea = GObject.registerClass({
         this.currentElement.cursorPosition = 0;
         // Translators: %s is a key label
         this.emit('show-osd', this._extension.FILES.ICONS.TOOL_TEXT, _("Press <i>%s</i>\nto start a new line")
-            .format(Gtk.accelerator_get_label(Clutter.KEY_Return, 0)), "", -1, true);
+            .format(Meta.accelerator_name(0, Clutter.KEY_Return)), "", -1, true);
         this._updateTextCursorTimeout();
         this.textHasCursor = true;
         this._redisplay();
@@ -879,7 +875,7 @@ export const DrawingArea = GObject.registerClass({
         }
     }
 
-    //Modifying MOVE_OR_RESIZE_WINDOW, to MOVE, both now function. //check in future versions of GNOME. 
+    //Modifying MOVE_OR_RESIZE_WINDOW, to MOVE, both now function. //check in future versions of GNOME.
     updatePointerCursor(controlPressed) {
         if (this.currentTool == Manipulation.MIRROR && this.grabbedElementLocked)
             this.setPointerCursor('CROSSHAIR');
@@ -1091,6 +1087,26 @@ export const DrawingArea = GObject.registerClass({
         this.emit('show-osd', this._extension.FILES.ICONS.PALETTE, this.currentPalette[0], "", -1, false);
     }
 
+    cycleColors() {
+        if (!this.colors || this.colors.length === 0) return;
+
+        let currentIndex = this.colors.findIndex(color =>
+            color.to_string() === this.currentColor.to_string());
+
+        let nextIndex = (currentIndex + 1) % this.colors.length;
+        this.selectColor(nextIndex);
+    }
+
+    cycleColorsReverse() {
+        if (!this.colors || this.colors.length === 0) return;
+
+        let currentIndex = this.colors.findIndex(color =>
+            color.to_string() === this.currentColor.to_string());
+
+        let nextIndex = (currentIndex - 1 + this.colors.length) % this.colors.length;
+        this.selectColor(nextIndex);
+    }
+
     switchDash() {
         this.dashedLine = !this.dashedLine;
         let icon = this._extension.FILES.ICONS[this.dashedLine ? 'DASHED_LINE' : 'FULL_LINE'];
@@ -1289,7 +1305,7 @@ export const DrawingArea = GObject.registerClass({
     _onDestroy() {
         this.textCursorTimeoutId = null; // To avoid calling _stopTextCursorTimeout.
         this._stopAll(true);
-        
+
         this._extension.drawingSettings.disconnect(this.drawingSettingsChangedHandler);
         this.erase();
         if (this._menu)

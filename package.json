@@ -1,0 +1,47 @@
+{
+  "name": "draw-on-gnome",
+  "version": "2.0.0",
+  "description": "Draw on your GNOME Desktop",
+  "type": "module",
+  "main": "src/extension.js",
+  "scripts": {
+    "build": "npm run lint && npm run compile-schemas && npm run package",
+    "lint": "eslint src/**/*.js --fix",
+    "lint-check": "eslint src/**/*.js",
+    "compile-schemas": "glib-compile-schemas src/schemas/",
+    "package": "node scripts/package.js",
+    "clean": "rm -rf build/ && rm -f src/schemas/gschemas.compiled",
+    "dev": "npm run compile-schemas",
+    "dev-install": "node scripts/dev-install.js",
+    "install-extension": "npm run build && cp -r build/draw-on-gnome@daveprowse.github.io ~/.local/share/gnome-shell/extensions/",
+    "watch": "nodemon --watch src --ext js,css,xml --exec 'npm run dev'",
+    "type-check": "tsc --noEmit",
+    "docs": "jsdoc -c jsdoc.conf.json",
+    "version-bump": "node scripts/version-bump.js",
+    "audit": "npm audit --audit-level moderate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daveprowse/Draw-On-Gnome.git"
+  },
+  "keywords": [
+    "gnome",
+    "extension",
+    "drawing",
+    "annotation"
+  ],
+  "author": "Dave Prowse",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@girs/gjs": "^4.0.0-beta.25",
+    "@girs/gnome-shell": "^48.0.2",
+    "eslint": "^8",
+    "@eslint/js": "^8",
+    "nodemon": "^3.1.10",
+    "jsdoc": "^4.0.4",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

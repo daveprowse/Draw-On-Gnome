@@ -16,13 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * SPDX-FileCopyrightText: 2019 Abakkk
+ * SPDX-FileCopyrightText: 2024 Dave Prowse
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
-/* jslint esversion: 6 */
-/* eslint version: 9.16 (2024) */
-/* exported Icons, Image, Images, Json, Jsons, getDateString, saveSvg */
-
 
 import GdkPixbuf from 'gi://GdkPixbuf';
 import Gio from 'gi://Gio';
@@ -450,7 +446,12 @@ export const Image = GObject.registerClass({
     setCairoSource(cr, x, y, width, height, preserveAspectRatio, color) {
         let pixbuf = preserveAspectRatio ? this.getPixbufAtScale(width, height, color)
             : this.getPixbuf(color).scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR);
-        Gdk.cairo_set_source_pixbuf(cr, pixbuf, x, y);
+        // Use GdkPixbuf's cairo integration
+        cr.save();
+        cr.translate(x, y);
+        cr.scale(width / pixbuf.get_width(), height / pixbuf.get_height());
+        cr.setSourceSurface(pixbuf, 0, 0);
+        cr.restore();
     }
 
     _replaceColor(contents, color) {
