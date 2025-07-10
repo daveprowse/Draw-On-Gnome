@@ -80,7 +80,7 @@
       <description>The dash offset in pixels</description>
     </key>
     <key type="s" name="grid-color">
-      <default>"Gray"</default>
+      <default>"rgb(190,190,190)"</default>
       <summary>Grid overlay color</summary>
       <description>The color of the lines</description>
     </key>
@@ -252,7 +252,7 @@
     <key type="as" name="select-arrow-shape">
       <default>["&lt;Primary&gt;a"]</default>
       <summary>Select arrow tool</summary>
-    </key>    
+    </key>
     <key type="as" name="select-mirror-tool">
       <default>["&lt;Primary&gt;c"]</default>
       <summary>Select mirror tool</summary>
