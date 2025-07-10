@@ -450,7 +450,12 @@ export const Image = GObject.registerClass({
     setCairoSource(cr, x, y, width, height, preserveAspectRatio, color) {
         let pixbuf = preserveAspectRatio ? this.getPixbufAtScale(width, height, color)
             : this.getPixbuf(color).scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR);
-        Gdk.cairo_set_source_pixbuf(cr, pixbuf, x, y);
+        // Use GdkPixbuf's cairo integration
+        cr.save();
+        cr.translate(x, y);
+        cr.scale(width / pixbuf.get_width(), height / pixbuf.get_height());
+        cr.setSourceSurface(pixbuf, 0, 0);
+        cr.restore();
     }
 
     _replaceColor(contents, color) {
