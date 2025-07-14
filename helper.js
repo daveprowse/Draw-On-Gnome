@@ -37,7 +37,7 @@ import { CURATED_UUID as UUID } from './utils.js';
 import GLib from 'gi://GLib';
 
 const GS_VERSION = Config.PACKAGE_VERSION;
-const Tweener = GS_VERSION < '3.33.0' ? imports.ui.tweener : null;
+const Tweener = imports.tweener.tweener;
 
 const HELPER_ANIMATION_TIME = 0.25;
 const MEDIA_KEYS_SCHEMA = 'org.gnome.settings-daemon.plugins.media-keys';
