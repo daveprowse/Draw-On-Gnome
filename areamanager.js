@@ -410,7 +410,7 @@ export class AreaManager {
             this.osdDisabled = this._extension.getSettings().get_boolean('osd-disabled');
             // <span size="medium"> is a clutter/mutter 3.38 bug workaround: https://gitlab.gnome.org/GNOME/mutter/-/issues/1467
             // Translators: %s is a key label
-            let label = `<small>${_("Press <i>%s</i> for help").format(this.activeArea.helper.helpKeyLabel)}</small>\n\n<span size="medium">${_("Entering drawing mode")}</span>`;
+            let label = `<small>${_("Press <i>Ctrl+F1</i> for help").format(this.activeArea.helper.helpKeyLabel)}</small>\n\n<span size="medium">${_("Entering drawing mode")}</span>`;
             this.showOsd(null, this._extension.FILES.ICONS.ENTER, label, null, null, true);
         }
         
