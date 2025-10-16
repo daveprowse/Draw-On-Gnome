@@ -672,7 +672,10 @@
 <p><code>gnome-extensions show draw-on-gnome@daveprowse.github.io</code></p>
 <p>To check the logs for Draw On Gnome, try the following options in the terminal:</p>
 <p><code>journalctl -f /usr/bin/gnome-shell</code></p>
-<p>This will give any important errors/messages about the GNOME shell in general. In some cases, you might need to preface the command with <code>sudo</code>.</p>
+<p>or:</p>
+<p><code>journalctl -f -o cat /usr/bin/gnome-shell</code></p>
+<p>or something similar.</p>
+<p>This will give any important errors/messages about the GNOME shell in general. In some cases, you might need to preface the command with <code>sudo</code>. The beauty of the <code>-f</code> parameter is that it will run continuously until you stop it. During that time you can run the extension and track any errors that might be occurring.</p>
 <p>Other options:</p>
 <p><code>journalctl -b | grep draw-on-gnome</code></p>
 <p><code>journalctl -b -l -n 3000</code></p>
