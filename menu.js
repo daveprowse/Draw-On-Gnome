@@ -26,7 +26,6 @@
 import Clutter from 'gi://Clutter';
 import GLib from 'gi://GLib';
 import GObject from 'gi://GObject';
-
 import St from 'gi://St';
 
 import * as BoxPointer from 'resource:///org/gnome/shell/ui/boxpointer.js';
@@ -35,14 +34,10 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import * as Slider from 'resource:///org/gnome/shell/ui/slider.js';
 
-import * as Config from 'resource:///org/gnome/shell/misc/config.js'
-
 import {gettext as _, pgettext} from 'resource:///org/gnome/shell/extensions/extension.js';
 
-import { CURATED_UUID as UUID } from './utils.js';
+import { CURATED_UUID as UUID, SHELL_MAJOR_VERSION } from './utils.js';
 
-
-const GS_VERSION = Config.PACKAGE_VERSION;
 // 150 labels with font-family style take ~15Mo
 const FONT_FAMILY_STYLE = true;
 // use 'login-dialog-message-warning' class in order to get GS theme warning color (default: #f57900)
@@ -151,7 +146,7 @@ export const DrawingMenu = GObject.registerClass({
         
         let side = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL ? St.Side.RIGHT : St.Side.LEFT;
         this.menu = new PopupMenu.PopupMenu(Main.layoutManager.dummyCursor, 0.25, side);
-        this.menuManager = new PopupMenu.PopupMenuManager(GS_VERSION < '3.33.0' ? { actor: this.area } : this.area);
+        this.menuManager = new PopupMenu.PopupMenuManager(SHELL_MAJOR_VERSION >= 3 ? { actor: this.area } : this.area);
         this.menuManager.addMenu(this.menu);
         
         Main.layoutManager.uiGroup.add_child(this.menu.actor);
@@ -357,33 +352,35 @@ export const DrawingMenu = GObject.registerClass({
         menu.addMenuItem(item);
     }
     
-    _addSliderItem(menu, target, targetProperty) {
-        let item = new PopupMenu.PopupBaseMenuItem({ activate: false });
-        let label = new St.Label({ text: DisplayStrings.getPixels(target[targetProperty]), style_class: 'draw-on-gnome-menu-slider-label' });
-        let slider = new Slider.Slider(target[targetProperty] / 50);
-        
-        if (GS_VERSION < '3.33.0') {
-            slider.connect('value-changed', (slider, value, property) => {
-                target[targetProperty] = Math.max(Math.round(value * 50), 0);
-                label.set_text(DisplayStrings.getPixels(target[targetProperty]));
-                this._extension.drawingSettings.set_int("tool-size", target[targetProperty]);
-                if (target[targetProperty] === 0)
-                    label.add_style_class_name(WARNING_COLOR_STYLE_CLASS_NAME);
-                else
-                    label.remove_style_class_name(WARNING_COLOR_STYLE_CLASS_NAME);
-            });
-        } else {
-            slider.connect('notify::value', () => {
-                target[targetProperty] = Math.max(Math.round(slider.value * 50), 0);
-                label.set_text(DisplayStrings.getPixels(target[targetProperty]));
-                this._extension.drawingSettings.set_int("tool-size", target[targetProperty]);
-                if (target[targetProperty] === 0)
-                    label.add_style_class_name(WARNING_COLOR_STYLE_CLASS_NAME);
-                else
-                    label.remove_style_class_name(WARNING_COLOR_STYLE_CLASS_NAME);
-            });
-        }
-        
+   _addSliderItem(menu, target, targetProperty) {
+    let item = new PopupMenu.PopupBaseMenuItem({ activate: false });
+    let label = new St.Label({ text: DisplayStrings.getPixels(target[targetProperty]), style_class: 'draw-on-gnome-menu-slider-label' });
+    let slider = new Slider.Slider(target[targetProperty] / 50);
+    
+    // In GNOME 40+, the signal changed from 'value-changed' to 'notify::value'
+    if (SHELL_MAJOR_VERSION >= 40) {
+        slider.connect('notify::value', () => {
+            target[targetProperty] = Math.max(Math.round(slider.value * 50), 0);
+            label.set_text(DisplayStrings.getPixels(target[targetProperty]));
+            this._extension.drawingSettings.set_int("tool-size", target[targetProperty]);
+            if (target[targetProperty] === 0)
+                label.add_style_class_name(WARNING_COLOR_STYLE_CLASS_NAME);
+            else
+                label.remove_style_class_name(WARNING_COLOR_STYLE_CLASS_NAME);
+        });
+    } else {
+        slider.connect('value-changed', (slider, value, property) => {
+            target[targetProperty] = Math.max(Math.round(value * 50), 0);
+            label.set_text(DisplayStrings.getPixels(target[targetProperty]));
+            this._extension.drawingSettings.set_int("tool-size", target[targetProperty]);
+            if (target[targetProperty] === 0)
+                label.add_style_class_name(WARNING_COLOR_STYLE_CLASS_NAME);
+            else
+                label.remove_style_class_name(WARNING_COLOR_STYLE_CLASS_NAME);
+        });
+    }
+    
+    // Rest of the function continues here...     
         this._getActor(slider).x_expand = true;
         this._getActor(item).add_child(this._getActor(slider));
         this._getActor(item).add_child(label);
@@ -489,7 +486,7 @@ export const DrawingMenu = GObject.registerClass({
         item.icon.set_gicon(icon);
         item.icon.set_style(`color:${this.area.currentColor.to_string().slice(0, 7)};`);
         
-        if (GS_VERSION >= '3.30') {
+        if (SHELL_MAJOR_VERSION >= 3) {
             let colorPickerCallback = () => {
                 this.close();
                 this.area.pickColor();
@@ -755,7 +752,7 @@ export const DrawingMenu = GObject.registerClass({
     };
 
     _getActor(object) {
-        return GS_VERSION < '3.33.0' ? object.actor : object;
+        return SHELL_MAJOR_VERSION >= 3 ? object.actor : object;
     };
 });
 
@@ -838,7 +835,7 @@ const Entry = GObject.registerClass({
                                                       reactive: true,
                                                       can_focus: false });
         
-        this.itemActor = GS_VERSION < '3.33.0' ? this.item.actor : this.item;
+        this.itemActor = SHELL_MAJOR_VERSION >= 3 ? this.item.actor : this.item;
         
         this.entry = new St.Entry({
             hint_text: params.hint_text || "",
@@ -907,7 +904,7 @@ const Entry = GObject.registerClass({
     }
 
     _getActor(object) {
-        return GS_VERSION < '3.33.0' ? object.actor : object;
+        return SHELL_MAJOR_VERSION >= 3 ? object.actor : object;
     };
 });
 

@@ -864,12 +864,28 @@ export const DrawingArea = GObject.registerClass({
 
         this.currentElement = null;
         this._stopTextCursorTimeout();
-        this.textEntry.destroy();
+        
+        // Store textEntry reference before destroying
+        const textEntry = this.textEntry;
         delete this.textEntry;
-        this.grab_key_focus();
-        this.updatePointerCursor();
-
-        this._redisplay();
+        
+        // Defer focus grab to avoid GNOME Shell 48.3/48.4 crash
+        // This ensures the text entry is fully destroyed before regaining focus
+        GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+            if (textEntry && !textEntry.is_finalized()) {
+                textEntry.destroy();
+            }
+            
+            // Only grab focus if the area is still reactive
+            if (this.reactive) {
+                this.grab_key_focus();
+            }
+            
+            this.updatePointerCursor();
+            this._redisplay();
+            
+            return GLib.SOURCE_REMOVE;
+        });
     }
 
     setPointerCursor(pointerCursorName) {
@@ -1287,7 +1303,7 @@ export const DrawingArea = GObject.registerClass({
     }
 
     _onDestroy() {
-        this.textCursorTimeoutId = null; // To avoid calling _stopTextCursorTimeout.
+        this._stopTextCursorTimeout(); // Properly stop the timeout before destroying as per E.G.O. request
         this._stopAll(true);
 
         this._extension.drawingSettings.disconnect(this.drawingSettingsChangedHandler);

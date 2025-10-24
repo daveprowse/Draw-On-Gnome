@@ -28,7 +28,6 @@ import Shell from 'gi://Shell';
 import St from 'gi://St';
 import Clutter from 'gi://Clutter';
 
-import * as Config from 'resource:///org/gnome/shell/misc/config.js'
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as OsdWindow from 'resource:///org/gnome/shell/ui/osdWindow.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
@@ -38,7 +37,7 @@ import {gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js'
 import * as Area from './area.js';
 import * as Helper from './helper.js';
 
-
+import { SHELL_MAJOR_VERSION } from './utils.js';
 
 // AreaManager assigns one DrawingArea per monitor (updateAreas()),
 // distributes keybinding callbacks to the active area
@@ -46,16 +45,20 @@ import * as Helper from './helper.js';
 export class AreaManager {
 
     constructor(extension) {
-        this._extension = extension;
-        this._GS_VERSION = Config.PACKAGE_VERSION;
-        this._HIDE_TIMEOUT_LONG = 2500; // ms, default is 1500 ms
-        
-        // custom Shell.ActionMode, assuming that they are unused
-        this._DRAWING_ACTION_MODE = Math.pow(2,14);
-        this._WRITING_ACTION_MODE = Math.pow(2,15);
-        // use 'login-dialog-message-warning' class in order to get GS theme warning color (default: #f57900)
-        this._WARNING_COLOR_STYLE_CLASS_NAME = 'login-dialog-message-warning';
-    }
+    this._extension = extension;
+    
+    // Store references to settings instances from extension
+    this._settings = extension.settings;
+    this._internalShortcutSettings = extension.internalShortcutSettings;
+    this._drawingSettings = extension.drawingSettings;
+    
+    this._SHELL_MAJOR_VERSION = SHELL_MAJOR_VERSION;
+    this._HIDE_TIMEOUT_LONG = 2500;
+    
+    this._DRAWING_ACTION_MODE = Math.pow(2,14);
+    this._WRITING_ACTION_MODE = Math.pow(2,15);
+    this._WARNING_COLOR_STYLE_CLASS_NAME = 'login-dialog-message-warning';
+}
 
     enable() {
         this.areas = [];
@@ -63,19 +66,19 @@ export class AreaManager {
         this.grab = null;
         
         Main.wm.addKeybinding('toggle-drawing',
-                              this._extension.getSettings(),
+                              this._settings,
                               Meta.KeyBindingFlags.NONE,
                               Shell.ActionMode.ALL,
                               this.toggleDrawing.bind(this));
         
         Main.wm.addKeybinding('toggle-modal',
-                              this._extension.getSettings(),
+                              this._settings,
                               Meta.KeyBindingFlags.NONE,
                               Shell.ActionMode.ALL,
                               this.toggleModal.bind(this));
         
         Main.wm.addKeybinding('erase-drawings',
-                              this._extension.getSettings(),
+                              this._settings,
                               Meta.KeyBindingFlags.NONE,
                               Shell.ActionMode.ALL,
                               this.eraseDrawings.bind(this));
@@ -84,23 +87,23 @@ export class AreaManager {
         this.monitorChangedHandler = Main.layoutManager.connect('monitors-changed', this.updateAreas.bind(this));
         
         this.updateIndicator();
-        this.indicatorSettingHandler = this._extension.getSettings().connect('changed::indicator-disabled', this.updateIndicator.bind(this));
+        this.indicatorSettingHandler = this._settings.connect('changed::indicator-disabled', this.updateIndicator.bind(this));
         
-        this.desktopSettingHandler = this._extension.getSettings().connect('changed::drawing-on-desktop', this.onDesktopSettingChanged.bind(this));
-        this.persistentOverRestartsSettingHandler = this._extension.getSettings().connect('changed::persistent-over-restarts', this.onPersistentOverRestartsSettingChanged.bind(this));
-        this.persistentOverTogglesSettingHandler = this._extension.getSettings().connect('changed::persistent-over-toggles', this.onPersistentOverTogglesSettingChanged.bind(this));
+        this.desktopSettingHandler = this._settings.connect('changed::drawing-on-desktop', this.onDesktopSettingChanged.bind(this));
+        this.persistentOverRestartsSettingHandler = this._settings.connect('changed::persistent-over-restarts', this.onPersistentOverRestartsSettingChanged.bind(this));
+        this.persistentOverTogglesSettingHandler = this._settings.connect('changed::persistent-over-toggles', this.onPersistentOverTogglesSettingChanged.bind(this));
     }
     
     get persistentOverToggles() {
-        return this._extension.getSettings().get_boolean('persistent-over-toggles');
+        return this._settings.get_boolean('persistent-over-toggles');
     }
     
     get persistentOverRestarts() {
-        return this._extension.getSettings().get_boolean('persistent-over-toggles') && this._extension.getSettings().get_boolean('persistent-over-restarts');
+        return this._settings.get_boolean('persistent-over-toggles') && this._settings.get_boolean('persistent-over-restarts');
     }
     
     get onDesktop() {
-        return this._extension.getSettings().get_boolean('persistent-over-toggles') && this._extension.getSettings().get_boolean('drawing-on-desktop');
+        return this._settings.get_boolean('persistent-over-toggles') && this._settings.get_boolean('drawing-on-desktop');
     }
     
     get toolPalette() {
@@ -140,7 +143,7 @@ export class AreaManager {
             this.indicator.disable();
             this.indicator = null;
         }
-        if (!this._extension.getSettings().get_boolean('indicator-disabled')) {
+        if (!this._settings.get_boolean('indicator-disabled')) {
             this.indicator = new DrawingIndicator();
             this.indicator.enable();
         }
@@ -407,7 +410,7 @@ export class AreaManager {
             }
             
             this.activeArea.enterDrawingMode();
-            this.osdDisabled = this._extension.getSettings().get_boolean('osd-disabled');
+            this.osdDisabled = this._settings.get_boolean('osd-disabled');
             // <span size="medium"> is a clutter/mutter 3.38 bug workaround: https://gitlab.gnome.org/GNOME/mutter/-/issues/1467
             // Translators: %s is a key label
             let label = `<small>${_("Press <i>Ctrl+F1</i> for help").format(this.activeArea.helper.helpKeyLabel)}</small>\n\n<span size="medium">${_("Entering drawing mode")}</span>`;
@@ -438,7 +441,7 @@ export class AreaManager {
         
         // GS 3.32- : bar from 0 to 100
         // GS 3.34+ : bar from 0 to 1
-        if (level && this._GS_VERSION > '3.33.0')
+        if (level && this._SHELL_MAJOR_VERSION >= 3)
             level = level / 100;
         
         if (!icon)
@@ -495,19 +498,19 @@ export class AreaManager {
             this.monitorChangedHandler = null;
         }
         if (this.indicatorSettingHandler) {
-            this._extension.getSettings().disconnect(this.indicatorSettingHandler);
+            this._settings.disconnect(this.indicatorSettingHandler);
             this.indicatorSettingHandler = null;
         }
         if (this.desktopSettingHandler) {
-            this._extension.getSettings().disconnect(this.desktopSettingHandler);
+            this._settings.disconnect(this.desktopSettingHandler);
             this.desktopSettingHandler = null;
         }
         if (this.persistentOverTogglesSettingHandler) {
-            this._extension.getSettings().disconnect(this.persistentOverTogglesSettingHandler);
+            this._settings.disconnect(this.persistentOverTogglesSettingHandler);
             this.persistentOverTogglesSettingHandler = null;
         }
         if (this.persistentOverRestartsSettingHandler) {
-            this._extension.getSettings().disconnect(this.persistentOverRestartsSettingHandler);
+            this._settings.disconnect(this.persistentOverRestartsSettingHandler);
             this.persistentOverRestartsSettingHandler = null;
         }
         
@@ -539,7 +542,7 @@ export class DrawingIndicator {
     enable() {
         let [menuAlignment, dontCreateMenu] = [0, true];
         this.button = new PanelMenu.Button(menuAlignment, "Drawing Indicator", dontCreateMenu);
-        this.buttonActor = this._GS_VERSION < '3.33.0' ? this.button.actor: this.button;
+        this.buttonActor = this._SHELL_MAJOR_VERSION >= 3 ? this.button.actor: this.button;
         Main.panel.addToStatusArea('draw-on-gnome-indicator', this.button);
         
         this.icon = new St.Icon({ icon_name: 'applications-graphics-symbolic',

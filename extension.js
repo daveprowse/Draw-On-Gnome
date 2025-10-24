@@ -25,11 +25,9 @@
 
 import GObject from 'gi://GObject';
 
-import { QuickToggle, SystemIndicator, QuickSettingsMenu } from 'resource:///org/gnome/shell/ui/quickSettings.js';
+import { QuickToggle, SystemIndicator } from 'resource:///org/gnome/shell/ui/quickSettings.js';
 
 import * as Panel from 'resource:///org/gnome/shell/ui/panel.js';
-
-import * as Config from 'resource:///org/gnome/shell/misc/config.js';
 
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 
@@ -37,10 +35,7 @@ import { Files } from './files.js';
 
 import * as AreaManager from './areamanager.js';
 
-
-
-const GS_VERSION = Config.PACKAGE_VERSION;
-
+import { SHELL_MAJOR_VERSION } from './utils.js';
 
 
 const FeatureToggle = GObject.registerClass(
@@ -57,28 +52,27 @@ class FeatureToggle extends QuickToggle {
 
 const Indicator = GObject.registerClass(
 class Indicator extends SystemIndicator {
-    _init() {
+    _init(extension) {
         super._init();
+        
+        this._extension = extension;
 
         this.toggle = new FeatureToggle();
         this.quickSettingsItems.push(this.toggle);
         this._addIndicator();
         
-        //Place the toggles above the background apps entry
-        // if (GS_VERSION >= 44) {
-        //   this.quickSettingsItems.forEach((item) => {
-        //     QuickSettingsMenu.menu._grid.set_child_below_sibling(item,
-        //       QuickSettingsMenu._backgroundApps.quickSettingsItems[0]);
-        //   });
-        // }
-        
-         this.connect('destroy', () => {
+        this.connect('destroy', () => {
             this.quickSettingsItems.forEach(item => item.destroy());
         });
     }
-    get_toggle()
-    {
+    
+    get_toggle() {
         return this.toggle;
+    }
+    
+    // Connect the toggle to the extension's drawing functionality
+    connectToExtension(toggleDrawingCallback) {
+        this.toggle.connect('clicked', toggleDrawingCallback);
     }
 });
 
@@ -86,41 +80,41 @@ class Indicator extends SystemIndicator {
 export default class DrawOnGnomeExtension extends Extension {
 
     constructor(metadata) {
-        super(metadata);        
-        
-    }
-
-    create_toggle() {
-        if (GS_VERSION >= '44.0') {
-            if (!this.getSettings().get_boolean("quicktoggle-disabled") && !this.toggle) {
-                this.toggle = new Indicator();
-                this.drawingtoggle = this.toggle.get_toggle();
-                this.drawingtoggle.connect('clicked',this.toggle_drawing.bind(this));
-            } else if (this.getSettings().get_boolean("quicktoggle-disabled") && this.toggle) {
-                this.toggle.destroy();
-                this.toggle = null;
-            }
-        }
+        super(metadata);
+        this.indicator = null;
     }
 
     enable() {
+        // Get settings instances ONCE - this is the entry point
         this.settings = this.getSettings();
         this.internalShortcutSettings = this.getSettings(this.metadata['settings-schema'] + '.internal-shortcuts');
         this.drawingSettings = this.getSettings(this.metadata['settings-schema'] + '.drawing');
+        
         this.areaManager = new AreaManager.AreaManager(this);
         this.areaManager.enable();
         
-        this.toggle = null;
-        this.create_toggle();
+        // Create indicator if GNOME version supports it and setting allows it
+        this._updateIndicator();
         
-        this.getSettings().connect('changed', this._onSettingsChanged.bind(this));
+        // Watch for settings changes
+        this._settingsChangedId = this.settings.connect('changed::quicktoggle-disabled', 
+            this._updateIndicator.bind(this));
 
         this.FILES = new Files(this);
     }
 
     disable() {
-        if (this.toggle)
-            this.toggle.destroy();
+        // Disconnect settings signal
+        if (this._settingsChangedId) {
+            this.settings.disconnect(this._settingsChangedId);
+            this._settingsChangedId = null;
+        }
+        
+        // Destroy indicator if it exists
+        if (this.indicator) {
+            this.indicator.destroy();
+            this.indicator = null;
+        }
         
         this.areaManager.disable();
         delete this.areaManager;
@@ -128,22 +122,34 @@ export default class DrawOnGnomeExtension extends Extension {
         delete this.internalShortcutSettings;
         this.FILES = null;
         this.drawingSettings = null;
-        this.toggle = null; 
         this.areaManager = null;
         this.internalShortcutSettings = null;
     }
 
-    toggle_drawing()
-    {
+    _updateIndicator() {
+        // Only create indicator on GNOME 44+
+        if (SHELL_MAJOR_VERSION < 44) {
+            return;
+        }
+        
+        const quicktoggleDisabled = this.settings.get_boolean('quicktoggle-disabled');
+        
+        if (quicktoggleDisabled && this.indicator) {
+            // Setting says disabled, but we have an indicator - destroy it
+            this.indicator.destroy();
+            this.indicator = null;
+        } else if (!quicktoggleDisabled && !this.indicator) {
+            // Setting says enabled, but we don't have an indicator - create it
+            this.indicator = new Indicator(this);
+            this.indicator.connectToExtension(this._toggleDrawing.bind(this));
+        }
+    }
+
+    _toggleDrawing() {
         Panel.closeQuickSettings();
-        this.drawingtoggle.set_checked(false);
+        if (this.indicator) {
+            this.indicator.get_toggle().set_checked(false);
+        }
         this.areaManager.toggleDrawing();
     }
-    
-    _onSettingsChanged() {
-        this.create_toggle()
-    }
 }
-
-
-

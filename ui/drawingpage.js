@@ -39,6 +39,7 @@ const ROWBOX_MARGIN_PARAMS = { margin_top: MARGIN / 2, margin_bottom: MARGIN / 2
 const DrawingPage = GObject.registerClass({
     GTypeName: `${UUID}-Drawing`
 }, class DrawingPage extends Adw.PreferencesPage {
+    
     constructor(extensionPreferences, window) {
         super({});
         
@@ -47,12 +48,14 @@ const DrawingPage = GObject.registerClass({
         this.set_name('drawing');
         this.set_icon_name("applications-graphics-symbolic");
 
-        this.settings = extensionPreferences.getSettings(extensionPreferences.metadata['settings-schema'] + '.drawing');
-          
+        // Use cached drawingSettings from extensionPreferences
+        this.settings = extensionPreferences.drawingSettings;
+        
         this.schema = this.settings.settings_schema;
-      
+    
         this.palettes = this.settings.get_value('palettes').deep_unpack();
         
+        // New constructor code above, below is the same
         this.palettes_adw_group = Adw.PreferencesGroup.new()
         this.palettes_adw_group.set_title(_("Palettes"));
 

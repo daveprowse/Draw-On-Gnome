@@ -48,7 +48,9 @@ const PreferencesPage = GObject.registerClass({
     this.set_title("Preferences");
     this.set_name('prefs');
     this.set_icon_name("preferences-system-symbolic");
-    let settings = extensionPreferences.getSettings();
+    
+    // Use cached settings from extensionPreferences
+    let settings = extensionPreferences.settings;
     let schema = settings.settings_schema;
 
     let grp_Global = Adw.PreferencesGroup.new();
@@ -65,7 +67,6 @@ const PreferencesPage = GObject.registerClass({
 
       grp_Global.add(globalKeybindingsRow);
     });
-
 
     Shortcuts.GLOBAL_KEYBINDINGS_SWITCHES.forEach((settingKeys) => {
       let ActionRow = Adw.ActionRow.new();
@@ -89,9 +90,10 @@ const PreferencesPage = GObject.registerClass({
     let grp_Internal = Adw.PreferencesGroup.new();
     grp_Internal.set_title("Internal");
 
-    let internalShortcutSettings = extensionPreferences.getSettings(extensionPreferences.metadata['settings-schema'] + '.internal-shortcuts');
+    // Use cached internalShortcutSettings
+    let internalShortcutSettings = extensionPreferences.internalShortcutSettings;
 
-    // TODO: Improve Shortcut Widget
+    // Rest of the code stays the same...
     Shortcuts.INTERNAL_KEYBINDINGS.forEach((settingKeys) => {
       let globalKeybindingsRow = new Adw.ActionRow();
       let globalKeybindingsWidget = new ShortCutWidget(internalShortcutSettings, settingKeys);
