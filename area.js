@@ -435,7 +435,7 @@ export const DrawingArea = GObject.registerClass({
                 if (this.grabbedElement)
                     this._startTransforming(x, y, controlPressed, shiftPressed);
             } else {
-                this._startDrawing(x, y, shiftPressed, event.get_device());
+                this._startDrawing(x, y, shiftPressed, event.get_device?.());
             }
             return Clutter.EVENT_STOP;
         } else if (button == 2) {
@@ -735,7 +735,7 @@ export const DrawingArea = GObject.registerClass({
 
         this.motionHandler = this.connect('motion-event', (actor, event) => {
             // To avoid painting due to the wrong device (2 cursors wayland support)
-            if (clickedDevice != event.get_device())
+            if (clickedDevice != event.get_device?.())
                 return;
 
             if (this.spaceKeyPressed)

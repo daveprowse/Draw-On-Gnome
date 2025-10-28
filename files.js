@@ -41,7 +41,7 @@ class Icons {
         ];
         const ICON_DIR = extension.dir.get_child('data').get_child('icons');
         const THEMED_ICON_NAMES = {
-            COLOR_PICKER: 'color-select-symbolic',
+            COLOR_PICKER: 'color-select',
             ENTER: 'applications-graphics', LEAVE: 'application-exit',
             GRAB: 'input-touchpad', UNGRAB: 'touchpad-disabled',
             OPEN: 'document-open', SAVE: 'document-save',
