@@ -34,7 +34,7 @@ Thank you to all the contributors! 😎
    
    > Note: Currently, the script will identify GNOME v49 through v40 and back all the way to v3.xx.
 
-   > Note: Note: You may need to enter your sudo password during the install. Make sure you are a sudoer!
+   > Note: You may need to enter your sudo password during the install. Make sure you are a sudoer!
 
    > **IMPORTANT!!** Always check scripts before running them! If you are uncomfortable running the script, or cannot run the script, then install manually with an option listed in the [Documentation](https://daveprowse.github.io/Draw-On-Gnome/installation/).
 
