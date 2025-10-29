@@ -752,7 +752,7 @@ export const DrawingMenu = GObject.registerClass({
     };
 
     _getActor(object) {
-        return SHELL_MAJOR_VERSION >= 3 ? object.actor : object;
+        return object.actor || object;
     };
 });
 
@@ -904,7 +904,7 @@ const Entry = GObject.registerClass({
     }
 
     _getActor(object) {
-        return SHELL_MAJOR_VERSION >= 3 ? object.actor : object;
+        return object.actor || object;
     };
 });
 

@@ -447,9 +447,13 @@ export class AreaManager {
         if (!icon)
             icon = this._extension.FILES.ICONS.ENTER;
         
+        if (this._SHELL_MAJOR_VERSION >= 49)
+            Main.osdWindowManager.showOne(activeIndex, icon, label, level, maxLevel);
+        else
+            Main.osdWindowManager.show(activeIndex, icon, label, level, maxLevel);
+        
         let osdWindow = Main.osdWindowManager._osdWindows[activeIndex];
-
-        Main.osdWindowManager.show(activeIndex, icon, label, level, maxLevel);
+        
         osdWindow._label.get_clutter_text().set_use_markup(true);
         
         if (color) {

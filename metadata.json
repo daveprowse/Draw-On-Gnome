@@ -8,8 +8,9 @@
     "data-dir": "draw-on-gnome",
     "persistent-file-name": "persistent",
     "shell-version": [                
-        "48"        
+        "48", 
+        "49"        
     ],    
-    "version-name": "1.5",
+    "version-name": "1.6",
     "version": 1    
 }
