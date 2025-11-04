@@ -16,13 +16,15 @@ Thank you to all the contributors! 😎
 - Multi-monitor support
 - Save your work with `Ctrl+S`!!
 
-## Installation
+## Installation Options
 
-> Note: We are working on getting the extension approved by GNOME so that it will be listed on https://extensions.gnome.org (E.G.O.) 
+### Option 1: Install from GNOME Extensions (ver. 48/49)
 
-> Stay tuned! Click [here](https://daveprowse.github.io/Draw-On-Gnome/blog/) for updates.
+[<img src="https://daveprowse.github.io/draw-on-gnome/media/gnome-extensions.png" height="100">](https://extensions.gnome.org/extension/7921/draw-on-gnome/)
 
----
+> **IMPORTANT!!**: Currently, this will *only* install to GNOMEv48 and v49. If you need the extension for another version of GNOME, see Option 2.
+
+## Option 2: Use the Automated Script
 
 1. Copy the following command to a *Bash* terminal and press `enter` to run it:
 

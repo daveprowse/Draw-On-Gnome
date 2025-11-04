@@ -32,47 +32,40 @@ import AboutPage from './ui/about.js';
 export default class DrawOnGnomeExtensionPreferences extends ExtensionPreferences {
 
     constructor(metadata) {
-        super(metadata);
-        // Initialize settings cache
-        this._settings = null;
-        this._internalShortcutSettings = null;
-        this._drawingSettings = null;
+        super(metadata);        
     }
     
-    // Get or create the main settings instance
-    get settings() {
-        if (!this._settings) {
-            this._settings = this.getSettings();
-        }
-        return this._settings;
-    }
-    
-    // Get or create the internal shortcuts settings instance
-    get internalShortcutSettings() {
-        if (!this._internalShortcutSettings) {
-            this._internalShortcutSettings = this.getSettings(this.metadata['settings-schema'] + '.internal-shortcuts');
-        }
-        return this._internalShortcutSettings;
-    }
-    
-    // Get or create the drawing settings instance
-    get drawingSettings() {
-        if (!this._drawingSettings) {
-            this._drawingSettings = this.getSettings(this.metadata['settings-schema'] + '.drawing');
-        }
-        return this._drawingSettings;
-    }
+    // !!! These are the changes for E.G.O. as per their issue #3 (11/3/2025 review). 
+    // They negate the changes made for issue #2 by using "window" instead of "this". 
+    // REMOVE these getter methods (lines 45, 53, 61 in your file):
+    // get settings() { ... }
+    // get internalShortcutSettings() { ... }
+    // get drawingSettings() { ... }
+    // 
+    // Don't store settings as properties on THIS class (the exported one)
     
     fillPreferencesWindow(window) {
-        window._settings = this.settings;  // Use the cached property
+        // Store settings on the WINDOW object instead of on this class
+        // This satisfies both fix #2 (use _settings.get_child) and fix #3 (don't store on exported class)
+        window._settings = this.getSettings();
+        window._internalShortcutSettings = window._settings.get_child('internal-shortcuts');
+        window._drawingSettings = window._settings.get_child('drawing');
+        
         window.search_enabled = true;
 
-        let page1 = new PreferencesPage(this);
+        let page1 = new PreferencesPage(this, window);
         let page2 = new DrawingPage(this, window);
         let page3 = new AboutPage(this);
 
         window.add(page1);
         window.add(page2);
         window.add(page3);
+        
+        // Clean up when window closes to allow garbage collection
+        window.connect('close-request', () => {
+            delete window._settings;
+            delete window._internalShortcutSettings;
+            delete window._drawingSettings;
+        });
     }
 }

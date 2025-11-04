@@ -49,7 +49,7 @@ const DrawingPage = GObject.registerClass({
         this.set_icon_name("applications-graphics-symbolic");
 
         // Use cached drawingSettings from extensionPreferences
-        this.settings = extensionPreferences.drawingSettings;
+        this.settings = window._drawingSettings;
         
         this.schema = this.settings.settings_schema;
     

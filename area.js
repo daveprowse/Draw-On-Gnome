@@ -168,7 +168,6 @@ export const DrawingArea = GObject.registerClass({
         this.dashedLine = false;
         this.fill = false;
 
-        this.connect('destroy', this._onDestroy.bind(this));
         this.connect('notify::reactive', this._onReactiveChanged.bind(this));
         this.drawingSettingsChangedHandler = this._extension.drawingSettings.connect('changed', this._onDrawingSettingsChanged.bind(this));
         this._onDrawingSettingsChanged();
@@ -1302,8 +1301,8 @@ export const DrawingArea = GObject.registerClass({
         }
     }
 
-    _onDestroy() {
-        this._stopTextCursorTimeout(); // Properly stop the timeout before destroying as per E.G.O. request
+    destroy() {
+        this.textCursorTimeoutId = null; // To avoid calling _stopTextCursorTimeout.
         this._stopAll(true);
 
         this._extension.drawingSettings.disconnect(this.drawingSettingsChangedHandler);
@@ -1311,6 +1310,8 @@ export const DrawingArea = GObject.registerClass({
         if (this._menu)
             this._menu.disable();
         delete this.areaManagerUtils;
+        
+        super.destroy();
     }
 
     enterDrawingMode() {

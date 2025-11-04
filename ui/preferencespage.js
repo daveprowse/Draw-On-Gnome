@@ -42,7 +42,7 @@ const PreferencesPage = GObject.registerClass({
   GTypeName: `${UUID}-PreferencesPage`
 }, class Preferences extends Adw.PreferencesPage {
 
-  constructor(extensionPreferences) {
+  constructor(extensionPreferences, window) {
     super({});
 
     this.set_title("Preferences");
@@ -50,7 +50,7 @@ const PreferencesPage = GObject.registerClass({
     this.set_icon_name("preferences-system-symbolic");
     
     // Use cached settings from extensionPreferences
-    let settings = extensionPreferences.settings;
+    let settings = window._settings;
     let schema = settings.settings_schema;
 
     let grp_Global = Adw.PreferencesGroup.new();
@@ -91,7 +91,7 @@ const PreferencesPage = GObject.registerClass({
     grp_Internal.set_title("Internal");
 
     // Use cached internalShortcutSettings
-    let internalShortcutSettings = extensionPreferences.internalShortcutSettings;
+    let internalShortcutSettings = window._internalShortcutSettings;
 
     // Rest of the code stays the same...
     Shortcuts.INTERNAL_KEYBINDINGS.forEach((settingKeys) => {
