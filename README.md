@@ -24,7 +24,7 @@ Thank you to all the contributors! 😎
 
 > **IMPORTANT!!**: Currently, this will *only* install to GNOMEv48 and v49. If you need the extension for another version of GNOME, see Option 2.
 
-## Option 2: Use the Automated Script
+### Option 2: Use the Automated Script
 
 1. Copy the following command to a *Bash* terminal and press `enter` to run it:
 
