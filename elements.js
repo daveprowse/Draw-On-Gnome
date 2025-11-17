@@ -45,7 +45,7 @@ export const StaticColor = {
     RED: Color.from_string('#ff0000')[1]
 }
 
-export const Shape = { NONE: 0, LINE: 1, ELLIPSE: 2, RECTANGLE: 3, TEXT: 4, POLYGON: 5, POLYLINE: 6, IMAGE: 7, ARROW: 8 };
+export const Shape = { NONE: 0, LINE: 1, ELLIPSE: 2, RECTANGLE: 3, TEXT: 4, POLYGON: 5, POLYLINE: 6, IMAGE: 7, ARROW: 8, LASER: 9 };
 export const TextAlignment = { LEFT: 0, CENTER: 1, RIGHT: 2 };
 export const Transformation = { TRANSLATION: 0, ROTATION: 1, SCALE_PRESERVE: 2, STRETCH: 3, REFLECTION: 4, INVERSION: 5, SMOOTH: 100 };
 
@@ -305,8 +305,44 @@ const _DrawingElement = GObject.registerClass({
             cr.moveTo(points[1][0], points[1][1]);
             cr.lineTo(points[1][0] - arrowSize * Math.cos(angle + Math.PI/6),
                     points[1][1] - arrowSize * Math.sin(angle + Math.PI/6));    
+        
+        // Laser Method
+        } else if (shape == Shape.LASER && points.length >= 2) {
+        // LASER BEAM - Like a bass line with vibrato! 🎸
+        const startX = points[0][0];
+        const startY = points[0][1];
+        const endX = points[1][0];
+        const endY = points[1][1];
+        
+        const distance = Math.hypot(endX - startX, endY - startY);
+        const angle = Math.atan2(endY - startY, endX - startX);
+        const segments = Math.floor(distance / 8);
+        
+        if (segments > 1) {
+            cr.moveTo(startX, startY);
+            
+            // Create the wavy laser effect - like sound waves! 🎵
+            for (let i = 1; i <= segments; i++) {
+                const progress = i / segments;
+                const x = startX + Math.cos(angle) * distance * progress;
+                const y = startY + Math.sin(angle) * distance * progress;
+                const waveAmplitude = Math.sin(progress * Math.PI) * 3; // Wave intensity
+                const perpOffset = Math.sin(i * Math.PI / 3) * waveAmplitude;
+                const perpX = x + Math.cos(angle + Math.PI/2) * perpOffset;
+                const perpY = y + Math.sin(angle + Math.PI/2) * perpOffset;
+                cr.lineTo(perpX, perpY);
+            }
+            
+            cr.lineTo(endX, endY);
+        } else {
+            // Fallback for very short lasers
+            cr.moveTo(startX, startY);
+            cr.lineTo(endX, endY);
         }
     }
+
+    // End Laser Portion
+}
     
     getContainsPoint(cr, x, y) {
         cr.save();
@@ -459,7 +495,37 @@ const _DrawingElement = GObject.registerClass({
             row += `M${points[1][0]},${points[1][1]} `;
             row += `L${points[1][0] - arrowSize * Math.cos(angle + Math.PI/6)},${points[1][1] - arrowSize * Math.sin(angle + Math.PI/6)}"`;
             row += `${transAttribute}/>`;
+        
+        // Laser portion
+        } else if (this.shape == Shape.LASER && points.length >= 2) {
+        // Export LASER as wavy path
+            const startX = points[0][0];
+            const startY = points[0][1];
+            const endX = points[1][0];
+            const endY = points[1][1];
+            const distance = Math.hypot(endX - startX, endY - startY);
+            const angle = Math.atan2(endY - startY, endX - startX);
+            const segments = Math.floor(distance / 8);
+            
+            row += `<path ${attributes} d="M${startX},${startY}`;
+            
+            if (segments > 1) {
+                for (let i = 1; i <= segments; i++) {
+                    const progress = i / segments;
+                    const x = startX + Math.cos(angle) * distance * progress;
+                    const y = startY + Math.sin(angle) * distance * progress;
+                    const waveAmplitude = Math.sin(progress * Math.PI) * 3;
+                    const perpOffset = Math.sin(i * Math.PI / 3) * waveAmplitude;
+                    const perpX = x + Math.cos(angle + Math.PI/2) * perpOffset;
+                    const perpY = y + Math.sin(angle + Math.PI/2) * perpOffset;
+                    row += ` L${perpX},${perpY}`;
+                }
+            }
+            
+            row += ` L${endX},${endY}"${transAttribute}/>`;
         }
+
+        // End laser portion
         
         return row;
     }

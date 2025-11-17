@@ -137,12 +137,41 @@ export const DrawingArea = GObject.registerClass({
         this.layerContainer.add_child(this.backLayer);
         this.foreLayer = new DrawingLayer(this._repaintFore.bind(this), this._getHasImageFore.bind(this));
         this.layerContainer.add_child(this.foreLayer);
+
         this.gridLayer = new DrawingLayer(this._repaintGrid.bind(this));
         this.gridLayer.hide();
         this.gridLayer.opacity = 0;
         this.layerContainer.add_child(this.gridLayer);
+        
+        // Laser pointer layer and state
+        this.laserLayer = new DrawingLayer(this._repaintLaser.bind(this));
+        this.laserLayer.hide();
+        this.laserLayer.opacity = 0;
+        this.laserLayer.reactive = false;  // ADD THIS LINE - allows clicks to pass through
+        this.layerContainer.add_child(this.laserLayer);
+        
+        // Laser pointer state variables
+        this.laserPointerActive = false;
+        this.laserPointerX = 0;
+        this.laserPointerY = 0;
+        this.laserTrailPoints = [];
+        this.laserTrailMaxLength = 15;
+        this.laserAnimationTimeoutId = null;
+        this.laserKeyPressed = false;
+        
+        // Laser pointer state variables
+        this.laserPointerActive = false;
+        this.laserPointerX = 0;
+        this.laserPointerY = 0;
+        this.laserTrailPoints = [];
+        this.laserTrailMaxLength = 15;
+        this.laserAnimationTimeoutId = null;
+        this.laserKeyPressed = false;
+        this.laserTrailTimeoutId = null;  // ADD THIS LINE
+        // End laser pointer code
 
         this.elements = [];
+        
         this.undoneElements = [];
         this.currentElement = null;
         this.currentTool = Shape.NONE;
@@ -386,6 +415,51 @@ export const DrawingArea = GObject.registerClass({
         }
     }
 
+    // Laser Rendering Method
+    _repaintLaser(cr) {
+        if (!this.laserPointerActive || this.laserTrailPoints.length === 0)
+            return;
+        
+        // Draw the laser trail with fading opacity
+        for (let i = 0; i < this.laserTrailPoints.length; i++) {
+            let point = this.laserTrailPoints[i];
+            let opacity = (i + 1) / this.laserTrailPoints.length;
+            let radius = 8 + (opacity * 4);
+            
+            cr.setSourceRGBA(1.0, 0.1, 0.1, opacity * 0.7);
+            cr.arc(point[0], point[1], radius, 0, 2 * Math.PI);
+            cr.fill();
+        }
+        
+        // Draw the main laser pointer
+        let mainRadius = 14;
+        
+        // Outer glow
+        let gradient = new Cairo.RadialGradient(
+            this.laserPointerX, this.laserPointerY, 0,
+            this.laserPointerX, this.laserPointerY, mainRadius * 1.5
+        );
+        gradient.addColorStopRGBA(0, 1.0, 0.2, 0.2, 0.9);
+        gradient.addColorStopRGBA(0.5, 1.0, 0.1, 0.1, 0.6);
+        gradient.addColorStopRGBA(1, 1.0, 0.0, 0.0, 0.0);
+        
+        cr.setSource(gradient);
+        cr.arc(this.laserPointerX, this.laserPointerY, mainRadius * 1.5, 0, 2 * Math.PI);
+        cr.fill();
+        
+        // Inner bright core
+        cr.setSourceRGBA(1.0, 0.3, 0.3, 0.95);
+        cr.arc(this.laserPointerX, this.laserPointerY, mainRadius, 0, 2 * Math.PI);
+        cr.fill();
+        
+        // Central hot spot
+        cr.setSourceRGBA(1.0, 0.9, 0.9, 1.0);
+        cr.arc(this.laserPointerX, this.laserPointerY, mainRadius * 0.4, 0, 2 * Math.PI);
+        cr.fill();
+    }
+
+    // End Laser Rendering Method code
+
     _getHasImageBack() {
         return this.elements.some(element => element.shape == Shape.IMAGE);
     }
@@ -429,14 +503,22 @@ export const DrawingArea = GObject.registerClass({
             return Clutter.EVENT_STOP;
         }
 
+        // Laser Button Press Handling Code
+
         if (button == 1) {
+            if (this.laserPointerActive) {
+                this.stopLaserPointer();
+            }
+            
             if (this.hasManipulationTool) {
                 if (this.grabbedElement)
                     this._startTransforming(x, y, controlPressed, shiftPressed);
             } else {
-                this._startDrawing(x, y, shiftPressed, event.get_device?.());
+                this._startDrawing(x, y, shiftPressed, event.get_device?.() || event.get_source_device());
             }
             return Clutter.EVENT_STOP;
+            // End Laser Button Press Handling Code
+
         } else if (button == 2) {
             this.switchFill();
         } else if (button == 3) {
@@ -458,8 +540,14 @@ export const DrawingArea = GObject.registerClass({
         return Clutter.EVENT_STOP;
     }
 
+    // Laser Integration (pressed) - replaced old code
+
     _onStageKeyPressed(actor, event) {
         if (event.get_key_symbol() == Clutter.KEY_Escape) {
+            if (this.laserPointerActive) {
+                this.stopLaserPointer();
+                return Clutter.EVENT_STOP;
+            }
             if (this.helper.visible)
                 this.toggleHelp();
             else
@@ -467,17 +555,39 @@ export const DrawingArea = GObject.registerClass({
             return Clutter.EVENT_STOP;
         } else if (event.get_key_symbol() == Clutter.KEY_space) {
             this.spaceKeyPressed = true;
+        } else if (event.get_key_symbol() == Clutter.KEY_Alt_R) {
+            // Right Alt key for laser pointer
+            this.laserKeyPressed = true;
+            if (!this.laserPointerActive) {
+                let [x, y] = global.get_pointer();
+                let [success, localX, localY] = this._transformStagePoint(x, y);
+                if (success) {
+                    this.startLaserPointer(localX, localY);
+                }
+            }
         }
 
         return Clutter.EVENT_PROPAGATE;
     }
 
+    // End Laser Integration (pressed)
+
+    // Laser Integration (released)
+
     _onStageKeyReleased(actor, event) {
-        if (event.get_key_symbol() == Clutter.KEY_space)
+        if (event.get_key_symbol() == Clutter.KEY_space) {
             this.spaceKeyPressed = false;
+        } else if (event.get_key_symbol() == Clutter.KEY_Alt_R) {
+            this.laserKeyPressed = false;
+            if (this.laserPointerActive) {
+                this.stopLaserPointer();
+            }
+        }
 
         return Clutter.EVENT_PROPAGATE;
     }
+
+    // End Laser Integration (released)
 
     _onKeyPressed(actor, event) {
         if (event.get_key_symbol() == Clutter.KEY_Escape) {
@@ -617,17 +727,22 @@ export const DrawingArea = GObject.registerClass({
             this._redisplay();
         }
 
-        this.motionHandler = this.connect('motion-event', (actor, event) => {
-            if (this.spaceKeyPressed)
-                return;
+        // Laser Motion Handling
 
+        this.motionHandler = this.connect('motion-event', (actor, event) => {
             let coords = event.get_coords();
             let [s, x, y] = this._transformStagePoint(coords[0], coords[1]);
             if (!s)
                 return;
+                        
+            if (this.spaceKeyPressed)
+                return;
+
             let controlPressed = event.has_control_modifier();
             this._updateTransforming(x, y, controlPressed);
         });
+
+        // End Laser Motion Handling
     }
 
     _updateTransforming(x, y, controlPressed) {
@@ -683,6 +798,14 @@ export const DrawingArea = GObject.registerClass({
         if (!success)
             return;
 
+        // Handle laser pointer tool
+        if (this.currentTool == Shape.LASER) {
+            if (!this.laserPointerActive) {
+                this.startLaserPointer(startX, startY);
+            }
+            return; // Don't create a drawing element
+        }
+
         this.buttonReleasedHandler = this.connect('button-release-event', (actor, event) => {
             this._stopDrawing();
         });
@@ -732,23 +855,27 @@ export const DrawingArea = GObject.registerClass({
             this.motionHandler = null;
         }
 
+        // Laser Motion Handling
+
         this.motionHandler = this.connect('motion-event', (actor, event) => {
-            // To avoid painting due to the wrong device (2 cursors wayland support)
-            if (clickedDevice != event.get_device?.())
-                return;
-
-            if (this.spaceKeyPressed)
-                return;
-
             let coords = event.get_coords();
             let [s, x, y] = this._transformStagePoint(coords[0], coords[1]);
             if (!s)
+                return;
+            
+            // To avoid painting due to the wrong device (2 cursors wayland support)
+            if (clickedDevice != event.get_device?.() && clickedDevice != event.get_source_device())
+                return Clutter.EVENT_PROPAGATE;
+
+            if (this.spaceKeyPressed)
                 return;
 
             let controlPressed = event.has_control_modifier();
             this._updateDrawing(x, y, controlPressed);
 
         });
+
+        // End Laser Motion Handling
     }
 
     _updateDrawing(x, y, controlPressed) {
@@ -896,6 +1023,14 @@ export const DrawingArea = GObject.registerClass({
 
     //Modifying MOVE_OR_RESIZE_WINDOW, to MOVE, both now function. //check in future versions of GNOME.
     updatePointerCursor(controlPressed) {
+        // Laser cursor handling
+        
+        if (this.laserPointerActive) {
+            this.setPointerCursor('CROSSHAIR');
+            return;
+        }
+        // End laser cursor handling
+
         if (this.currentTool == Manipulation.MIRROR && this.grabbedElementLocked)
             this.setPointerCursor('CROSSHAIR');
         else if (this.hasManipulationTool)
@@ -933,6 +1068,16 @@ export const DrawingArea = GObject.registerClass({
     // A priori there is nothing to stop, except transformations, if there is no current element.
     // 'force' argument is passed when leaving drawing mode to ensure all is clean, as a workaround for possible bugs.
     _stopAll(force) {
+        // Stop laser if active
+        if (this.laserPointerActive) {
+            this.stopLaserPointer();
+            // Also switch away from laser tool so motion doesn't restart it
+            if (this.currentTool === Shape.LASER) {
+                this.currentTool = this.previousTool || Shape.NONE;
+            }
+        }
+        // End laser stop method mods
+
         if (this.grabbedElement) {
             this._stopTransforming();
             this.grabbedElement = null;
@@ -1084,6 +1229,122 @@ export const DrawingArea = GObject.registerClass({
         this.emit('show-osd', this._extension.FILES.ICONS[`TOOL_${Tool.getNameOf(tool)}`] || null, DisplayStrings.Tool[tool], "", -1, false);
         this.updatePointerCursor();
     }
+
+    // Laser Control Methods
+    startLaserPointer(x, y) {
+        if (this.laserPointerActive)
+            return;
+        
+        this.laserPointerActive = true;
+        this.laserPointerX = x;
+        this.laserPointerY = y;
+        this.laserTrailPoints = [[x, y]];
+        
+        this.laserLayer.show();
+        this.laserLayer.ease({
+            opacity: 255,
+            duration: 100,
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD
+        });
+        
+        this._startLaserAnimation();
+        this.setPointerCursor('NONE');
+        
+        if (!this._laserPointerShownOnce) {
+            this._laserPointerShownOnce = true;
+            this.emit('show-osd', this._extension.FILES.ICONS.TOOL_ARROW, 
+                      _("Laser Pointer Active"), 
+                      _("Release Shift to deactivate"), -1, true);
+        }
+    }
+
+    updateLaserPointer(x, y) {
+        if (!this.laserPointerActive)
+            return;
+        
+        this.laserPointerX = x;
+        this.laserPointerY = y;
+        
+        this.laserTrailPoints.push([x, y]);
+        
+        if (this.laserTrailPoints.length > this.laserTrailMaxLength) {
+            this.laserTrailPoints.shift();
+        }
+        
+        // Clear any existing timeout
+        if (this.laserTrailTimeoutId) {
+            GLib.source_remove(this.laserTrailTimeoutId);
+            this.laserTrailTimeoutId = null;
+        }
+        
+        // Set new timeout to clear trail after 100ms of no movement
+        // Might need to lower this to 50 ms, need to test more...
+        this.laserTrailTimeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
+            if (this.laserPointerActive) {
+                // Fade out the trail by removing points
+                if (this.laserTrailPoints.length > 1) {
+                    // Remove half the trail points for fade effect
+                    let removeCount = Math.ceil(this.laserTrailPoints.length / 2);
+                    this.laserTrailPoints.splice(0, removeCount);
+                    return GLib.SOURCE_CONTINUE; // Keep running to fade more
+                } else {
+                    // Clear all trail points
+                    this.laserTrailPoints = [[this.laserPointerX, this.laserPointerY]];
+                }
+            }
+            this.laserTrailTimeoutId = null;
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+
+    stopLaserPointer() {
+        if (!this.laserPointerActive)
+            return;
+        
+        this.laserPointerActive = false;
+        this._stopLaserAnimation();
+        
+        // Clean up trail timeout - ADD THESE LINES
+        if (this.laserTrailTimeoutId) {
+            GLib.source_remove(this.laserTrailTimeoutId);
+            this.laserTrailTimeoutId = null;
+        }
+        
+        this.laserLayer.ease({
+            opacity: 0,
+            duration: 200,
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+            onComplete: () => {
+                this.laserLayer.hide();
+                this.laserTrailPoints = [];
+            }
+        });
+        
+        this.updatePointerCursor();
+    }
+
+    _startLaserAnimation() {
+        if (this.laserAnimationTimeoutId)
+            return;
+        
+        this.laserAnimationTimeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 16, () => {
+            if (this.laserPointerActive) {
+                this.laserLayer.queue_repaint();
+                return GLib.SOURCE_CONTINUE;
+            }
+            this.laserAnimationTimeoutId = null;
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+
+    _stopLaserAnimation() {
+        if (this.laserAnimationTimeoutId) {
+            GLib.source_remove(this.laserAnimationTimeoutId);
+            this.laserAnimationTimeoutId = null;
+        }
+    }
+
+    // End Laser Control Methods
 
     switchFill() {
         this.fill = !this.fill;
@@ -1298,12 +1559,46 @@ export const DrawingArea = GObject.registerClass({
                 this.stageKeyReleasedHandler = null;
             }
             this.spaceKeyPressed = false;
+            this.laserKeyPressed = false;
         }
     }
 
+    // New Laser Method
+    _onLaserMotion(actor, event) {
+        if (this.currentTool == Shape.LASER) {
+            let coords = event.get_coords();
+            let [success, x, y] = this._transformStagePoint(coords[0], coords[1]);
+            
+            if (success) {
+                if (!this.laserPointerActive) {
+                    this.startLaserPointer(x, y);
+                } else {
+                    this.updateLaserPointer(x, y);
+                }
+                return Clutter.EVENT_STOP;
+            }
+        }
+        
+        return Clutter.EVENT_PROPAGATE;
+    }
+
+
+
     destroy() {
-        this.textCursorTimeoutId = null; // To avoid calling _stopTextCursorTimeout.
+        this.textCursorTimeoutId = null;
         this._stopAll(true);
+
+        // Clean up laser pointer
+        if (this.laserAnimationTimeoutId) {
+            GLib.source_remove(this.laserAnimationTimeoutId);
+            this.laserAnimationTimeoutId = null;
+        }
+        if (this.laserTrailTimeoutId) {  // ADD THESE LINES
+            GLib.source_remove(this.laserTrailTimeoutId);
+            this.laserTrailTimeoutId = null;
+        }
+        this.laserLayer = null;
+        // End laser pointer cleanup
 
         this._extension.drawingSettings.disconnect(this.drawingSettingsChangedHandler);
         this.erase();
@@ -1319,6 +1614,10 @@ export const DrawingArea = GObject.registerClass({
         this.buttonPressedHandler = this.connect('button-press-event', this._onButtonPressed.bind(this));
         this.keyboardPopupMenuHandler = this.connect('popup-menu', this._onKeyboardPopupMenu.bind(this));
         this.scrollHandler = this.connect('scroll-event', this._onScroll.bind(this));
+        
+        // Add dedicated motion handler for laser pointer
+        this.laserMotionHandler = this.connect('motion-event', this._onLaserMotion.bind(this));
+        
         this.set_background_color(this.reactive && this.hasBackground ? this.areaBackgroundColor : null);
     }
 
@@ -1338,6 +1637,19 @@ export const DrawingArea = GObject.registerClass({
         if (this.scrollHandler) {
             this.disconnect(this.scrollHandler);
             this.scrollHandler = null;
+        }
+        // More laser motion handling
+        if (this.laserMotionHandler) {
+            this.disconnect(this.laserMotionHandler);
+            this.laserMotionHandler = null;
+        }
+        // Clean up laser pointer
+        if (this.laserPointerActive) {
+            this.stopLaserPointer();
+        }
+        if (this.laserAnimationTimeoutId) {
+            GLib.source_remove(this.laserAnimationTimeoutId);
+            this.laserAnimationTimeoutId = null;
         }
 
         this._stopAll(true);

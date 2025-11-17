@@ -209,6 +209,14 @@ export class AreaManager {
             'select-none-shape': () => this.activeArea.selectTool(Area.Tool.NONE),
             'select-line-shape': () => this.activeArea.selectTool(Area.Tool.LINE),
             'select-arrow-shape': () => this.activeArea.selectTool(Area.Tool.ARROW),
+            'select-laser-shape': () => {
+                if (this.activeArea.currentTool === Area.Tool.LASER) {
+                    this.activeArea.stopLaserPointer();
+                    this.activeArea.selectTool(Area.Tool.NONE); // Always go to pencil
+                } else {
+                    this.activeArea.selectTool(Area.Tool.LASER);
+                }
+            },
             'select-ellipse-shape': () => this.activeArea.selectTool(Area.Tool.ELLIPSE),
             'select-rectangle-shape': () => this.activeArea.selectTool(Area.Tool.RECTANGLE),
             'select-text-shape': () => this.activeArea.selectTool(Area.Tool.TEXT),

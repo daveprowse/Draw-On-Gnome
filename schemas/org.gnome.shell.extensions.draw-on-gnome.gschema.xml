@@ -253,6 +253,10 @@
       <default>["&lt;Primary&gt;a"]</default>
       <summary>Select arrow tool</summary>
     </key>
+    <key type="as" name="select-laser-shape">
+      <default>["&lt;Primary&gt;q"]</default>
+      <summary>Select laser tool</summary>
+    </key>
     <key type="as" name="select-mirror-tool">
       <default>["&lt;Primary&gt;c"]</default>
       <summary>Select mirror tool</summary>
