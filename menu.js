@@ -230,7 +230,13 @@ export const DrawingMenu = GObject.registerClass({
         this.redoButton = new ActionButton(this._getSummary('redo'), 'edit-redo-symbolic', this.area.redo.bind(this.area), this._updateActionSensitivity.bind(this));
         this.eraseButton = new ActionButton(_("Erase"), 'edit-clear-all-symbolic', this.area.deleteLastElement.bind(this.area), this._updateActionSensitivity.bind(this));
         this.smoothButton = new ActionButton(_("Smooth"), this._extension.FILES.ICONS.SMOOTH, this.area.smoothLastElement.bind(this.area), this._updateActionSensitivity.bind(this));
+        
+        // Add hover colors - Top row
+        this.undoButton.setHoverColor('orange');
+        this.redoButton.setHoverColor('green');
         this.eraseButton.child.add_style_class_name('draw-on-gnome-menu-destructive-button');
+        this.smoothButton.setHoverColor('cyan');
+        
         this._getActor(groupItem).add_child(this.undoButton);
         this._getActor(groupItem).add_child(this.redoButton);
         this._getActor(groupItem).add_child(this.eraseButton);
@@ -291,6 +297,13 @@ export const DrawingMenu = GObject.registerClass({
         this.svgButton = new ActionButton(this._getSummary('export-to-svg'), this._extension.FILES.ICONS.DOCUMENT_EXPORT, this.area.exportToSvg.bind(this.area), null);
         this.prefsButton = new ActionButton(this._getSummary('open-preferences'), 'document-page-setup-symbolic', this.areaManagerUtils.openPreferences, null);
         this.helpButton = new ActionButton(this._getSummary('toggle-help'), 'preferences-desktop-keyboard-shortcuts-symbolic', () => { this.close(); this.area.toggleHelp(); }, null);
+        
+        // Add hover colors - Bottom row
+        this.saveButton.setHoverColor('blue');
+        this.svgButton.setHoverColor('purple');
+        this.prefsButton.setHoverColor('red');
+        this.helpButton.setHoverColor('yellow');
+        
         this._getActor(groupItem).add_child(this.saveButton);
         this._getActor(groupItem).add_child(this.svgButton);
         this._getActor(groupItem).add_child(this.prefsButton);
@@ -360,23 +373,19 @@ export const DrawingMenu = GObject.registerClass({
     // In GNOME 40+, the signal changed from 'value-changed' to 'notify::value'
     if (SHELL_MAJOR_VERSION >= 40) {
         slider.connect('notify::value', () => {
-            target[targetProperty] = Math.max(Math.round(slider.value * 50), 0);
+            target[targetProperty] = Math.max(Math.round(slider.value * 50), 1);            
             label.set_text(DisplayStrings.getPixels(target[targetProperty]));
             this._extension.drawingSettings.set_int("tool-size", target[targetProperty]);
-            if (target[targetProperty] === 0)
-                label.add_style_class_name(WARNING_COLOR_STYLE_CLASS_NAME);
-            else
-                label.remove_style_class_name(WARNING_COLOR_STYLE_CLASS_NAME);
+            // No warning needed - minimum is now 1
+            label.remove_style_class_name(WARNING_COLOR_STYLE_CLASS_NAME);
         });
     } else {
         slider.connect('value-changed', (slider, value, property) => {
-            target[targetProperty] = Math.max(Math.round(value * 50), 0);
+            target[targetProperty] = Math.max(Math.round(value * 50), 1);            
             label.set_text(DisplayStrings.getPixels(target[targetProperty]));
             this._extension.drawingSettings.set_int("tool-size", target[targetProperty]);
-            if (target[targetProperty] === 0)
-                label.add_style_class_name(WARNING_COLOR_STYLE_CLASS_NAME);
-            else
-                label.remove_style_class_name(WARNING_COLOR_STYLE_CLASS_NAME);
+            // No warning needed - minimum is now 1
+            label.remove_style_class_name(WARNING_COLOR_STYLE_CLASS_NAME);
         });
     }
     
@@ -801,16 +810,100 @@ const ActionButton = GObject.registerClass ({
         if (inline)
             button.child.add_style_class_name('popup-menu-icon');
         
+        // Create tooltip label
+        this._tooltipLabel = new St.Label({
+            text: name,
+            style_class: 'dash-label',
+            opacity: 0,
+            visible: false
+        });
+        Main.layoutManager.uiGroup.add_child(this._tooltipLabel);
+        
+        button.connect('notify::hover', () => {
+            if (button.hover) {
+                // Position tooltip
+                let [stageX, stageY] = button.get_transformed_position();
+                let buttonWidth = button.width;
+                let buttonHeight = button.height;
+                
+                this._tooltipLabel.opacity = 0;
+                this._tooltipLabel.visible = true;
+                
+                let labelWidth = this._tooltipLabel.width;
+                let labelHeight = this._tooltipLabel.height;
+                
+                // Determine if we're in the bottom half of the screen
+                let monitor = Main.layoutManager.primaryMonitor;
+                let isBottomHalf = stageY > monitor.height / 2;
+                
+                // Position tooltip above or below based on screen position
+                let tooltipX = Math.floor(stageX + (buttonWidth - labelWidth) / 2);
+                let tooltipY = isBottomHalf 
+                    ? Math.floor(stageY + buttonHeight + 6)  // Below button
+                    : Math.floor(stageY - labelHeight - 6);   // Above button
+                
+                this._tooltipLabel.set_position(tooltipX, tooltipY);
+                
+                this._tooltipLabel.ease({
+                    opacity: 255,
+                    duration: 150,
+                    mode: Clutter.AnimationMode.EASE_OUT_QUAD
+                });
+            } else {
+                this._tooltipLabel.ease({
+                    opacity: 0,
+                    duration: 100,
+                    mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+                    onComplete: () => {
+                        this._tooltipLabel.visible = false;
+                    }
+                });
+            }
+        });
+        
         button.connect('clicked', () => {
             callback();
             if (callbackAfter)
                 callbackAfter();
         });
         button.bind_property('reactive', button, 'can_focus', GObject.BindingFlags.DEFAULT);
-        //button.connect('notify::hover', () => this._syncLabel(this));
         
         super._init({ child: button, x_expand: inline ? false : true });
+        
+        // Clean up tooltip on destroy
+        this.connect('destroy', () => {
+            if (this._tooltipLabel) {
+                this._tooltipLabel.destroy();
+            }
+        });
     }
+
+    setHoverColor(color) {
+        // Store reference to button for hover effect
+        let button = this.child;
+        
+        // Define color mapping
+        const colors = {
+            'orange': 'background-color: rgba(255, 165, 0, 0.3);',
+            'green': 'background-color: rgba(0, 255, 0, 0.3);',
+            'cyan': 'background-color: rgba(0, 255, 255, 0.3);',
+            'blue': 'background-color: rgba(0, 100, 255, 0.3);',
+            'purple': 'background-color: rgba(160, 32, 240, 0.3);',
+            'red': 'background-color: rgba(255, 0, 0, 0.3);',
+            'yellow': 'background-color: rgba(255, 255, 0, 0.3);'
+        };
+        
+        const hoverStyle = colors[color] || '';
+        
+        // Connect to hover events
+        button.connect('notify::hover', () => {
+            if (button.hover) {
+                button.set_style(hoverStyle);
+            } else {
+                button.set_style('');
+            }
+        });
+    }    // <-- New method ends here
     
     get label() {
         if (!this._label) {

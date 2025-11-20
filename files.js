@@ -23,12 +23,15 @@
 /* eslint version: 9.16 (2024) */
 /* exported Icons, Image, Images, Json, Jsons, getDateString, saveSvg */
 
-
+import Gdk from 'gi://Gdk';
 import GdkPixbuf from 'gi://GdkPixbuf';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 import GObject from 'gi://GObject';
 import St from 'gi://St';
+
+// Import Clipboard from St
+// const Clipboard = St.Clipboard;
 
 import { CURATED_UUID as UUID } from './utils.js';
 
@@ -197,9 +200,13 @@ class Images {
     }
 
     addImagesFromClipboard(callback) {
-        Clipboard.get_text(St.ClipboardType.CLIPBOARD, (clipboard, text) => {
-            if (!text)
+        St.Clipboard.get_default().get_text(St.ClipboardType.CLIPBOARD, (clipboard, text) => {
+            console.log(`DEBUG CLIPBOARD: text="${text}"`);
+            if (!text) {
+                // testing for images
+                console.log(`DEBUG CLIPBOARD: No text in clipboard`);
                 return;
+            }
 
             // Since 3.38 there is a line terminator character, that has to be removed with .trim().
             let lines = text.split('\n').map(line => line.trim());
@@ -448,14 +455,30 @@ export const Image = GObject.registerClass({
     }
 
     setCairoSource(cr, x, y, width, height, preserveAspectRatio, color) {
-        let pixbuf = preserveAspectRatio ? this.getPixbufAtScale(width, height, color)
-            : this.getPixbuf(color).scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR);
-        // Use GdkPixbuf's cairo integration
-        cr.save();
-        cr.translate(x, y);
-        cr.scale(width / pixbuf.get_width(), height / pixbuf.get_height());
-        cr.setSourceSurface(pixbuf, 0, 0);
-        cr.restore();
+        try {
+            let pixbuf = preserveAspectRatio ? this.getPixbufAtScale(width, height, color)
+                : this.getPixbuf(color).scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR);
+            
+            // Use Gdk directly on the original context
+            cr.save();
+            cr.translate(x, y);
+            cr.scale(width / pixbuf.get_width(), height / pixbuf.get_height());
+            
+            Gdk.cairo_set_source_pixbuf(cr, pixbuf, 0, 0);
+            cr.paint();
+            
+            cr.restore();
+            
+        } catch (e) {
+            console.error(`Image rendering failed: ${e.message}`);
+            
+            // Fallback: red rectangle
+            cr.save();
+            cr.setSourceRGB(1, 0, 0);
+            cr.rectangle(x, y, width, height);
+            cr.fill();
+            cr.restore();
+        }
     }
 
     _replaceColor(contents, color) {

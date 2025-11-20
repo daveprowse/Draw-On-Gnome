@@ -334,8 +334,8 @@ export const DrawingArea = GObject.registerClass({
         }
 
         this.dashOffset = Math.round(this._extension.drawingSettings.get_double('dash-offset') * 100) / 100;
-        if (this._extension.drawingSettings.get_boolean('dash-array-auto')) {
-            this.dashArray = [0, 0];
+        if (this._extension.drawingSettings.get_boolean('dash-array-auto')) {            
+            this.dashArray = [0,0];  
         } else {
             let on = Math.round(this._extension.drawingSettings.get_double('dash-array-on') * 100) / 100;
             let off = Math.round(this._extension.drawingSettings.get_double('dash-array-off') * 100) / 100;
@@ -360,7 +360,10 @@ export const DrawingArea = GObject.registerClass({
                     cr.closePath();
             }
 
-            cr.stroke();
+            // Don't stroke images - they're already painted
+                if (element.shape !== Shape.IMAGE) {
+                    cr.stroke();
+                }
             element._addMarks(cr);
             cr.restore();
 
@@ -830,13 +833,28 @@ export const DrawingArea = GObject.registerClass({
                 points: []
             });
         } else {
+            // Calculate dash array dynamically based on line width if in auto mode
+            let dashArray = this.dashArray;
+            if (this._extension.drawingSettings.get_boolean('dash-array-auto') && this.dashedLine) {
+                // Scale dash pattern with line width: dash = 3x width, gap = 2x width
+                let dashLength = Math.max(this.currentLineWidth * 3, 8);
+                let gapLength = Math.max(this.currentLineWidth * 2, 4);
+                // alternative formula for larger gaps: * 2,6, * 2,6
+                dashArray = [dashLength, gapLength];
+            }
+            
             this.currentElement = new Elements.DrawingElement({
                 shape: this.currentTool,
                 color: this.currentColor,
                 eraser: shiftPressed,
                 fill: this.fill,
                 fillRule: this.currentFillRule,
-                line: { lineWidth: this.currentLineWidth, lineJoin: this.currentLineJoin, lineCap: this.currentLineCap },
+                line: { lineWidth: this.currentLineWidth, 
+                        lineJoin: this.currentLineJoin, 
+                        lineCap: this.currentLineCap },
+                dash: { active: this.dashedLine, 
+                        array: dashArray, 
+                        offset: this.dashOffset },
                 points: []
             });
         }
@@ -913,6 +931,15 @@ export const DrawingArea = GObject.registerClass({
                 this._startWriting();
                 return;
             }
+
+        // For images, use original size instead of drag size
+        if (this.currentElement && this.currentElement.shape == Shape.IMAGE && this.currentElement.points.length >= 1) {
+            let pixbuf = this.currentElement.image.getPixbuf(this.currentElement.colored ? this.currentElement.color.toJSON() : null);
+            let [startX, startY] = this.currentElement.points[0];
+            // Place image at click point with original dimensions
+            this.currentElement.points[1] = [startX + pixbuf.get_width(), startY + pixbuf.get_height()];
+            this.currentElement.preserveAspectRatio = true;
+        }
 
             this.elements.push(this.currentElement);
         }
@@ -1368,13 +1395,13 @@ export const DrawingArea = GObject.registerClass({
     }
 
     switchDash() {
-        this.dashedLine = !this.dashedLine;
+        this.dashedLine = !this.dashedLine;        
         let icon = this._extension.FILES.ICONS[this.dashedLine ? 'DASHED_LINE' : 'FULL_LINE'];
         this.emit('show-osd', icon, DisplayStrings.getDashedLine(this.dashedLine), "", -1, false);
     }
 
     incrementLineWidth(increment) {
-        this.currentLineWidth = Math.max(this.currentLineWidth + increment, 0);
+        this.currentLineWidth = Math.max(this.currentLineWidth + increment, 1);
         this.emit('show-osd', null, DisplayStrings.getPixels(this.currentLineWidth), "", 2 * this.currentLineWidth, false);
         this._extension.drawingSettings.set_int("tool-size", this.currentLineWidth)
     }

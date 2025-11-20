@@ -38,8 +38,6 @@ import GLib from 'gi://GLib';
 
 
 const HELPER_ANIMATION_TIME = 0.25;
-const MEDIA_KEYS_SCHEMA = 'org.gnome.settings-daemon.plugins.media-keys';
-const MEDIA_KEYS_KEYS = ['screenshot', 'screenshot-clip', 'area-screenshot', 'area-screenshot-clip'];
 
 // DrawingHelper provides the "help osd" (Ctrl + F1)
 // It uses the same texts as in prefs
@@ -102,6 +100,28 @@ export const DrawingHelper = GObject.registerClass({
 
             let hbox = new St.BoxLayout({ vertical: false });
             let shortcut = this._extension.settings.get_strv(settingKeys)[0];
+            // Convert modifier keys
+            shortcut = shortcut.replace(/<Primary>/g, 'Ctrl+')
+                               .replace(/<Shift>/g, 'Shift+')
+                               .replace(/<Alt>/g, 'Alt+')
+                               .replace(/<Super>/g, 'Super+')
+                               // Remove KP_ prefix (numpad keys)
+                               .replace(/KP_/g, '')
+                               // Convert symbol names to actual symbols
+                               .replace(/equal/g, '=')
+                               .replace(/Multiply/g, '*')
+                               .replace(/Divide/g, '/')
+                               .replace(/Add/g, '+')
+                               .replace(/Subtract/g, '-')
+                               .replace(/period/g, '.')
+                               .replace(/comma/g, ',')
+                               .replace(/slash/g, '/')
+                               .replace(/minus/g, '-')
+                               .replace(/plus/g, '+')
+                               .replace(/asterisk/g, '*')
+                               // Uppercase single letters after + or at start
+                               .replace(/\+([a-z])$/g, (match, letter) => '+' + letter.toUpperCase())
+                               .replace(/^([a-z])$/g, (match, letter) => letter.toUpperCase());
             shortcut = GLib.markup_escape_text(shortcut, -1);
             hbox.add_child(new St.Label({ text: this._extension.settings.settings_schema.get_key(settingKeys).get_summary() }));
             let label = new St.Label({ text: "<b><i>" + shortcut + "</i></b>", x_expand: true })
@@ -138,34 +158,35 @@ export const DrawingHelper = GObject.registerClass({
 
             let hbox = new St.BoxLayout({ vertical: false });
             let shortcut = this._extension.internalShortcutSettings.get_strv(settingKeys)[0];
+            // Convert modifier keys
+            shortcut = shortcut.replace(/<Primary>/g, 'Ctrl+')
+                               .replace(/<Shift>/g, 'Shift+')
+                               .replace(/<Alt>/g, 'Alt+')
+                               .replace(/<Super>/g, 'Super+')
+                               // Remove KP_ prefix (numpad keys)
+                               .replace(/KP_/g, '')
+                               // Convert symbol names to actual symbols
+                               .replace(/equal/g, '=')
+                               .replace(/Multiply/g, '*')
+                               .replace(/Divide/g, '/')
+                               .replace(/Add/g, '+')
+                               .replace(/Subtract/g, '-')
+                               .replace(/period/g, '.')
+                               .replace(/comma/g, ',')
+                               .replace(/slash/g, '/')
+                               .replace(/minus/g, '-')
+                               .replace(/plus/g, '+')
+                               .replace(/asterisk/g, '*')
+                               // Uppercase single letters after + or at start
+                               .replace(/\+([a-z])$/g, (match, letter) => '+' + letter.toUpperCase())
+                               .replace(/^([a-z])$/g, (match, letter) => letter.toUpperCase());
             shortcut = GLib.markup_escape_text(shortcut, -1);
             hbox.add_child(new St.Label({ text: this._extension.internalShortcutSettings.settings_schema.get_key(settingKeys).get_summary() }));
             let label = new St.Label({ text: "<b><i>" + shortcut + "</i></b>", x_expand: true })
             label.get_clutter_text().set_use_markup(true);
             hbox.add_child(label);
             this.vbox.add_child(hbox);
-        });
-
-        let mediaKeysSettings;
-        try { mediaKeysSettings = this._extension.getSettings(MEDIA_KEYS_SCHEMA); } catch(e) { return; }
-
-        this.vbox.add_child(new St.BoxLayout({ vertical: false, style_class: 'draw-on-gnome-helper-separator' }));
-        this.vbox.add_child(new St.Label({ text: _("System") }));
-
-        for (let settingKey of MEDIA_KEYS_KEYS) {
-            if (!mediaKeysSettings.settings_schema.has_key(settingKey))
-                continue;
-            let shortcut = SHELL_MAJOR_VERSION >= 3 ? mediaKeysSettings.get_string(settingKey) : mediaKeysSettings.get_strv(settingKey)[0];
-            shortcut = GLib.markup_escape_text(shortcut, -1);
-            if (!shortcut)
-                continue;
-            let hbox = new St.BoxLayout({ vertical: false });
-            hbox.add_child(new St.Label({ text: mediaKeysSettings.settings_schema.get_key(settingKey).get_summary() }));
-            let label = new St.Label({ text: "<b><i>" + shortcut + "</i></b>", x_expand: true })
-            label.get_clutter_text().set_use_markup(true);
-            hbox.add_child(label);
-            this.vbox.add_child(hbox);
-        }
+        });        
     }
 
     showHelp() {
