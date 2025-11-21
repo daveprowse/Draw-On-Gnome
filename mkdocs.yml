@@ -1,0 +1,75 @@
+site_name: Draw On Gnome
+site_description: Annotate your GNOME desktop - press 'Super+Alt+D' to start drawing!
+repo_url: https://github.com/daveprowse/Draw-On-Gnome
+repo_name: Draw-On-Gnome
+
+theme: 
+  name: material
+  logo: assets/laptop-computer.svg
+  favicon: assets/laptop-computer.svg
+  icon:
+    repo: fontawesome/brands/github    
+  palette:  
+    - scheme: default    
+      primary: deep orange
+      accent: light blue    
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: orange
+      accent: indigo   
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode      
+  features:
+    - content.code.copy
+    - content.code.annotate
+    - toc.integrate    
+
+plugins:
+  - search
+  - glightbox
+  - blog:
+      post_date_format: medium
+      archive: false
+      categories: false
+      post_excerpt: optional
+  
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.emoji:      
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - attr_list
+  - admonition
+  - pymdownx.details  
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - HOME: 'index.md'  
+  - INSTALLATION: 'installation.md'
+  - BASIC USAGE: 'basic-usage.md'
+  - ADVANCED USAGE:
+    - COLOR: 'color.md'
+    - SHORTCUTS: 'shortcuts.md'  
+    - MIRROR: 'mirror.md'
+  - TROUBLESHOOTING: 'troubleshooting.md'
+  - NEWS: 'blog/index.md'
+  - ROADMAP: 'roadmap.md'
+  - VERSION-HISTORY: 'version-history.md'
+  - ALTERNATIVES: 'alternatives.md'
+  
+  
+  
+  

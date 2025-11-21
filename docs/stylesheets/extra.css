@@ -1,0 +1,8 @@
+.md-typeset h1 {font-weight: bold; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; 
+  display: inline-block; border-bottom: 1px solid; padding-bottom:3px;}
+.md-typeset h2 {font-weight: bold; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  display: inline-block; border-bottom: 1px solid; padding-bottom:3px;}
+.md-typeset h3 {font-weight: bold; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  display: inline-block; border-bottom: 1px solid; padding-bottom:3px;}
+
+.md-grid {max-width: 1000px;}
