@@ -1,5 +1,7 @@
 # Draw On Gnome
 
+[<img src="https://daveprowse.github.io/Draw-On-Gnome/images/dog.png" height="70">](https://extensions.gnome.org/extension/7921/draw-on-gnome/)
+
 Annotate your GNOME™ desktop with **`Super+Alt+D`**.
 
 Documentation is **[here](https://daveprowse.github.io/Draw-On-Gnome/)**.
@@ -9,9 +11,11 @@ Thank you to all the contributors! 😎
 ## Features
 
 - Draw over applications
-- Basic shapes (rectangle, circle, ellipse, line, curve, polygon, polyline, arrow, text, image, free)
-- Basic transformations (move, rotate, resize, stretch, mirror, inverse)
+- Basic shapes (rectangle, circle, ellipse, line, polygon, polyline, arrow, text, free)
+- Basic transformations (move, rotate, resize, mirror)
+- Laser pointer, highlighter (GNOME version 48 and newer)
 - Blackboard and Grid
+- Paste images from local computer
 - Keep drawings on desktop background with persistence
 - Multi-monitor support
 - Save your work with `Ctrl+S`!!
@@ -70,6 +74,8 @@ It's back to the drawing board my friends! Enjoy! 😎
 ---
 
 ## Manual Installs
+
+> Warning!! If you clone the main repository you are getting the latest features, but they have not yet been released, and might not be thoroughly tested. You've been warned!
 
 📖 For manual installation procedures (git clone and tarball) see the **[Documentation](https://daveprowse.github.io/Draw-On-Gnome/installation/)**.
 

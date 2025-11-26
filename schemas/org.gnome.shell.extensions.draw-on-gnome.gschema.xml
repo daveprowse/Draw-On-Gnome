@@ -149,7 +149,7 @@
   </schema>
   <schema path="/org/gnome/shell/extensions/draw-on-gnome/internal-shortcuts/" id="org.gnome.shell.extensions.draw-on-gnome.internal-shortcuts">
     <key type="as" name="decrement-line-width">
-      <default><![CDATA[['<Primary>KP_Subtract','<Primary>minus','<Primary><Shift>minus']]]></default>
+      <default>["&lt;Primary&gt;KP_Subtract","&lt;Primary&gt;minus","&lt;Primary&gt;&lt;Shift&gt;minus"]</default>
       <summary>Decrement line width</summary>
     </key>
     <key type="as" name="decrement-line-width-more">
@@ -165,7 +165,7 @@
       <summary>Export drawing to a SVG file</summary>
     </key>
     <key type="as" name="increment-line-width">
-      <default><![CDATA[['<Primary>KP_Add','<Primary><Shift>plus']]]></default>
+      <default>["&lt;Primary&gt;KP_Add","&lt;Primary&gt;&lt;Shift&gt;plus"]</default>
       <summary>Increment line width</summary>
     </key>
     <key type="as" name="increment-line-width-more">
@@ -189,7 +189,7 @@
       <summary>Add images from the clipboard</summary>
     </key>
     <key type="as" name="pick-color">
-      <default><![CDATA[['<Primary>KP_0','<Primary>0']]]></default>
+      <default>["&lt;Primary&gt;KP_0","&lt;Primary&gt;0"]</default>
       <summary>Pick a color</summary>
     </key>
     <key type="as" name="redo">
@@ -201,40 +201,40 @@
       <summary>Save drawing</summary>
     </key>
     <key type="as" name="select-color1">
-      <default><![CDATA[['<Primary>KP_1','<Primary>1']]]></default>
+      <default>["&lt;Primary&gt;KP_1","&lt;Primary&gt;1"]</default>
       <summary>Select color 1</summary>
       <description></description>
     </key>
     <key type="as" name="select-color2">
-      <default><![CDATA[['<Primary>KP_2','<Primary>2']]]></default>
+      <default>["&lt;Primary&gt;KP_2","&lt;Primary&gt;2"]</default>
       <summary>Select color 2</summary>
     </key>
     <key type="as" name="select-color3">
-      <default><![CDATA[['<Primary>KP_3','<Primary>3']]]></default>
+      <default>["&lt;Primary&gt;KP_3","&lt;Primary&gt;3"]</default>
       <summary>Select color 3</summary>
     </key>
     <key type="as" name="select-color4">
-      <default><![CDATA[['<Primary>KP_4','<Primary>4']]]></default>
+      <default>["&lt;Primary&gt;KP_4","&lt;Primary&gt;4"]</default>
       <summary>Select color 4</summary>
     </key>
     <key type="as" name="select-color5">
-      <default><![CDATA[['<Primary>KP_5','<Primary>5']]]></default>
+      <default>["&lt;Primary&gt;KP_5","&lt;Primary&gt;5"]</default>
       <summary>Select color 5</summary>
     </key>
     <key type="as" name="select-color6">
-      <default><![CDATA[['<Primary>KP_6','<Primary>6']]]></default>
+      <default>["&lt;Primary&gt;KP_6","&lt;Primary&gt;6"]</default>
       <summary>Select color 6</summary>
     </key>
     <key type="as" name="select-color7">
-      <default><![CDATA[['<Primary>KP_7','<Primary>7']]]></default>
+      <default>["&lt;Primary&gt;KP_7","&lt;Primary&gt;7"]</default>
       <summary>Select color 7</summary>
     </key>
     <key type="as" name="select-color8">
-      <default><![CDATA[['<Primary>KP_8','<Primary>8']]]></default>
+      <default>["&lt;Primary&gt;KP_8","&lt;Primary&gt;8"]</default>
       <summary>Select color 8</summary>
     </key>
     <key type="as" name="select-color9">
-      <default><![CDATA[['<Primary>KP_9','<Primary>9']]]></default>
+      <default>["&lt;Primary&gt;KP_9","&lt;Primary&gt;9"]</default>
       <summary>Select color 9</summary>
     </key>
     <key type="as" name="select-ellipse-shape">
@@ -256,6 +256,11 @@
     <key type="as" name="select-laser-shape">
       <default>["&lt;Primary&gt;q"]</default>
       <summary>Select laser tool</summary>
+    </key>
+    <key type="as" name="select-highlighter-shape">
+      <default>["&lt;Primary&gt;h"]</default>
+      <summary>Select highlighter tool</summary>
+      <description>Select yellow highlighter tool</description>
     </key>
     <key type="as" name="select-mirror-tool">
       <default>["&lt;Primary&gt;c"]</default>
@@ -310,7 +315,7 @@
       <summary>Toggle fill/outline</summary>
     </key>
     <key type="as" name="switch-fill-rule">
-      <default><![CDATA[['<Primary>KP_Multiply','<Primary>asterisk','<Primary><Shift>asterisk']]]></default>
+      <default>["&lt;Primary&gt;KP_Multiply","&lt;Primary&gt;asterisk","&lt;Primary&gt;&lt;Shift&gt;asterisk"]</default>
       <summary>Toggle fill rule</summary>
     </key>
     <key type="as" name="switch-font-family">
@@ -362,8 +367,8 @@
       <summary>Show help</summary>
     </key>
     <key type="as" name="toggle-panel-and-dock-visibility">
-      <default>["&lt;Primary&gt;h"]</default>
-      <summary>Hide panel and dock</summary>
+      <default>["&lt;Primary&gt;&lt;Shift&gt;h"]</default>
+      <summary>Hide panel</summary>
     </key>
     <key type="as" name="toggle-square-area">
       <default>["&lt;Primary&gt;n"]</default>
