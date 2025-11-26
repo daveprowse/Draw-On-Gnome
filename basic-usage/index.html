@@ -413,6 +413,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#image-pasting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Image Pasting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#background-and-grid" class="md-nav__link">
     <span class="md-ellipsis">
       Background and Grid
@@ -422,9 +431,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#laser-pointer" class="md-nav__link">
+  <a href="#laser-pointer-gnomev48-and-higher" class="md-nav__link">
     <span class="md-ellipsis">
-      Laser Pointer
+      Laser Pointer (GNOMEv48 and higher)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#highlighter-gnomev48-and-higher" class="md-nav__link">
+    <span class="md-ellipsis">
+      Highlighter (GNOMEv48 and higher)
     </span>
   </a>
   
@@ -548,6 +566,29 @@
   
   <span class="md-ellipsis">
     SHORTCUTS
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MIRROR
     
   </span>
   
@@ -742,6 +783,23 @@
 <p>You can move or resize any of the previous objects mentioned.</p>
 <p>To <strong>move</strong> and object, press <code>Ctrl + M</code> and hover on the object. Click and drag to move it where you wish. You must hover the cursor directly on the line, the perimeter of the shape, or the actual text that you want to move. When you do so, the cursor will change from a standard pointer to a 4-way directional cursor.</p>
 <p>To <strong>resize</strong> and object, press <code>Ctrl + X</code> and hover on the object. Click and drag to make the object bigger or smaller. Again, you must hover the cursor directly on the line, the perimeter of the shape, or the actual text that you want to resize.</p>
+<h2 id="image-pasting">Image Pasting</h2>
+<p>Copy a locally stored image and paste it into your drawing! </p>
+<p>To do this:</p>
+<ol>
+<li>Make sure the extension is off.</li>
+<li>Find an image on your local computer, right-click on it and copy it.</li>
+<li>Open the extension (<code>Super+ALT+D</code>)</li>
+<li>Press <code>Ctrl+V</code>, and then click and drag to paste it onto the screen. The extension will place the image on the screen at the exact pixel size and resolution as the original. </li>
+</ol>
+<p>Awesome fun!</p>
+<ul>
+<li>You can then move the image (<code>Ctrl+M</code>) or resize it (<code>Ctrl+X</code>) as you see fit.</li>
+<li>If you want to paste the image again, press <code>Ctrl+I</code>, then click and drag to paste.</li>
+<li>If you want to use another previously pasted image, right-click for the menu and click the image drop-down, you should see a list of the images you have pasted so far in this session.</li>
+<li>If you wish to paste a new image from your computer, close out of the extension, copy the new image, open the extension, and paste it in with <code>Ctrl+V</code>!! </li>
+</ul>
+<p>The fun never ends!</p>
 <h2 id="background-and-grid">Background and Grid</h2>
 <p>Press <code>Ctrl+B</code> to initiate the background option.</p>
 <p>Press <code>Ctrl+G</code> to overlay a grid. This works best with the background feature.</p>
@@ -749,8 +807,13 @@
 <p class="admonition-title">Note</p>
 <p>The background and grid options have set colors but you can modify those in <strong>Extensions &gt; Draw On Gnome Settings &gt; Drawing Page</strong>.</p>
 </div>
-<h2 id="laser-pointer">Laser Pointer</h2>
-<p>Use <code>Ctrl+Z</code> to toggle it. Then simply move the mouse or stylus to move the laser around. Ctrl+Z to toggle it back off and return to the drawing tool. </p>
+<h2 id="laser-pointer-gnomev48-and-higher">Laser Pointer (GNOMEv48 and higher)</h2>
+<p>Press <code>Ctrl+Q</code> to toggle it. Then simply move the mouse or stylus to move the laser around. <code>Ctrl+Q</code> to toggle it back off and return to the drawing tool. </p>
+<h2 id="highlighter-gnomev48-and-higher">Highlighter (GNOMEv48 and higher)</h2>
+<p>Press <code>Ctrl+H</code> to use the highlighter. Then, click and drag the mouse to create a rectangular highlighted area. The decision to use a rectangular shape, as opposed to something similar to the drawing tool, was solely personal preference!</p>
+<blockquote>
+<p>Customization Note: In <code>area.js</code> the transparency location is <code>highlighterColor.alpha = 128;</code> If you want a lighter highlight, make this a lower number. The color of the highlighter can be modified in <code>area.js</code> as well. It is toward the beginning of the file: <code>const HIGHLIGHTER_YELLOW = Color.from_string('#ffff00')[1];</code></p>
+</blockquote>
 <h2 id="the-right-click-menu">The Right-Click Menu</h2>
 <p>While working in Draw On Gnome, right-click the screen and you will be presented with the pop-up menu as shown below. From here you can manually select any of the options mentioned on this page. You can also:</p>
 <ul>
@@ -761,13 +824,32 @@
 </ul>
 <p>Play around with it a little bit to learn what options are available to you!</p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/right-click-menu.png" data-desc-position="bottom"><img alt="right-click-menu" src="../images/right-click-menu.png"></a></p>
+<p>There are eight action buttons in the menu (four on the top, and four on the bottom). These have the following functions:</p>
+<p><strong>Top</strong> (from left to right)</p>
+<ul>
+<li>Undo</li>
+<li>Redo</li>
+<li>Erase (deletes the last drawn element, and can continue backwards in time)</li>
+<li>Smooth (smooths out the last free-drawn line)</li>
+</ul>
+<p><strong>Bottom</strong> (from left to right)</p>
+<ul>
+<li>Save</li>
+<li>Export to SVG (saves an .svg file to <code>~/Pictures</code>)</li>
+<li>Opens the Preferences page (exits out of D.O.G.)</li>
+<li>Shows the Shortcuts/Help (can also be done with <code>Ctrl+F1</code>)</li>
+</ul>
 <h2 id="saving-and-opening-files">Saving and Opening Files</h2>
 <p>Press <code>Ctrl+S</code> to save your file with an automatically generated name. You can also go to the pop-up menu and save your file there with a name of your choice.</p>
+<p>Files are saved by default to: <code>/home/&lt;user&gt;/.local/share/draw-on-gnome</code></p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Draw On Gnome does not auto-save! You need to press <code>Ctrl+S</code> to save. And do it often!!</p>
 </div>
-<p>Press <code>Ctrl+O</code> to open the latest drawing. Use <code>Ctrl+O</code> or <code>Ctrl+Shift+O</code> to cycle through the history of drawings. You can also select from a list of drawings in the pop-up menu. (This might be the easier option as you will be able to see a list of files with filenames).</p>
+<p>To open files, select from a list of drawings in the pop-up menu. </p>
+<blockquote>
+<p>Note: You can also press <code>Ctrl+O</code> to open the latest drawing. Use <code>Ctrl+O</code> or <code>Ctrl+Shift+O</code> to cycle through the history of drawings. However, this functionality is somewhat broken. It is supposed to cycle through the drawing and show each one as you continually press <code>Ctrl+O</code> but it stopped working around the GNOMEv45 update. It is on the roadmap.</p>
+</blockquote>
 <h2 id="opening-the-preferences-page">Opening the Preferences Page</h2>
 <p>The Preferences page is where you can go to configure global settings and set keyboard shortcuts.</p>
 <p>The preferences page functions outside of the extension. However, you can access it from the CLI, the GNOME shell (GUI) or from <em>within</em> the extension itself:</p>

@@ -408,6 +408,29 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MIRROR
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -632,15 +655,26 @@
 </ul>
 <h2 id="issues">Issues</h2>
 <ul>
-<li>Dashed line issue (also, <code>Ctrl+.</code> doesn't appear to work)</li>
-<li>Polygon and Polyline are disappearing after letting go of the mouse button.</li>
-<li>There is no hover text for buttons in right-click menu (this appears to not be programmed)</li>
-<li>Modify line thickness slider so that integers start with 1. (Unless there was reasoning behind having 0 before...)</li>
-<li>Hide Panel and Dock option (not necessary for default GNOME Dash and doesn't work for newer versions of Dash-to-Dock). Requires more testing.</li>
-<li>Set up a branch to push the local mkdocs directory to.</li>
-<li><code>Ctrl+O</code> and <code>Ctrl+Shift+O</code> not cycling properly in v15</li>
-<li><code>Ctrl+/</code> and <code>Ctrl+Shift+/</code> not cycling properly in v15</li>
-<li>EvenOdd issue for Gnome High Normal and others. Should be white?<ul>
+<li>After typing text and when selecting another tool, the text blinks for a moment and a log error is written:</li>
+</ul>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>JS ERROR: TypeError: textEntry.is_finalized is not a function
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>_stopWriting/&lt;@file:///home/dave3/.local/share/gnome-shell/extensions/draw-on-gnome@daveprowse.github.io/area.js:1100:41
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>@resource:///org/gnome/shell/ui/init.js:21:20
+</span></code></pre></div>
+<p>So I have some work to do on <code>textEntry.is</code></p>
+<ul>
+<li>
+<p>A previously saved file with a highlighter box when opened only shows a white box, not highlighted.</p>
+</li>
+<li>
+<p><code>Ctrl+/</code> and <code>Ctrl+Shift+/</code> not cycling properly in v15. Interesting that there is another cycling problem. This could be related to the opening of images (which was fixed). Probably similar code.</p>
+</li>
+<li>
+<p>After using the text tool, the polygon/polyline tools will not create matrices properly. Closing and reopening the extension will reset this. This is a remnant from the after-text-tool error that is 95% fixed. </p>
+</li>
+<li>
+<p>EvenOdd issue for Gnome High Normal and others. Should be white?</p>
+<ul>
 <li>"Light" works from the menu but not with <code>Ctrl+F8</code></li>
 <li>Happens when fill is selected (also, related, fill doesn't shut off from toggle properly, only shortcut works right)</li>
 </ul>
@@ -648,18 +682,32 @@
 <li><code>Ctrl+KP /</code> shortcut for palettes not cyclicling properly, (rename, it's just <code>Ctrl+/</code>)</li>
 </ul>
 <h2 id="planned-features-long-term">Planned Features (long-term)</h2>
-<ul>
-<li>Feature Request - Delete Tool. Currently you can only delete in a LIFO manner. This proposed tool would use a hot-key to activate Delete on any item that was drawn. This one will require some work!</li>
-<li>Snap to grid feature</li>
+<ol>
+<li>Selection Tool
+Currently can only manipulate one element. This is a huge limitation for complex drawings.</li>
+<li>Freehand Eraser
+Fixing mistakes is clunky now. A proper eraser is essential.</li>
+<li>Snap-to-Grid
+Grid exists but doesn't snap. This would make technical drawings so much easier.</li>
+<li>Rulers &amp; Guides
+Standard in every drawing app for a reason.</li>
+<li>Clipboard Rich Copy
+Being able to paste drawings directly into other apps would be a massive workflow improvement.</li>
+<li>Auto-save feature. As of now, there is no auto-save option. The user needs to manually press <code>Ctrl + S</code> to save a drawing.</li>
+<li>
+<p>Delete Tool. Currently you can only delete in a LIFO manner. This proposed tool would use a hot-key to activate Delete on any item that was drawn. This one will require some work!</p>
+</li>
+<li>
+<p>More development of the "Mirror" tool.</p>
+</li>
 <li>Blur option - for redacting - see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/9" target="_blank">this link</a></li>
 <li>Fade out option - (Similar to macOS ScreenBrush) - see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/23" target="_blank">this link</a></li>
-<li>Auto-save feature. As of now, there is no auto-save option. The user needs to manually press <code>Ctrl + S</code> to save a drawing.</li>
 <li>Whiteboard option with one shortcut (similar to Microsoft Powerpoint option)</li>
 <li>Feature Request - ICONS - see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/1" target="_blank">this link</a></li>
 <li>Smooth line fix - testing with area.js currently. However, this is <em>very</em> dependent on the video card in the user's system, so I'm not sure how much we can accomplish within the confines of the GNOME desktop. </li>
 <li>Reorder palettes via drag and drop</li>
 <li>Touchscreen support - see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/3" target="_blank">this link</a></li>
-</ul>
+</ol>
 <hr>
 
 
