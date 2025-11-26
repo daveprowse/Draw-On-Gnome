@@ -9,7 +9,9 @@ categories:
 
 # December 2025 Updates
 
-Here are the updates! And there's a bunch! Including the new Laser Pointer feature, image pasting fix, dashed line fix, line thickness fix, polygon fix, and hovering tool tips addition! Oh YEAH!! 👍👍
+**HUGE UPDATE! Version 5.0**
+
+Here are the updates! And there's a bunch! Including the new Laser Pointer feature, image pasting fix, dashed line fix, line thickness fix, polygon fix, file open fix, and hovering tool tips addition! Oh YEAH!! 👍👍
 
 ## The Laser Pointer has Arrived!
 
@@ -33,6 +35,12 @@ This functionality can be found as early as version 4.1...
 Note: `Ctrl+Q` might seem like an odd choice, but it works with left-hand only. Plus, we are running out of shortcuts! Think *"Q" > Star Trek > Phasers > Lasers*. Pretty weak connection, but there it is...
 
 Enjoy everyone! 👍
+
+## The Highlighter Tool
+
+This has been requested for some time. Now it is done. Press `Ctrl+H` to use it. Currently it works in rectangular click-and-drag mode. 
+
+> Note: The Hide the Panel tool has been moved to `Ctrl+Shift+H`.
 
 ## Dashed line fix
 
@@ -97,6 +105,7 @@ Now you can paste images into your drawing properly. Currently it only works wit
 
 ## More fixes
 
+- Repaired the `Ctrl+O` scrolling through available files issue - by mistake! While I was repairing the `getColorFromString` method to fix an issue where the drop-down menu for "Open Drawings" wouldn't work, I also fixed the file scrolling issue. Now it scrolls through, in real-time, and works in reverse `Ctrl+Shift+O`. This was bugging me for a long time. By fixing one thing, I fixed the entire pipeline. YEAH! (Usually, when I fix one thing, another breaks - this time, it was the reverse!)
 - Repaired the `Ctrl+F1` shortcuts window. Used a lot of JS regex and was able to fix many problems there. Also removed a lot of outdated code. Today, GNOME only uses `printscreen` and the screenshot app opens. So I also removed the SYSTEM section for shortcuts. 
 - Fixed a lot of issues in the schema and recompiled.
 - Did some more work on the "mirror" tool. It is a strange tool that needs more thought.

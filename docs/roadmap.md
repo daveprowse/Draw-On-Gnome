@@ -18,13 +18,22 @@ Here's the roadmap. The program works very well as is, but could always use some
 
 ## Issues
 
-- Opening saved images should result in them being displayed immediately. As of now, you have to click on the screen to see the image you are trying to open.
-- `Ctrl+O` and `Ctrl+Shift+O` not cycling properly in v15. This is probably connected to the previous
-- Set up a branch to push the local mkdocs directory to.
+- After typing text and when selecting another tool, the text blinks for a moment and a log error is written:
 
-And more...
+```
+JS ERROR: TypeError: textEntry.is_finalized is not a function
+_stopWriting/<@file:///home/dave3/.local/share/gnome-shell/extensions/draw-on-gnome@daveprowse.github.io/area.js:1100:41
+@resource:///org/gnome/shell/ui/init.js:21:20
+```
 
-- `Ctrl+/` and `Ctrl+Shift+/` not cycling properly in v15
+So I have some work to do on `textEntry.is`
+
+- A previously saved file with a highlighter box when opened only shows a white box, not highlighted.
+
+- `Ctrl+/` and `Ctrl+Shift+/` not cycling properly in v15. Interesting that there is another cycling problem. This could be related to the opening of images (which was fixed). Probably similar code.
+
+- After using the text tool, the polygon/polyline tools will not create matrices properly. Closing and reopening the extension will reset this. This is a remnant from the after-text-tool error that is 95% fixed. 
+
 - EvenOdd issue for Gnome High Normal and others. Should be white?
 	- "Light" works from the menu but not with `Ctrl+F8`
 	- Happens when fill is selected (also, related, fill doesn't shut off from toggle properly, only shortcut works right)
@@ -32,9 +41,19 @@ And more...
 
 ## Planned Features (long-term)
 
-- Auto-save feature. As of now, there is no auto-save option. The user needs to manually press `Ctrl + S` to save a drawing.
-- Feature Request - Delete Tool. Currently you can only delete in a LIFO manner. This proposed tool would use a hot-key to activate Delete on any item that was drawn. This one will require some work!
-- Snap to grid feature
+1. Selection Tool
+Currently can only manipulate one element. This is a huge limitation for complex drawings.
+2. Freehand Eraser
+Fixing mistakes is clunky now. A proper eraser is essential.
+3. Snap-to-Grid
+Grid exists but doesn't snap. This would make technical drawings so much easier.
+4. Rulers & Guides
+Standard in every drawing app for a reason.
+5. Clipboard Rich Copy
+Being able to paste drawings directly into other apps would be a massive workflow improvement.
+6. Auto-save feature. As of now, there is no auto-save option. The user needs to manually press `Ctrl + S` to save a drawing.
+7. Delete Tool. Currently you can only delete in a LIFO manner. This proposed tool would use a hot-key to activate Delete on any item that was drawn. This one will require some work!
+
 - More development of the "Mirror" tool.
 - Blur option - for redacting - see [this link](https://github.com/daveprowse/Draw-On-Gnome/issues/9){target="_blank"}
 - Fade out option - (Similar to macOS ScreenBrush) - see [this link](https://github.com/daveprowse/Draw-On-Gnome/issues/23){target="_blank"}

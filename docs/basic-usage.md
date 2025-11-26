@@ -103,9 +103,15 @@ Press `Ctrl+G` to overlay a grid. This works best with the background feature.
 
     The background and grid options have set colors but you can modify those in **Extensions > Draw On Gnome Settings > Drawing Page**.
 
-## Laser Pointer
+## Laser Pointer (GNOMEv48 and higher)
 
-Use `Ctrl+Q` to toggle it. Then simply move the mouse or stylus to move the laser around. `Ctrl+Q` to toggle it back off and return to the drawing tool. 
+Press `Ctrl+Q` to toggle it. Then simply move the mouse or stylus to move the laser around. `Ctrl+Q` to toggle it back off and return to the drawing tool. 
+
+## Highlighter (GNOMEv48 and higher)
+
+Press `Ctrl+H` to use the highlighter. Then, click and drag the mouse to create a rectangular highlighted area. The decision to use a rectangular shape, as opposed to something similar to the drawing tool, was solely personal preference!
+
+> Customization Note: In `area.js` the transparency location is `highlighterColor.alpha = 128;` If you want a lighter highlight, make this a lower number. The color of the highlighter can be modified in `area.js` as well. It is toward the beginning of the file: `const HIGHLIGHTER_YELLOW = Color.from_string('#ffff00')[1];`
 
 ## The Right-Click Menu
 
