@@ -1097,13 +1097,18 @@ const ImageElement = GObject.registerClass({
         let row = "\n  ";
         let attributes = '';
         
+        // GNOME 48.5 fix: Check if image exists before accessing
+        if (!this.image) {            
+            return row; // Return empty row
+        }
+        
         if (points.length == 2) {
             attributes += `fill="none"`;
             let base64 = this.image.getBase64ForColor(this.colored ? this.color.toJSON() : null);
             row += `<image ${attributes} x="${Math.min(points[0][0], points[1][0])}" y="${Math.min(points[0][1], points[1][1])}" ` +
-                   `width="${Math.abs(points[1][0] - points[0][0])}" height="${Math.abs(points[1][1] - points[0][1])}"${transAttribute} ` +
-                   `preserveAspectRatio="${this.preserveAspectRatio ? 'xMinYMin' : 'none'}" ` +
-                   `id="${this.image.displayName}" xlink:href="data:${this.image.contentType};base64,${base64}"/>`;
+                `width="${Math.abs(points[1][0] - points[0][0])}" height="${Math.abs(points[1][1] - points[0][1])}"${transAttribute} ` +
+                `preserveAspectRatio="${this.preserveAspectRatio ? 'xMinYMin' : 'none'}" ` +
+                `id="${this.image.displayName}" xlink:href="data:${this.image.contentType};base64,${base64}"/>`;
         }
         
         return row;
