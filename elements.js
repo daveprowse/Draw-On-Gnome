@@ -45,7 +45,7 @@ export const StaticColor = {
     RED: Color.from_string('#ff0000')[1]
 }
 
-export const Shape = { NONE: 0, LINE: 1, ELLIPSE: 2, RECTANGLE: 3, TEXT: 4, POLYGON: 5, POLYLINE: 6, IMAGE: 7, ARROW: 8, LASER: 9 };
+export const Shape = { NONE: 0, LINE: 1, ELLIPSE: 2, RECTANGLE: 3, TEXT: 4, POLYGON: 5, POLYLINE: 6, IMAGE: 7, ARROW: 8, LASER: 9, HIGHLIGHTER: 10 };
 export const TextAlignment = { LEFT: 0, CENTER: 1, RIGHT: 2 };
 export const Transformation = { TRANSLATION: 0, ROTATION: 1, SCALE_PRESERVE: 2, STRETCH: 3, REFLECTION: 4, INVERSION: 5, SMOOTH: 100 };
 
@@ -339,10 +339,22 @@ const _DrawingElement = GObject.registerClass({
             cr.moveTo(startX, startY);
             cr.lineTo(endX, endY);
         }
-    }
+    
+        // End Laser Portion
 
-    // End Laser Portion
-}
+        // Start Highlighter Portion
+
+        } else if (shape == Shape.HIGHLIGHTER && points.length >= 2) {
+                // HIGHLIGHTER - Semi-transparent yellow brush
+                cr.setOperator(Cairo.Operator.OVER);
+                cr.moveTo(points[0][0], points[0][1]);
+                for (let j = 1; j < points.length; j++) {
+                    cr.lineTo(points[j][0], points[j][1]);
+                }
+            }   
+            // End Highlighter Portion
+            
+        }
     
     getContainsPoint(cr, x, y) {
         cr.save();
@@ -523,9 +535,19 @@ const _DrawingElement = GObject.registerClass({
             }
             
             row += ` L${endX},${endY}"${transAttribute}/>`;
-        }
-
+        
         // End laser portion
+
+        // Start Highlighter Portion
+        } else if (this.shape == Shape.HIGHLIGHTER && points.length >= 2) {
+            // Export HIGHLIGHTER as semi-transparent path
+            row += `<path ${attributes} opacity="0.5" d="M${points[0][0]},${points[0][1]}`;
+            for (let i = 1; i < points.length; i++) {
+                row += ` L${points[i][0]},${points[i][1]}`;
+            }
+            row += `"${transAttribute}/>`;
+        }
+        // End Highlighter Portion
         
         return row;
     }

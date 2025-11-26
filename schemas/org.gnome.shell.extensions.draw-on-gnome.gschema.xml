@@ -257,6 +257,11 @@
       <default>["&lt;Primary&gt;q"]</default>
       <summary>Select laser tool</summary>
     </key>
+    <key type="as" name="select-highlighter-shape">
+      <default>["&lt;Primary&gt;h"]</default>
+      <summary>Select highlighter tool</summary>
+      <description>Select yellow highlighter tool</description>
+    </key>
     <key type="as" name="select-mirror-tool">
       <default>["&lt;Primary&gt;c"]</default>
       <summary>Select mirror tool</summary>
@@ -362,7 +367,7 @@
       <summary>Show help</summary>
     </key>
     <key type="as" name="toggle-panel-and-dock-visibility">
-      <default>["&lt;Primary&gt;h"]</default>
+      <default>["&lt;Primary&gt;&lt;Shift&gt;h"]</default>
       <summary>Hide panel</summary>
     </key>
     <key type="as" name="toggle-square-area">

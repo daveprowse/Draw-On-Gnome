@@ -124,10 +124,20 @@ export const DisplayStrings = {
     
     get Tool() {
         if (!this._Tool)
-            this._Tool = { 0: pgettext("drawing-tool", "Free drawing"), 1: pgettext("drawing-tool", "Line"), 2: pgettext("drawing-tool", "Ellipse"),
-                           3: pgettext("drawing-tool", "Rectangle"), 4: pgettext("drawing-tool", "Text"), 5: pgettext("drawing-tool", "Polygon"),
-                           6: pgettext("drawing-tool", "Polyline"), 7: pgettext("drawing-tool", "Image"), 8: pgettext("drawing-tool", "Arrow"),
-                           100: pgettext("drawing-tool", "Move"), 101: pgettext("drawing-tool", "Resize"), 102: pgettext("drawing-tool", "Mirror") };
+            this._Tool = { 0: pgettext("drawing-tool", "Free drawing"), 
+                        1: pgettext("drawing-tool", "Line"), 
+                        2: pgettext("drawing-tool", "Ellipse"),
+                        3: pgettext("drawing-tool", "Rectangle"), 
+                        4: pgettext("drawing-tool", "Text"), 
+                        5: pgettext("drawing-tool", "Polygon"),
+                        6: pgettext("drawing-tool", "Polyline"), 
+                        7: pgettext("drawing-tool", "Image"), 
+                        8: pgettext("drawing-tool", "Arrow"),
+                        9: pgettext("drawing-tool", "Laser Pointer"),
+                        10: pgettext("drawing-tool", "Highlighter"),
+                        100: pgettext("drawing-tool", "Move"), 
+                        101: pgettext("drawing-tool", "Resize"), 
+                        102: pgettext("drawing-tool", "Mirror") };
         return this._Tool;
     }
 };
@@ -768,10 +778,23 @@ export const DrawingMenu = GObject.registerClass({
 
 
 
-// based on ApplicationsButton.scrollToButton , https://gitlab.gnome.org/GNOME/gnome-shell-extensions/blob/master/extensions/apps-menu/extension.js
+// Updated for GNOME version 49.1
 const updateSubMenuAdjustment = function(itemActor) {
     let scrollView = itemActor.get_parent().get_parent();
-    let adjustment = scrollView.get_vscroll_bar().get_adjustment();
+    
+    // GNOME 49+ compatibility: get_vscroll_bar() no longer exists
+    let adjustment;
+    if (scrollView.get_vscroll_bar) {
+        // GNOME 48 and below
+        adjustment = scrollView.get_vscroll_bar().get_adjustment();
+    } else if (scrollView.vscroll && scrollView.vscroll.adjustment) {
+        // GNOME 49+
+        adjustment = scrollView.vscroll.adjustment;
+    } else {
+        // Fallback: can't find scrollbar, exit gracefully
+        return;
+    }
+    
     let scrollViewAlloc = scrollView.get_allocation_box();
     let currentScrollValue = adjustment.get_value();
     let height = scrollViewAlloc.y2 - scrollViewAlloc.y1;
@@ -784,7 +807,6 @@ const updateSubMenuAdjustment = function(itemActor) {
     if (newScrollValue != currentScrollValue)
         adjustment.set_value(newScrollValue);
 };
-
 
 
 

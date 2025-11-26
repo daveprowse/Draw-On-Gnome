@@ -217,6 +217,7 @@ export class AreaManager {
                     this.activeArea.selectTool(Area.Tool.LASER);
                 }
             },
+            'select-highlighter-shape': () => this.activeArea.selectTool(Area.Tool.HIGHLIGHTER),
             'select-ellipse-shape': () => this.activeArea.selectTool(Area.Tool.ELLIPSE),
             'select-rectangle-shape': () => this.activeArea.selectTool(Area.Tool.RECTANGLE),
             'select-text-shape': () => this.activeArea.selectTool(Area.Tool.TEXT),

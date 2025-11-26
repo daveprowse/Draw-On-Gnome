@@ -40,7 +40,7 @@ class Icons {
     constructor(extension) {
         const ICON_NAMES = [
             'arc', 'color', 'dashed-line', 'document-export', 'fillrule-evenodd', 'fillrule-nonzero', 'fill', 'full-line', 'linecap', 'linejoin', 'palette', 'smooth', 'stroke',
-            'tool-ellipse', 'tool-line', 'tool-mirror', 'tool-move', 'tool-none', 'tool-polygon', 'tool-polyline', 'tool-rectangle', 'tool-resize', 'tool-arrow', 'tool-laser',  // ⚡ NEW! The star of the show!
+            'tool-ellipse', 'tool-line', 'tool-mirror', 'tool-move', 'tool-none', 'tool-polygon', 'tool-polyline', 'tool-rectangle', 'tool-resize', 'tool-arrow', 'tool-laser', 'tool-highlighter'
         ];
         const ICON_DIR = extension.dir.get_child('data').get_child('icons');
         const THEMED_ICON_NAMES = {
@@ -580,6 +580,10 @@ export const Json = new GObject.registerClass({
     }
 
     get isPersistent() {
+    // Safety check for GNOME 49+ compatibility
+        if (!this._extension || !this._extension.metadata) {
+            return false;
+        }
         return this.name == this._extension.metadata['persistent-file-name'];
     }
 

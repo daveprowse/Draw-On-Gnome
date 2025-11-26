@@ -60,6 +60,8 @@ const TOGGLE_ANIMATION_DURATION = 300; // ms
 const GRID_TILES_HORIZONTAL_NUMBER = 30;
 const COLOR_PICKER_EXTENSION_UUID = 'color-picker@tuberry';
 
+const HIGHLIGHTER_YELLOW = Color.from_string('#ffff00')[1];
+
 const { Shape, StaticColor, TextAlignment, Transformation } = Elements;
 const { DisplayStrings } = Menu;
 
@@ -809,6 +811,75 @@ export const DrawingArea = GObject.registerClass({
             return; // Don't create a drawing element
         }
 
+        // Start Highlighter section
+        // Handle highlighter tool - creates semi-transparent yellow filled rectangles
+        if (this.currentTool == Shape.HIGHLIGHTER) {
+            this.buttonReleasedHandler = this.connect('button-release-event', (actor, event) => {
+                this._stopDrawing();
+            });
+            
+            // Yellow highlighter with 50% transparency
+            let highlighterColor = HIGHLIGHTER_YELLOW.copy();
+            highlighterColor.alpha = 128;
+            
+            // Use RECTANGLE shape with fill enabled for highlighting
+            this.currentElement = new Elements.DrawingElement({
+                shape: Shape.RECTANGLE,
+                color: highlighterColor,
+                eraser: false,
+                fill: true,
+                fillRule: this.currentFillRule,
+                line: { lineWidth: 2,    // ← CHANGED: 2 instead of 0
+                        lineJoin: Cairo.LineJoin.ROUND, 
+                        lineCap: Cairo.LineCap.ROUND },
+                dash: { active: false, array: [0, 0], offset: 0 },
+                points: []
+            });
+            
+            this.currentElement.startDrawing(startX, startY);
+            
+            // Standard motion handler
+            if (this.motionHandler) {
+                this.disconnect(this.motionHandler);
+                this.motionHandler = null;
+            }
+            
+            this.motionHandler = this.connect('motion-event', (actor, event) => {
+                let coords = event.get_coords();
+                let [s, x, y] = this._transformStagePoint(coords[0], coords[1]);
+                if (!s)
+                    return;
+                
+                if (clickedDevice != event.get_device?.() && clickedDevice != event.get_source_device())
+                    return Clutter.EVENT_PROPAGATE;
+
+                if (this.spaceKeyPressed)
+                    return;
+
+                let controlPressed = event.has_control_modifier();
+                this._updateDrawing(x, y, controlPressed);
+            });
+            
+            return;
+        }
+                
+        // } else if (this.currentTool == Shape.HIGHLIGHTER) {
+        //     // Highlighter uses yellow color with semi-transparency
+        //     let highlighterColor = HIGHLIGHTER_YELLOW.copy();
+        //     highlighterColor.alpha = 128; // 50% transparency
+            
+        //     this.currentElement = new Elements.DrawingElement({
+        //         shape: Shape.RECTANGLE,
+        //         color: highlighterColor,
+        //         eraser: false,
+        //         fill: true,  
+        //         line: { lineWidth: 2, lineJoin: this.currentLineJoin, lineCap: this.currentLineCap },
+        //         points: []
+        //     });
+
+            
+        // End Highlighter section
+
         this.buttonReleasedHandler = this.connect('button-release-event', (actor, event) => {
             this._stopDrawing();
         });
@@ -823,7 +894,8 @@ export const DrawingArea = GObject.registerClass({
                 text: pgettext("text-area-content", "Text"),
                 textAlignment: this.currentTextAlignment,
                 points: []
-            });
+            });  
+                
         } else if (this.currentTool == Shape.IMAGE) {
             this.currentElement = new Elements.DrawingElement({
                 shape: this.currentTool,
@@ -1840,6 +1912,32 @@ export const DrawingArea = GObject.registerClass({
     // toJSON provides a string suitable for SVG color attribute whereas
     // toString provides a string suitable for displaying the color name to the user.
     getColorFromString(string, fallback) {
+       // GNOME 49+ fix: Handle if already a Color object
+        if (string && typeof string === 'object' && string.red !== undefined) {
+            // GNOME 48.5 SVG export fix: Ensure toJSON method exists
+            if (!string.toJSON || typeof string.toJSON !== 'function') {
+                let colorStr;
+                if (string.to_string && typeof string.to_string === 'function') {
+                    colorStr = string.to_string().slice(0, -2); // Remove alpha suffix
+                } else {
+                    colorStr = `rgb(${string.red},${string.green},${string.blue})`;
+                }
+                string.toJSON = () => colorStr;
+                string.toString = () => colorStr;
+            }
+            return string;
+        }
+        
+        // Handle null/undefined/non-string
+        if (!string || typeof string !== 'string') {
+            let color = StaticColor[(fallback || 'White').toUpperCase()];
+            if (!color) color = StaticColor.WHITE;
+            color.toJSON = () => fallback || 'White';
+            color.toString = () => fallback || 'White';
+            return color;
+        }
+        
+        // Original string handling (GNOME 48 and below)
         let [colorString, displayName] = string.split(':');
         let [success, color] = Color.from_string(colorString);
         color.toJSON = () => colorString;
@@ -1852,6 +1950,6 @@ export const DrawingArea = GObject.registerClass({
         color.toJSON = () => fallback;
         color.toString = () => fallback;
         return color;
-    };
+    }
 });
 
