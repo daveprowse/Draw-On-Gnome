@@ -660,9 +660,11 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>_stopWriting/&lt;@file:///home/dave3/.local/share/gnome-shell/extensions/draw-on-gnome@daveprowse.github.io/area.js:1100:41
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>@resource:///org/gnome/shell/ui/init.js:21:20
 </span></code></pre></div>
-<p>This causes the polygon and polyline tools to fail. Some other tools might act erratically. </p>
-<p>So I have some work to do on <code>textEntry.is</code> and elsewhere.</p>
+<p>This causes the polygon and polyline tools to fail. Some other tools might act erratically (Save as SVG, dotted line, etc...) (Save as file still works.)</p>
+<p>So I have some work to do on <code>textEntry.is</code> and elsewhere. I'm currrently logging the problem and trying different code solutions. </p>
 <ul>
+<li>Highlighter issues:</li>
+<li>After using the highlighter, the "Save as SVG" button doesn't work. Regular file save still works.</li>
 <li>
 <p>A previously saved file with a highlighter box when opened only shows a white box, not highlighted.</p>
 </li>
