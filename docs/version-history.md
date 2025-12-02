@@ -4,6 +4,12 @@ Version history for Draw on Gnome (and it's previous name - DrawOnYourScreen)
 
 > Note: You can also see the version history at the [releases page](https://github.com/daveprowse/Draw-On-Gnome/releases){target="_blank"}
 
+## v7.0 - Dec, 2025
+
+- Works on GNOME v48 and v49
+- Using E.G.O. version numbering so we have skipped from 4.0 to 7.0.
+- Includes the new laser pointer, highlighter tool, fixed image pasting, and much more.
+
 ## v4.0 - Nov, 2025
 
 - Approved by E.G.O. !!!

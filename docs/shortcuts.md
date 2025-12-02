@@ -2,7 +2,7 @@ Press `Ctrl + F1` to see the list of current shortcuts while working in **Draw O
 
 !!! note "Note about `KP`"
 
-    If you press `Ctrl+F1` you will see a lot of shortcuts that have "KP" in them. This is short for "KeyPad". You *do not* have to press `KP` on the keyboard for these. So, for example, to use the color picker, the shortcut shows as `Ctrl+KP 0`, but you only need to press `Ctrl+0` on the keyboard (pressing the `0` either in the main portion of the keyboard or the numeric keypad).
+    In older versions of D.O.G., if you press `Ctrl+F1`, you will see a lot of shortcuts that have "KP" in them. This is short for "KeyPad". You *do not* have to press `KP` on the keyboard for these. So, for example, to use the color picker, the shortcut shows as `Ctrl+KP 0`, but you only need to press `Ctrl+0` on the keyboard (pressing the `0` either in the main portion of the keyboard or the numeric keypad).
 
     The beauty of the "KP" portion is that you can use the KeyPad key in question with the keypad number lock on or off. More...(1)
     { .annotate }

@@ -13,8 +13,7 @@ Here's the roadmap. The program works very well as is, but could always use some
 
 ## Primary Goals
 
-- All done! E.G.O. Approved!
-- Working on issues and will submit new ver. 5.0 to E.G.O. in the next few weeks.
+- All done! Version 7.0 is E.G.O. Approved!
 
 ## Issues
 
@@ -26,9 +25,13 @@ _stopWriting/<@file:///home/dave3/.local/share/gnome-shell/extensions/draw-on-gn
 @resource:///org/gnome/shell/ui/init.js:21:20
 ```
 
-So I have some work to do on `textEntry.is`
+This causes the polygon and polyline tools to fail. Some other tools might act erratically (Save as SVG, dotted line, etc...) (Save as file still works.)
 
-- A previously saved file with a highlighter box when opened only shows a white box, not highlighted.
+So I have some work to do on `textEntry.is` and elsewhere. I'm currrently logging the problem and trying different code solutions. 
+
+- Highlighter issues:
+    - After using the highlighter, the "Save as SVG" button doesn't work. Regular file save still works.
+    - A previously saved file with a highlighter box when opened only shows a white box, not highlighted.
 
 - `Ctrl+/` and `Ctrl+Shift+/` not cycling properly in v15. Interesting that there is another cycling problem. This could be related to the opening of images (which was fixed). Probably similar code.
 
@@ -41,18 +44,14 @@ So I have some work to do on `textEntry.is`
 
 ## Planned Features (long-term)
 
-1. Selection Tool
-Currently can only manipulate one element. This is a huge limitation for complex drawings.
-2. Freehand Eraser
-Fixing mistakes is clunky now. A proper eraser is essential.
-3. Snap-to-Grid
-Grid exists but doesn't snap. This would make technical drawings so much easier.
-4. Rulers & Guides
-Standard in every drawing app for a reason.
-5. Clipboard Rich Copy
-Being able to paste drawings directly into other apps would be a massive workflow improvement.
-6. Auto-save feature. As of now, there is no auto-save option. The user needs to manually press `Ctrl + S` to save a drawing.
-7. Delete Tool. Currently you can only delete in a LIFO manner. This proposed tool would use a hot-key to activate Delete on any item that was drawn. This one will require some work!
+1. Overwrite save? Currently, when you press `Ctrl+S`, the extension will save with an automatically generated name (based on the date and time). If a user saves often, this can create a lot of clutter files. My thought is to change it so that the default `Ctrl+S` action will be to *overwrite* (like most applications out there), and the auto-generated name would only happen the first time. If a user wants to save as a differnt file, they would have to open the right-click menu or press `Ctrl+Shift+S` to save as a new file. It seems logical. 
+2. Selection Tool: Currently can only manipulate one element. This is a huge limitation for complex drawings.
+3. Freehand Eraser: Fixing mistakes is clunky now. A proper eraser is essential.
+4. Snap-to-Grid: Grid exists but doesn't snap. This would make technical drawings so much easier.
+5. Rulers & Guides: Standard in every drawing app for a reason.
+6. Clipboard Rich Copy: Being able to paste drawings directly into other apps would be a massive workflow improvement.
+7. Auto-save feature: As of now, there is no auto-save option. The user needs to manually press `Ctrl + S` to save a drawing.
+8. Delete Tool: Currently you can only delete in a LIFO manner. This proposed tool would use a hot-key to activate Delete on any item that was drawn. This one will require some work!
 
 - More development of the "Mirror" tool.
 - Blur option - for redacting - see [this link](https://github.com/daveprowse/Draw-On-Gnome/issues/9){target="_blank"}

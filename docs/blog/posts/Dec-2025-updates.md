@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 authors:
   - daveprowse
 date: 2025-12-04
@@ -9,9 +9,11 @@ categories:
 
 # December 2025 Updates
 
-**HUGE UPDATE! Version 5.0**
+**HUGE UPDATE! Version 7.0**
 
-Here are the updates! And there's a bunch! Including the new Laser Pointer feature, image pasting fix, dashed line fix, line thickness fix, polygon fix, file open fix, and hovering tool tips addition! Oh YEAH!! 👍👍
+Here are the updates! And there's a bunch! Including the new Laser Pointer feature, highlighter tool, image pasting fix, dashed line fix, line thickness fix, polygon fix, file open fix, and hovering tool tips addition! 
+
+This is my holiday gift to all you open sourcerers! Oh YEAH!! 👍👍
 
 ## The Laser Pointer has Arrived!
 
@@ -19,8 +21,6 @@ Now we have a working laser pointer. Rockin' 🎸
 
 That required a lot more work than I initially thought. But it is done. Tested on GNOMEv49.1 and v48.5.
 Use `Ctrl+Q` to toggle it. Then simply move the mouse or stylus to move the laser around. `Ctrl+Q` to toggle it back off and return to the drawing tool. Even got the right-click menu option to work while in laser mode.
-
-This functionality can be found as early as version 4.1...
 
 **Summary:**
 
@@ -38,7 +38,7 @@ Enjoy everyone! 👍
 
 ## The Highlighter Tool
 
-This has been requested for some time. Now it is done. Press `Ctrl+H` to use it. Currently it works in rectangular click-and-drag mode. 
+This has been requested for some time. Now it is done. Press `Ctrl+H` to use it. Currently it works in rectangular click-and-drag mode and creates a translucent yellow rectangle at whatever size you wish. 
 
 > Note: The Hide the Panel tool has been moved to `Ctrl+Shift+H`.
 
@@ -60,6 +60,10 @@ If anyone wants a larger gap size, we could change it to (2,6), (2,6).
 ```js
 console.log(`DEBUG: dashedLine=${this.dashedLine}, dashArray=[${this.dashArray}], dashOffset=${this.dashOffset}`);`
 ```
+
+!!! tip "Math is Everywhere!"
+
+    Apparently mathematics was important in school. Go figure. Kids, know this: math has a special relationship with everything! ≛  ≛
 
 ## Line Thickness Fix
 
@@ -83,7 +87,7 @@ That was an easy one.
 
 ## Polygon/Polyline Fix
 
-I believe that state management was being affected in the extension because of the dashed line issue or the line thickness issue (my guess is the dashed line issue). Once those were fixed, the polygon issue went away. Very interesting, but something I will keep an eye on...
+I believe that state management was being affected in the extension because of the dashed line issue or the line thickness issue (my guess is the dashed line issue). Once those were fixed, the polygon issue went away. Very interesting, but something I will keep an eye on... Now the polygon and polyline tools work as they should.
 
 ## Added Hover Tooltips to the eight buttons in the Right-click Menu
 
@@ -95,19 +99,23 @@ Now you can paste images into your drawing properly. Currently it only works wit
 
 **Summary:**
 
-✅ Image rendering in GNOME 47+ - Using Gdk.cairo_set_source_pixbuf() to bridge GdkPixbuf to Cairo
+✅ Image rendering in GNOME 47+ - Bridging GdkPixbuf to Cairo
 
 ✅ Paste at original size - Images maintain aspect ratio, resizable with tools
 
 ✅ No stroking on images - Removed the cr.stroke() that was covering painted pixels
 
-✅ Clean, minimal changes - After massive testing with a backup of the extension, this fix only modifies 3 files
+✅ Clean, minimal changes 
 
 ## More fixes
 
 - Repaired the `Ctrl+O` scrolling through available files issue - by mistake! While I was repairing the `getColorFromString` method to fix an issue where the drop-down menu for "Open Drawings" wouldn't work, I also fixed the file scrolling issue. Now it scrolls through, in real-time, and works in reverse `Ctrl+Shift+O`. This was bugging me for a long time. By fixing one thing, I fixed the entire pipeline. YEAH! (Usually, when I fix one thing, another breaks - this time, it was the reverse!)
+- Fixed how GdkPixBuf was working with `setCairoSource` so that image placement works properly 0 and without GDK! (An E.G.O. requirement.)
+- Set up a temporaray PNG approach for pasting images. 
 - Repaired the `Ctrl+F1` shortcuts window. Used a lot of JS regex and was able to fix many problems there. Also removed a lot of outdated code. Today, GNOME only uses `printscreen` and the screenshot app opens. So I also removed the SYSTEM section for shortcuts. 
 - Fixed a lot of issues in the schema and recompiled.
-- Did some more work on the "mirror" tool. It is a strange tool that needs more thought.
+- Did some more work on the "mirror" tool. It is a strange tool that needs more thought but it now works.
+
+That's it! Happy Holidays everyone!
 
 ---

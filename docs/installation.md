@@ -11,7 +11,7 @@ There are a couple of ways to install Draw On Gnome. This will depend on your ve
 
 ## Option 1: Install from GNOME Extensions (ver. 48/49)
 
-[<img src="https://github.com/daveprowse/Draw-On-Gnome/raw/main/media/gnome-extensions.png" width="250">](https://extensions.gnome.org/extension/7921/draw-on-gnome/)
+[<img src="https://daveprowse.github.io/Draw-On-Gnome/images/gnome-extensions.png" width="250">](https://extensions.gnome.org/extension/7921/draw-on-gnome/)
 
 > **IMPORTANT!!**: Currently, this will only install to GNOMEv48 and v49. If you need the extension for another version of GNOME, see Option 2.
 
@@ -88,13 +88,13 @@ For those of you who would rather install manually, find your version of GNOME a
     **Download option:**
   
     ```console
-    wget https://github.com/daveprowse/Draw-On-Gnome/releases/download/D.O.G.-ver-1.6/Draw-On-Gnome-ver-1-6.tar.xz
+    wget https://github.com/daveprowse/Draw-On-Gnome/releases/download/D.O.G.-ver-7.0/Draw-On-Gnome-ver-7-0.tar.xz
     ```
 
     Then, decompress the tar file:
 
     ```console
-    tar -xvf Draw-On-GNOME-ver-1-6.tar.xz
+    tar -xvf Draw-On-Gnome-ver-7-0.tar.xz
     ```
 
     **Clone option (GIVES LATEST WORKING VERSION):**

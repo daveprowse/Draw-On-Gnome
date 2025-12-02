@@ -20,7 +20,7 @@ You will also note that the keyboard shortcurt `Ctrl + F1` will reveal *all* sho
 
 By default, you are placed in standard "drawing mode" where you can write on the screen with a stylus/tablet or with your mouse. If you ever need to return to this mode, press `Ctrl + P`. Think "P" like "pen" or "pencil".
 
-- To increase line width: `Ctrl +`
+- To increase line width: `Ctrl Shift +` 
 - To decrease line width: `Ctrl -`
 
 > Or, use `Ctrl+MouseWheel`, or right-click for the popup menu and use the slider. You'll find plenty of other great options in that menu.
@@ -89,7 +89,7 @@ Awesome fun!
 - You can then move the image (`Ctrl+M`) or resize it (`Ctrl+X`) as you see fit.
 - If you want to paste the image again, press `Ctrl+I`, then click and drag to paste.
 - If you want to use another previously pasted image, right-click for the menu and click the image drop-down, you should see a list of the images you have pasted so far in this session.
-- If you wish to paste a new image from your computer, close out of the extension, copy the new image, open the extension, and paste it in with `Ctrl+V`!! 
+- If you wish to paste a new image from your computer, close out of the extension, copy the new image, open the extension, and paste it in with `Ctrl+V`!! Alternatively, you could grab the keyboard/mouse with the `Ctrl+Super+Alt+D` toggle. 
 
 The fun never ends!
 
@@ -154,7 +154,7 @@ Files are saved by default to: `/home/<user>/.local/share/draw-on-gnome`
 
 To open files, select from a list of drawings in the pop-up menu. 
 
-> Note: You can also press `Ctrl+O` to open the latest drawing. Use `Ctrl+O` or `Ctrl+Shift+O` to cycle through the history of drawings. However, this functionality is somewhat broken. It is supposed to cycle through the drawing and show each one as you continually press `Ctrl+O` but it stopped working around the GNOMEv45 update. It is on the roadmap.
+> Note: You can also press `Ctrl+O` to open the latest drawing. Use `Ctrl+O` or `Ctrl+Shift+O` to cycle through the history of drawings. 
 
 ## Opening the Preferences Page
 
