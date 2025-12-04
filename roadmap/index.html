@@ -567,6 +567,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -654,31 +663,7 @@
 </ul>
 <h2 id="issues">Issues</h2>
 <ul>
-<li>After typing text and when selecting another tool, the text blinks for a moment and a log error is written:</li>
-</ul>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>JS ERROR: TypeError: textEntry.is_finalized is not a function
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>_stopWriting/&lt;@file:///home/dave3/.local/share/gnome-shell/extensions/draw-on-gnome@daveprowse.github.io/area.js:1100:41
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>@resource:///org/gnome/shell/ui/init.js:21:20
-</span></code></pre></div>
-<p>This causes the polygon and polyline tools to fail. Some other tools might act erratically (Save as SVG, dotted line, etc...) (Save as file still works.)</p>
-<p>So I have some work to do on <code>textEntry.is</code> and elsewhere. I'm currrently logging the problem and trying different code solutions. </p>
-<ul>
-<li>
-<p>Highlighter issues:</p>
-<ul>
-<li>After using the highlighter, the "Save as SVG" button doesn't work. Regular file save still works.</li>
-<li>A previously saved file with a highlighter box when opened only shows a white box, not highlighted.</li>
-</ul>
-</li>
-<li>
-<p><code>Ctrl+/</code> and <code>Ctrl+Shift+/</code> not cycling properly in v15. Interesting that there is another cycling problem. This could be related to the opening of images (which was fixed). Probably similar code.</p>
-</li>
-<li>
-<p>After using the text tool, the polygon/polyline tools will not create matrices properly. Closing and reopening the extension will reset this. This is a remnant from the after-text-tool error that is 95% fixed. </p>
-</li>
-<li>
-<p>EvenOdd issue for Gnome High Normal and others. Should be white?</p>
-<ul>
+<li>EvenOdd issue for Gnome High Normal and others. Should be white?<ul>
 <li>"Light" works from the menu but not with <code>Ctrl+F8</code></li>
 <li>Happens when fill is selected (also, related, fill doesn't shut off from toggle properly, only shortcut works right)</li>
 </ul>
@@ -686,6 +671,7 @@
 <li><code>Ctrl+KP /</code> shortcut for palettes not cyclicling properly, (rename, it's just <code>Ctrl+/</code>)</li>
 </ul>
 <h2 id="planned-features-long-term">Planned Features (long-term)</h2>
+<p>Working on GNOME 46/47 compatibility on the version 7 (48/49) version of the extension...</p>
 <ol>
 <li>Overwrite save? Currently, when you press <code>Ctrl+S</code>, the extension will save with an automatically generated name (based on the date and time). If a user saves often, this can create a lot of clutter files. My thought is to change it so that the default <code>Ctrl+S</code> action will be to <em>overwrite</em> (like most applications out there), and the auto-generated name would only happen the first time. If a user wants to save as a differnt file, they would have to open the right-click menu or press <code>Ctrl+Shift+S</code> to save as a new file. It seems logical. </li>
 <li>Selection Tool: Currently can only manipulate one element. This is a huge limitation for complex drawings.</li>
@@ -708,6 +694,15 @@
 <li>Reorder palettes via drag and drop</li>
 <li>Touchscreen support - see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/3" target="_blank">this link</a></li>
 </ol>
+<h2 id="documentation">Documentation</h2>
+<ul>
+<li>How to Use D.O.G. Video</li>
+<li>Add animated gifs</li>
+<li>More common "known" issues in Troubleshooting</li>
+<li>Search function for Keyboard shortcuts</li>
+<li>Navigation - stickier on scroll?</li>
+<li>Update to Zensical from Material for mkdocs?</li>
+</ul>
 <hr>
 
 

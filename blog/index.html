@@ -615,70 +615,13 @@
 </ul>
 <p>Here are the updates! And there's a bunch! Including the new Laser Pointer feature, highlighter tool, image pasting fix, dashed line fix, line thickness fix, polygon fix, file open fix, and hovering tool tips addition! </p>
 <p>This is my holiday gift to all you open sourcerers! Oh YEAH!! 👍👍</p>
-<h3 id="the-laser-pointer-has-arrived"><a class="toclink" href="2025/12/04/december-2025-updates/#the-laser-pointer-has-arrived">The Laser Pointer has Arrived!</a></h3>
-<p>Now we have a working laser pointer. Rockin' 🎸</p>
-<p>That required a lot more work than I initially thought. But it is done. Tested on GNOMEv49.1 and v48.5.
-Use <code>Ctrl+Q</code> to toggle it. Then simply move the mouse or stylus to move the laser around. <code>Ctrl+Q</code> to toggle it back off and return to the drawing tool. Even got the right-click menu option to work while in laser mode.</p>
-<p><strong>Summary:</strong></p>
-<p>✅ Created a laser pointer tool with Google Slides-style visual effect</p>
-<p>✅ Trail fade - disappears when mouse stops (tunable at 50-100ms, I have it at 100 now, but might reduce it based on feedback...)</p>
-<p>✅ <code>Ctrl+Q</code> toggle - enables/disables laser, returns to drawing tool</p>
-<p>✅ Right-click menu - stops laser and opens menu correctly</p>
-<p>Note: <code>Ctrl+Q</code> might seem like an odd choice, but it works with left-hand only. Plus, we are running out of shortcuts! Think <em>"Q" &gt; Star Trek &gt; Phasers &gt; Lasers</em>. Pretty weak connection, but there it is...</p>
-<p>Enjoy everyone! 👍</p>
-<h3 id="the-highlighter-tool"><a class="toclink" href="2025/12/04/december-2025-updates/#the-highlighter-tool">The Highlighter Tool</a></h3>
-<p>This has been requested for some time. Now it is done. Press <code>Ctrl+H</code> to use it. Currently it works in rectangular click-and-drag mode and creates a translucent yellow rectangle at whatever size you wish. </p>
-<blockquote>
-<p>Note: The Hide the Panel tool has been moved to <code>Ctrl+Shift+H</code>.</p>
-</blockquote>
-<h3 id="dashed-line-fix"><a class="toclink" href="2025/12/04/december-2025-updates/#dashed-line-fix">Dashed line fix</a></h3>
-<p>This was nonfunctional for a while. Now it works with <code>Ctrl+.</code> or by right-clicking for the popup menu and selecting the "Dashed Line" toggle. </p>
-<p>Not sure what happened to the code over the years, because dotted lines used to work. Anyway, I configured a dynamic solution in area.js that uses a multiplier of the line thickness to calculate a proportional amount of pixels for the dashes and the gaps. See below:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">let</span><span class="w"> </span><span class="nx">dashLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentLineWidth</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">8</span><span class="p">);</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">let</span><span class="w"> </span><span class="nx">gapLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentLineWidth</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">);</span>
-</span></code></pre></div>
-<p>If anyone wants a larger gap size, we could change it to (2,6), (2,6).</p>
-<blockquote>
-<p>Note for posterity: This was my debug line to see the issue: </p>
-</blockquote>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`DEBUG: dashedLine=</span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">dashedLine</span><span class="si">}</span><span class="sb">, dashArray=[</span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">dashArray</span><span class="si">}</span><span class="sb">], dashOffset=</span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">dashOffset</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span><span class="sb">`</span>
-</span></code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Math is Everywhere!</p>
-<p>Apparently mathematics was important in school. Go figure. Kids, know this: math has a special relationship with everything! ≛  ≛</p>
-</div>
-<h3 id="line-thickness-fix"><a class="toclink" href="2025/12/04/december-2025-updates/#line-thickness-fix">Line Thickness Fix</a></h3>
-<p>Now it is set to a minumum of 1, whereas it was previously set to 0 (which would make invisible drawings!). It now works in the right-click menu slider, with <code>Ctrl+mousewheel</code>, and with <code>Ctrl+Shift++</code>/<code>Ctrl+-</code>.</p>
-<p><strong>Problem: </strong>The extension was allowing for a line thickness of zero which was causing us all kinds of headaches. It was easy to set the thickness to zero with <code>Ctrl+mousewheel</code> without even noticing it. And then it would stay at zero even if you restarted the extension (or the computer). </p>
-<p>I repaired the problem by modifying the following line in the <code>incrementLineWidth()</code> method to <code>1</code>:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">this</span><span class="p">.</span><span class="nx">currentLineWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentLineWidth</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">increment</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">);</span>
-</span></code></pre></div>
-<p>My debug test for this was in the <code>_addSliderItem</code> method in the <code>if</code> and the <code>else</code> sections:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`DEBUG SLIDER: value=</span><span class="si">${</span><span class="nx">slider</span><span class="p">.</span><span class="nx">value</span><span class="si">}</span><span class="sb">, calculated=</span><span class="si">${</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">slider</span><span class="p">.</span><span class="nx">value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">50</span><span class="p">)</span><span class="si">}</span><span class="sb">, final=</span><span class="si">${</span><span class="nx">target</span><span class="p">[</span><span class="nx">targetProperty</span><span class="p">]</span><span class="si">}</span><span class="sb">, SHELL_VERSION=</span><span class="si">${</span><span class="nx">SHELL_MAJOR_VERSION</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
-</span></code></pre></div>
-<p>That was an easy one. </p>
-<h3 id="polygonpolyline-fix"><a class="toclink" href="2025/12/04/december-2025-updates/#polygonpolyline-fix">Polygon/Polyline Fix</a></h3>
-<p>I believe that state management was being affected in the extension because of the dashed line issue or the line thickness issue (my guess is the dashed line issue). Once those were fixed, the polygon issue went away. Very interesting, but something I will keep an eye on... Now the polygon and polyline tools work as they should.</p>
-<h3 id="added-hover-tooltips-to-the-eight-buttons-in-the-right-click-menu"><a class="toclink" href="2025/12/04/december-2025-updates/#added-hover-tooltips-to-the-eight-buttons-in-the-right-click-menu">Added Hover Tooltips to the eight buttons in the Right-click Menu</a></h3>
-<p>This was gnawing at me for some time. Now we have hovering tool tips that describe what each of the eight tool buttons do in the right-click menu. I also color coded the buttons so they show distinct colors when hovering on them. Fun! This work was all conducted inside of <code>menu.js</code>.</p>
-<h3 id="fixed-the-image-pasting-function"><a class="toclink" href="2025/12/04/december-2025-updates/#fixed-the-image-pasting-function">Fixed the image pasting function</a></h3>
-<p>Now you can paste images into your drawing properly. Currently it only works with locally stored images, you can't grab from the Internet ... yet. I removed the scaling feature while pasting the image. It would skew the image. I thought the better workflow would be to paste the image at original size, and then use the Resize tool (<code>Ctrl+X</code>) to size it as necessary.</p>
-<p><strong>Summary:</strong></p>
-<p>✅ Image rendering in GNOME 47+ - Bridging GdkPixbuf to Cairo</p>
-<p>✅ Paste at original size - Images maintain aspect ratio, resizable with tools</p>
-<p>✅ No stroking on images - Removed the cr.stroke() that was covering painted pixels</p>
-<p>✅ Clean, minimal changes </p>
-<h3 id="more-fixes"><a class="toclink" href="2025/12/04/december-2025-updates/#more-fixes">More fixes</a></h3>
-<ul>
-<li>Repaired the <code>Ctrl+O</code> scrolling through available files issue - by mistake! While I was repairing the <code>getColorFromString</code> method to fix an issue where the drop-down menu for "Open Drawings" wouldn't work, I also fixed the file scrolling issue. Now it scrolls through, in real-time, and works in reverse <code>Ctrl+Shift+O</code>. This was bugging me for a long time. By fixing one thing, I fixed the entire pipeline. YEAH! (Usually, when I fix one thing, another breaks - this time, it was the reverse!)</li>
-<li>Fixed how GdkPixBuf was working with <code>setCairoSource</code> so that image placement works properly 0 and without GDK! (An E.G.O. requirement.)</li>
-<li>Set up a temporaray PNG approach for pasting images. </li>
-<li>Repaired the <code>Ctrl+F1</code> shortcuts window. Used a lot of JS regex and was able to fix many problems there. Also removed a lot of outdated code. Today, GNOME only uses <code>printscreen</code> and the screenshot app opens. So I also removed the SYSTEM section for shortcuts. </li>
-<li>Fixed a lot of issues in the schema and recompiled.</li>
-<li>Did some more work on the "mirror" tool. It is a strange tool that needs more thought but it now works.</li>
-</ul>
-<p>That's it! Happy Holidays everyone!</p>
-<hr>
+
+    
+      <nav class="md-post__action">
+        <a href="2025/12/04/december-2025-updates/">
+          Continue reading
+        </a>
+      </nav>
     
   </div>
 </article>
