@@ -568,9 +568,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#documentation" class="md-nav__link">
+  <a href="#planned-features-super-duper-long-term" class="md-nav__link">
     <span class="md-ellipsis">
-      Documentation
+      Planned Features (super-duper long-term)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-todo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation ToDo
     </span>
   </a>
   
@@ -659,20 +668,13 @@
 </div>
 <h2 id="primary-goals">Primary Goals</h2>
 <ul>
-<li>All done! Version 7.0 is E.G.O. Approved!</li>
+<li>All done! Version 9.0 is E.G.O. Approved!</li>
 </ul>
 <h2 id="issues">Issues</h2>
-<ul>
-<li>EvenOdd issue for Gnome High Normal and others. Should be white?<ul>
-<li>"Light" works from the menu but not with <code>Ctrl+F8</code></li>
-<li>Happens when fill is selected (also, related, fill doesn't shut off from toggle properly, only shortcut works right)</li>
-</ul>
-</li>
-</ul>
+<p>All known issues have been fixed! The plate is cleared! </p>
 <h2 id="planned-features-long-term">Planned Features (long-term)</h2>
-<p>Working on GNOME 46/47 compatibility on the version 7 (48/49) version of the extension...</p>
 <ol>
-<li>Overwrite save? Currently, when you press <code>Ctrl+S</code>, the extension will save with an automatically generated name (based on the date and time). If a user saves often, this can create a lot of clutter files. My thought is to change it so that the default <code>Ctrl+S</code> action will be to <em>overwrite</em> (like most applications out there), and the auto-generated name would only happen the first time. If a user wants to save as a differnt file, they would have to open the right-click menu or press <code>Ctrl+Shift+S</code> to save as a new file. It seems logical. </li>
+<li>Overwrite save? Currently, when you press <code>Ctrl+S</code>, the extension will save with an automatically generated name (based on the date and time). If a user saves often, this can create a lot of clutter files. My thought is to change it so that the default <code>Ctrl+S</code> action will be to <em>overwrite</em> (like most applications out there), and the auto-generated name would only happen the first time. If a user wants to save as a differnt file, they would have to open the right-click menu or press <code>Ctrl+Shift+S</code> to save as a new file. It seems logical. As part of this, I would like to modify how the "Persistent over Restarts" option saves the file. As is, it saves in the default location as <code>undefined.json</code>. I'm waiting on fixing this until auto-save works properly. It probably entails ensuring that <code>metadata['persistent-file-name']</code> is properly defined. We'll see!</li>
 <li>Selection Tool: Currently can only manipulate one element. This is a huge limitation for complex drawings.</li>
 <li>Freehand Eraser: Fixing mistakes is clunky now. A proper eraser is essential. THe <code>Shift</code> key works as an eraser right now, but it is invisible. Some sort of icon or unfilled circle would be much better.</li>
 <li>Snap-to-Grid: Grid exists but doesn't snap. This would make technical drawings so much easier.</li>
@@ -693,7 +695,11 @@
 <li>Reorder palettes via drag and drop</li>
 <li>Touchscreen support - see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/3" target="_blank">this link</a></li>
 </ol>
-<h2 id="documentation">Documentation</h2>
+<h2 id="planned-features-super-duper-long-term">Planned Features (super-duper long-term)</h2>
+<ul>
+<li>Port the program to Rust (or C) so that it can be used on <em>any</em> Linux system: GNOME, KDE, Tiling systems, etc... This would be a massive undertaking, maybe too much. A smaller step would be a port for KDE only (perhaps C or Rust-based).</li>
+</ul>
+<h2 id="documentation-todo">Documentation ToDo</h2>
 <ul>
 <li>How to Use D.O.G. Video</li>
 <li>Add animated gifs</li>
