@@ -673,28 +673,28 @@
 <h2 id="issues">Issues</h2>
 <p>All known issues have been fixed! The plate is cleared! </p>
 <h2 id="planned-features-long-term">Planned Features (long-term)</h2>
-<ol>
+<ul>
 <li>Overwrite save? Currently, when you press <code>Ctrl+S</code>, the extension will save with an automatically generated name (based on the date and time). If a user saves often, this can create a lot of clutter files. My thought is to change it so that the default <code>Ctrl+S</code> action will be to <em>overwrite</em> (like most applications out there), and the auto-generated name would only happen the first time. If a user wants to save as a differnt file, they would have to open the right-click menu or press <code>Ctrl+Shift+S</code> to save as a new file. It seems logical. As part of this, I would like to modify how the "Persistent over Restarts" option saves the file. As is, it saves in the default location as <code>undefined.json</code>. I'm waiting on fixing this until auto-save works properly. It probably entails ensuring that <code>metadata['persistent-file-name']</code> is properly defined. We'll see!</li>
 <li>Selection Tool: Currently can only manipulate one element. This is a huge limitation for complex drawings.</li>
 <li>Freehand Eraser: Fixing mistakes is clunky now. A proper eraser is essential. THe <code>Shift</code> key works as an eraser right now, but it is invisible. Some sort of icon or unfilled circle would be much better.</li>
 <li>Snap-to-Grid: Grid exists but doesn't snap. This would make technical drawings so much easier.</li>
-<li>Rulers &amp; Guides: Standard in every drawing app for a reason.</li>
 <li>Clipboard Rich Copy: Being able to paste drawings directly into other apps would be a massive workflow improvement.</li>
 <li>Auto-save feature: As of now, there is no auto-save option. The user needs to manually press <code>Ctrl + S</code> to save a drawing.</li>
-<li>
-<p>Delete Tool: Currently you can only delete in a LIFO manner. This proposed tool would use a hot-key to activate Delete on any item that was drawn. This one will require some work!</p>
-</li>
-<li>
-<p>More development of the "Mirror" tool.</p>
-</li>
+<li>Delete Tool: Currently you can only delete in a LIFO manner. This proposed tool would use a hot-key to activate Delete on any item that was drawn. This one will require some work!</li>
+</ul>
+<hr>
+<ul>
+<li>More development of the "Mirror" tool.</li>
 <li>Blur option - for redacting - see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/9" target="_blank">this link</a></li>
 <li>Fade out option - (Similar to macOS ScreenBrush) - see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/23" target="_blank">this link</a></li>
-<li>Whiteboard option with one shortcut (similar to Microsoft Powerpoint option)</li>
+<li>Whiteboard option with one shortcut (similar to Microsoft Powerpoint option) - or a way to change the background color while it is activated.</li>
 <li>Feature Request - ICONS - see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/1" target="_blank">this link</a></li>
+<li>Feature Request - Opacity for drawings</li>
+<li>Pencil cursor? See <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/46" target="_blank">this link</a></li>
 <li>Smooth line fix - testing with area.js currently. However, this is <em>very</em> dependent on the video card in the user's system, so I'm not sure how much we can accomplish within the confines of the GNOME desktop. </li>
 <li>Reorder palettes via drag and drop</li>
 <li>Touchscreen support - see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/3" target="_blank">this link</a></li>
-</ol>
+</ul>
 <h2 id="planned-features-super-duper-long-term">Planned Features (super-duper long-term)</h2>
 <ul>
 <li>Port the program to Rust (or C) so that it can be used on <em>any</em> Linux system: GNOME, KDE, Tiling systems, etc... This would be a massive undertaking, maybe too much. A smaller step would be a port for KDE only (perhaps C or Rust-based).</li>
