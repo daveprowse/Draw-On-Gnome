@@ -674,6 +674,16 @@
 <p>All known issues have been fixed! The plate is cleared! </p>
 <h2 id="planned-features-long-term">Planned Features (long-term)</h2>
 <ul>
+<li>Touchscreen support - see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/3" target="_blank">this link</a>. My plan for this would be to incorporate the following:</li>
+<li>a toggle in preferences to turn on touchscreen support</li>
+<li>This would place a clickable/tappable icon in the System Status Area (even while the extension is not enabled). This would be in an "idle" state.</li>
+<li>User would tap on the icon to go into drawing mode (equal to pressing <code>Super+Alt+D</code>).</li>
+<li>The icon would change shape and color to indicate that the extension is running.</li>
+<li>User would tap the icon again to exit the extension</li>
+<li>Icon would change back to idle. </li>
+</ul>
+<p>Should work??? It will require some heavy duty programming and testing though... </p>
+<ul>
 <li>a timer. This could be a great function for live training. The problem with the extension is that you cannot run things simultaenously. Well, you can I suppose, build your drawing, then press <code>Super+Ctrl+Alt+D</code> to access the keyboard and mouse, start a timer in a terminal (and make it always on top) and press <code>Super+Ctrl+Alt+D</code> again to return to the drawing (and draw while the timer is running). However, a built in timer would be super-duper... OpenBoard has this functionality and I used to like it...</li>
 <li>Overwrite save? Currently, when you press <code>Ctrl+S</code>, the extension will save with an automatically generated name (based on the date and time). If a user saves often, this can create a lot of clutter files. My thought is to change it so that the default <code>Ctrl+S</code> action will be to <em>overwrite</em> (like most applications out there), and the auto-generated name would only happen the first time. If a user wants to save as a differnt file, they would have to open the right-click menu or press <code>Ctrl+Shift+S</code> to save as a new file. It seems logical. As part of this, I would like to modify how the "Persistent over Restarts" option saves the file. As is, it saves in the default location as <code>undefined.json</code>. I'm waiting on fixing this until auto-save works properly. It probably entails ensuring that <code>metadata['persistent-file-name']</code> is properly defined. We'll see!</li>
 <li>Selection Tool: Currently can only manipulate one element. This is a huge limitation for complex drawings.</li>
@@ -694,7 +704,6 @@
 <li>Pencil cursor? See <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/46" target="_blank">this link</a></li>
 <li>Smooth line fix - testing with area.js currently. However, this is <em>very</em> dependent on the video card in the user's system, so I'm not sure how much we can accomplish within the confines of the GNOME desktop. </li>
 <li>Reorder palettes via drag and drop</li>
-<li>Touchscreen support - see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/3" target="_blank">this link</a></li>
 </ul>
 <h2 id="planned-features-super-duper-long-term">Planned Features (super-duper long-term)</h2>
 <ul>
