@@ -186,7 +186,7 @@ export const DrawingHelper = GObject.registerClass({
             label.get_clutter_text().set_use_markup(true);
             hbox.add_child(label);
             this.vbox.add_child(hbox);
-        });        
+        });
     }
 
     showHelp() {

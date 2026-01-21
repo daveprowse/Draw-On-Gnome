@@ -62,9 +62,7 @@ const TOGGLE_ANIMATION_DURATION = 300; // ms
 const GRID_TILES_HORIZONTAL_NUMBER = 30;
 const COLOR_PICKER_EXTENSION_UUID = 'color-picker@tuberry';
 
-const HIGHLIGHTER_YELLOW = Color.from_string('#ffff00')[1];
-
-const { Shape, StaticColor, TextAlignment, Transformation } = Elements;
+const { Shape, StaticColor, TextAlignment, Transformation, ArrowType } = Elements;
 const { DisplayStrings } = Menu;
 
 const FontGenericFamilies = ['Sans-Serif', 'Serif', 'Monospace', 'Cursive', 'Fantasy'];
@@ -146,25 +144,27 @@ export const DrawingArea = GObject.registerClass({
         this.gridLayer.hide();
         this.gridLayer.opacity = 0;
         this.layerContainer.add_child(this.gridLayer);
-        
+
         // Ruler layer - shows with grid
         this.rulerLayer = new DrawingLayer(this._repaintRulers.bind(this));
         this.rulerLayer.hide();
         this.rulerLayer.opacity = 0;
         this.rulerLayer.reactive = false;  // Clicks pass through
         this.layerContainer.add_child(this.rulerLayer);
-        
+
         // Track mouse position for ruler highlights
         this.rulerMouseX = 0;
         this.rulerMouseY = 0;
-        
+
+        // Arrow data
+        this.arrowType = ArrowType.FORWARD;
         // Laser pointer layer and state
         this.laserLayer = new DrawingLayer(this._repaintLaser.bind(this));
         this.laserLayer.hide();
         this.laserLayer.opacity = 0;
         this.laserLayer.reactive = false;  // ADD THIS LINE - allows clicks to pass through
         this.layerContainer.add_child(this.laserLayer);
-        
+
         // Laser pointer state variables
         this.laserPointerActive = false;
         this.laserPointerX = 0;
@@ -173,7 +173,7 @@ export const DrawingArea = GObject.registerClass({
         this.laserTrailMaxLength = 15;
         this.laserAnimationTimeoutId = null;
         this.laserKeyPressed = false;
-        
+
         // Laser pointer state variables
         this.laserPointerActive = false;
         this.laserPointerX = 0;
@@ -186,7 +186,7 @@ export const DrawingArea = GObject.registerClass({
         // End laser pointer code
 
         this.elements = [];
-        
+
         this.undoneElements = [];
         this.currentElement = null;
         this.currentTool = Shape.NONE;
@@ -351,8 +351,8 @@ export const DrawingArea = GObject.registerClass({
         }
 
         this.dashOffset = Math.round(this._extension.drawingSettings.get_double('dash-offset') * 100) / 100;
-        if (this._extension.drawingSettings.get_boolean('dash-array-auto')) {            
-            this.dashArray = [0,0];  
+        if (this._extension.drawingSettings.get_boolean('dash-array-auto')) {
+            this.dashArray = [0,0];
         } else {
             let on = Math.round(this._extension.drawingSettings.get_double('dash-array-on') * 100) / 100;
             let off = Math.round(this._extension.drawingSettings.get_double('dash-array-off') * 100) / 100;
@@ -438,10 +438,10 @@ export const DrawingArea = GObject.registerClass({
     _repaintRulers(cr) {
         if (!this.reactive || !this.hasGrid)
             return;
-        
+
         const RULER_WIDTH = 40;
         const RULER_OPACITY = 0.7;
-        
+
         // Calculate lighter color (30% lighter than grid)
         let lighterColor = new Color({
             red: Math.min(255, this.gridColor.red + 77),
@@ -449,15 +449,15 @@ export const DrawingArea = GObject.registerClass({
             blue: Math.min(255, this.gridColor.blue + 77),
             alpha: Math.floor(this.gridColor.alpha * RULER_OPACITY)
         });
-        
+
         // Create Pango layout for text
         let layout = this.rulerLayer.create_pango_layout('');
         let fontDesc = Pango.FontDescription.from_string('Sans Bold 9');
         layout.set_font_description(fontDesc);
-        
+
         // === LEFT RULER (Y-axis) ===
         cr.save();
-        
+
         // Draw ruler background
         cr.setSourceRGBA(
             lighterColor.red / 255,
@@ -467,69 +467,69 @@ export const DrawingArea = GObject.registerClass({
         );
         cr.rectangle(0, 0, RULER_WIDTH, this.monitor.height);
         cr.fill();
-        
+
         // Draw Y-axis tick marks
         cr.setSourceColor(this.gridColor);
         let centerY = this.monitor.height / 2;
         let gridUnit = 0;
         let y = 0;
-        
+
         while (y < this.monitor.height / 2) {
             let isMainMark = (gridUnit % 5 === 0);
             cr.setLineWidth(isMainMark ? 2 : 1);
-            
+
             let tickLength = isMainMark ? 12 : 6;
             // Marks above center
             cr.moveTo(RULER_WIDTH - tickLength, centerY - y);
             cr.lineTo(RULER_WIDTH, centerY - y);
             cr.stroke();
-            
+
             // Marks below center
             cr.moveTo(RULER_WIDTH - tickLength, centerY + y);
             cr.lineTo(RULER_WIDTH, centerY + y);
             cr.stroke();
-            
+
             y += this.gridLineSpacing;
             gridUnit++;
         }
-        
+
         // Draw Y-axis numbers (separate pass for proper rendering)
         gridUnit = 0;
         y = 0;
         cr.setSourceRGBA(0.1, 0.1, 0.1, 0.9); // Dark gray text
-        
+
         while (y < this.monitor.height / 2) {
             let isMainMark = (gridUnit % 5 === 0);
-            
+
             if (isMainMark && gridUnit > 0) {
                 layout.set_text(String(gridUnit), -1);
                 let [textWidth, textHeight] = layout.get_pixel_size();
-                
+
                 // Above center
                 cr.moveTo(5, centerY - y - textHeight / 2);
                 PangoCairo.show_layout(cr, layout);
-                
+
                 // Below center
                 cr.moveTo(5, centerY + y - textHeight / 2);
                 PangoCairo.show_layout(cr, layout);
             }
-            
+
             y += this.gridLineSpacing;
             gridUnit++;
         }
-        
+
         // Highlight current Y position - darker and more visible
         if (this.rulerMouseY >= 0 && this.rulerMouseY <= this.monitor.height) {
             cr.setSourceRGBA(0.2, 0.5, 0.8, 0.6); // Blue highlight, more opaque
             cr.rectangle(0, this.rulerMouseY - 2, RULER_WIDTH, 4);
             cr.fill();
         }
-        
+
         cr.restore();
-        
+
         // === BOTTOM RULER (X-axis) ===
         cr.save();
-        
+
         // Draw ruler background
         cr.setSourceRGBA(
             lighterColor.red / 255,
@@ -539,64 +539,64 @@ export const DrawingArea = GObject.registerClass({
         );
         cr.rectangle(0, this.monitor.height - RULER_WIDTH, this.monitor.width, RULER_WIDTH);
         cr.fill();
-        
+
         // Draw X-axis tick marks
         cr.setSourceColor(this.gridColor);
         let centerX = this.monitor.width / 2;
         gridUnit = 0;
         let x = 0;
-        
+
         while (x < this.monitor.width / 2) {
             let isMainMark = (gridUnit % 5 === 0);
             cr.setLineWidth(isMainMark ? 2 : 1);
-            
+
             let tickLength = isMainMark ? 12 : 6;
             // Marks left of center
             cr.moveTo(centerX - x, this.monitor.height - RULER_WIDTH);
             cr.lineTo(centerX - x, this.monitor.height - RULER_WIDTH + tickLength);
             cr.stroke();
-            
+
             // Marks right of center
             cr.moveTo(centerX + x, this.monitor.height - RULER_WIDTH);
             cr.lineTo(centerX + x, this.monitor.height - RULER_WIDTH + tickLength);
             cr.stroke();
-            
+
             x += this.gridLineSpacing;
             gridUnit++;
         }
-        
+
         // Draw X-axis numbers (separate pass for proper rendering)
         gridUnit = 0;
         x = 0;
         cr.setSourceRGBA(0.1, 0.1, 0.1, 0.9); // Dark gray text
-        
+
         while (x < this.monitor.width / 2) {
             let isMainMark = (gridUnit % 5 === 0);
-            
+
             if (isMainMark && gridUnit > 0) {
                 layout.set_text(String(gridUnit), -1);
                 let [textWidth, textHeight] = layout.get_pixel_size();
-                
+
                 // Left of center
                 cr.moveTo(centerX - x - textWidth / 2, this.monitor.height - RULER_WIDTH + 15);
                 PangoCairo.show_layout(cr, layout);
-                
+
                 // Right of center
                 cr.moveTo(centerX + x - textWidth / 2, this.monitor.height - RULER_WIDTH + 15);
                 PangoCairo.show_layout(cr, layout);
             }
-            
+
             x += this.gridLineSpacing;
             gridUnit++;
         }
-        
+
         // Highlight current X position - darker and more visible
         if (this.rulerMouseX >= 0 && this.rulerMouseX <= this.monitor.width) {
             cr.setSourceRGBA(0.2, 0.5, 0.8, 0.6); // Blue highlight, more opaque
             cr.rectangle(this.rulerMouseX - 2, this.monitor.height - RULER_WIDTH, 4, RULER_WIDTH);
             cr.fill();
         }
-        
+
         cr.restore();
     }
 
@@ -604,21 +604,21 @@ export const DrawingArea = GObject.registerClass({
     _repaintLaser(cr) {
         if (!this.laserPointerActive || this.laserTrailPoints.length === 0)
             return;
-        
+
         // Draw the laser trail with fading opacity
         for (let i = 0; i < this.laserTrailPoints.length; i++) {
             let point = this.laserTrailPoints[i];
             let opacity = (i + 1) / this.laserTrailPoints.length;
             let radius = 8 + (opacity * 4);
-            
+
             cr.setSourceRGBA(1.0, 0.1, 0.1, opacity * 0.7);
             cr.arc(point[0], point[1], radius, 0, 2 * Math.PI);
             cr.fill();
         }
-        
+
         // Draw the main laser pointer
         let mainRadius = 14;
-        
+
         // Outer glow
         let gradient = new Cairo.RadialGradient(
             this.laserPointerX, this.laserPointerY, 0,
@@ -627,16 +627,16 @@ export const DrawingArea = GObject.registerClass({
         gradient.addColorStopRGBA(0, 1.0, 0.2, 0.2, 0.9);
         gradient.addColorStopRGBA(0.5, 1.0, 0.1, 0.1, 0.6);
         gradient.addColorStopRGBA(1, 1.0, 0.0, 0.0, 0.0);
-        
+
         cr.setSource(gradient);
         cr.arc(this.laserPointerX, this.laserPointerY, mainRadius * 1.5, 0, 2 * Math.PI);
         cr.fill();
-        
+
         // Inner bright core
         cr.setSourceRGBA(1.0, 0.3, 0.3, 0.95);
         cr.arc(this.laserPointerX, this.laserPointerY, mainRadius, 0, 2 * Math.PI);
         cr.fill();
-        
+
         // Central hot spot
         cr.setSourceRGBA(1.0, 0.9, 0.9, 1.0);
         cr.arc(this.laserPointerX, this.laserPointerY, mainRadius * 0.4, 0, 2 * Math.PI);
@@ -696,7 +696,7 @@ export const DrawingArea = GObject.registerClass({
             if (this.laserPointerActive) {
                 this.stopLaserPointer();
             }
-            
+
             if (this.hasManipulationTool) {
                 if (this.grabbedElement)
                     this._startTransforming(x, y, controlPressed, shiftPressed);
@@ -921,7 +921,7 @@ export const DrawingArea = GObject.registerClass({
             let [s, x, y] = this._transformStagePoint(coords[0], coords[1]);
             if (!s)
                 return;
-                        
+
             if (this.spaceKeyPressed)
                 return;
 
@@ -999,11 +999,11 @@ export const DrawingArea = GObject.registerClass({
             this.buttonReleasedHandler = this.connect('button-release-event', (actor, event) => {
                 this._stopDrawing();
             });
-            
+
             // Yellow highlighter with 50% transparency
-            let highlighterColor = HIGHLIGHTER_YELLOW.copy();
+            let highlighterColor = this.currentColor.copy();
             highlighterColor.alpha = 128;
-            
+
             // Add toJSON method so color saves properly
             highlighterColor.toJSON = function() {
                 return this.to_string();
@@ -1011,7 +1011,7 @@ export const DrawingArea = GObject.registerClass({
             highlighterColor.toString = function() {
                 return this.to_string();
             };
-            
+
             // Use RECTANGLE shape with fill enabled for highlighting
             this.currentElement = new Elements.DrawingElement({
                 shape: Shape.RECTANGLE,
@@ -1020,26 +1020,26 @@ export const DrawingArea = GObject.registerClass({
                 fill: true,
                 fillRule: this.currentFillRule,
                 line: { lineWidth: 2,    // ← CHANGED: 2 instead of 0
-                        lineJoin: Cairo.LineJoin.ROUND, 
+                        lineJoin: Cairo.LineJoin.ROUND,
                         lineCap: Cairo.LineCap.ROUND },
                 dash: { active: false, array: [0, 0], offset: 0 },
                 points: []
             });
-            
+
             this.currentElement.startDrawing(startX, startY);
-            
+
             // Standard motion handler
             if (this.motionHandler) {
                 this.disconnect(this.motionHandler);
                 this.motionHandler = null;
             }
-            
+
             this.motionHandler = this.connect('motion-event', (actor, event) => {
                 let coords = event.get_coords();
                 let [s, x, y] = this._transformStagePoint(coords[0], coords[1]);
                 if (!s)
                     return;
-                
+
                 if (clickedDevice != (event.get_device ? event.get_device() : null) && clickedDevice != event.get_source_device())
                     return Clutter.EVENT_PROPAGATE;
 
@@ -1049,25 +1049,9 @@ export const DrawingArea = GObject.registerClass({
                 let controlPressed = event.has_control_modifier();
                 this._updateDrawing(x, y, controlPressed);
             });
-            
+
             return;
         }
-                
-        // } else if (this.currentTool == Shape.HIGHLIGHTER) {
-        //     // Highlighter uses yellow color with semi-transparency
-        //     let highlighterColor = HIGHLIGHTER_YELLOW.copy();
-        //     highlighterColor.alpha = 128; // 50% transparency
-            
-        //     this.currentElement = new Elements.DrawingElement({
-        //         shape: Shape.RECTANGLE,
-        //         color: highlighterColor,
-        //         eraser: false,
-        //         fill: true,  
-        //         line: { lineWidth: 2, lineJoin: this.currentLineJoin, lineCap: this.currentLineCap },
-        //         points: []
-        //     });
-
-            
         // End Highlighter section
 
         this.buttonReleasedHandler = this.connect('button-release-event', (actor, event) => {
@@ -1084,8 +1068,8 @@ export const DrawingArea = GObject.registerClass({
                 text: pgettext("text-area-content", "Text"),
                 textAlignment: this.currentTextAlignment,
                 points: []
-            });  
-                
+            });
+
         } else if (this.currentTool == Shape.IMAGE) {
             this.currentElement = new Elements.DrawingElement({
                 shape: this.currentTool,
@@ -1104,18 +1088,19 @@ export const DrawingArea = GObject.registerClass({
                 // alternative formula for larger gaps: * 2,6, * 2,6
                 dashArray = [dashLength, gapLength];
             }
-            
+
             this.currentElement = new Elements.DrawingElement({
+                arrowType: this.arrowType,
                 shape: this.currentTool,
                 color: this.currentColor,
                 eraser: shiftPressed,
                 fill: this.fill,
                 fillRule: this.currentFillRule,
-                line: { lineWidth: this.currentLineWidth, 
-                        lineJoin: this.currentLineJoin, 
+                line: { lineWidth: this.currentLineWidth,
+                        lineJoin: this.currentLineJoin,
                         lineCap: this.currentLineCap },
-                dash: { active: this.dashedLine, 
-                        array: dashArray, 
+                dash: { active: this.dashedLine,
+                        array: dashArray,
                         offset: this.dashOffset },
                 points: []
             });
@@ -1142,11 +1127,11 @@ export const DrawingArea = GObject.registerClass({
             let [s, x, y] = this._transformStagePoint(coords[0], coords[1]);
             if (!s)
                 return;
-            
+
             // To avoid painting due to the wrong device (2 cursors wayland support)
             //Modified for GNOME 46/47 support
             if (clickedDevice != (event.get_device ? event.get_device() : null) && clickedDevice != event.get_source_device())
-                return Clutter.EVENT_PROPAGATE;            
+                return Clutter.EVENT_PROPAGATE;
 
             if (this.spaceKeyPressed)
                 return;
@@ -1280,11 +1265,11 @@ export const DrawingArea = GObject.registerClass({
 
         this.currentElement = null;
         this._stopTextCursorTimeout();
-        
+
         // Store textEntry reference before destroying
         const textEntry = this.textEntry;
         delete this.textEntry;
-        
+
         // Defer focus grab to avoid GNOME Shell 48.3/48.4 crash
         // This ensures the text entry is fully destroyed before regaining focus
         GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
@@ -1298,15 +1283,15 @@ export const DrawingArea = GObject.registerClass({
             } catch (e) {
                 // Widget already destroyed or finalized, ignore
             }
-            
+
             // Only grab focus if the area is still reactive
             if (this.reactive) {
                 this.grab_key_focus();
             }
-            
+
             this.updatePointerCursor();
             this._redisplay();
-            
+
             return GLib.SOURCE_REMOVE;
         });
     }
@@ -1321,7 +1306,7 @@ export const DrawingArea = GObject.registerClass({
     //Modifying MOVE_OR_RESIZE_WINDOW, to MOVE, both now function. //check in future versions of GNOME.
     updatePointerCursor(controlPressed) {
         // Laser cursor handling
-        
+
         if (this.laserPointerActive) {
             this.setPointerCursor('CROSSHAIR');
             return;
@@ -1467,17 +1452,17 @@ export const DrawingArea = GObject.registerClass({
             this.gridLayer.remove_all_transitions();
             this.rulerLayer.remove_all_transitions();
             let visible = !this.gridLayer.visible;
-            
+
             this.gridLayer.visible = true;
             this.rulerLayer.visible = true;
-            
+
             this.gridLayer.ease({
                 opacity: visible ? 255 : 0,
                 duration: TOGGLE_ANIMATION_DURATION,
                 transition: Clutter.AnimationMode.EASE_IN_OUT_QUAD,
                 onStopped: () => this.gridLayer.visible = visible
             });
-            
+
             this.rulerLayer.ease({
                 opacity: visible ? 255 : 0,
                 duration: TOGGLE_ANIMATION_DURATION,
@@ -1530,44 +1515,62 @@ export const DrawingArea = GObject.registerClass({
             this.currentElement.color = this.currentColor;
             this._redisplay();
         }
-        
+
         // Use light background for Ctrl+9 (index 8) to make dark colors readable
         let osdBackground = (index === 8) ? '#deddda' : this.currentColor.to_string().slice(0, 7);
-        
+
         // Foreground color markup is not displayed since 3.36, use style instead but the transparency is lost.
         this.emit('show-osd', this._extension.FILES.ICONS.COLOR, String(this.currentColor), osdBackground, -1, false);
     }
 
     selectTool(tool) {
         this.currentTool = tool;
-        this.emit('show-osd', this._extension.FILES.ICONS[`TOOL_${Tool.getNameOf(tool)}`] || null, DisplayStrings.Tool[tool], "", -1, false);
+        let text = DisplayStrings.Tool[tool];
+
+        if(tool == Shape.ARROW) {
+            if(this.arrowType == ArrowType.FORWARD) text = text +_("(forward)");
+            if(this.arrowType == ArrowType.BACK) text = text + _("(back)");
+            if(this.arrowType == ArrowType.BOTH) text = text + _("(both sides)");
+            if(this.arrowType == ArrowType.NONE) text = text + _("(none)");
+        }
+
+        this.emit('show-osd', this._extension.FILES.ICONS[`TOOL_${Tool.getNameOf(tool)}`] || null, text, "", -1, false);
         this.updatePointerCursor();
+    }
+
+    selectArrowType() {
+        if(this.currentTool == Shape.ARROW) {
+            this.arrowType = (this.arrowType + 1) % 4;
+        }
+        else {
+            this.arrowType = ArrowType.FORWARD;
+        }
     }
 
     // Laser Control Methods
     startLaserPointer(x, y) {
         if (this.laserPointerActive)
             return;
-        
+
         this.laserPointerActive = true;
         this.laserPointerX = x;
         this.laserPointerY = y;
         this.laserTrailPoints = [[x, y]];
-        
+
         this.laserLayer.show();
         this.laserLayer.ease({
             opacity: 255,
             duration: 100,
             mode: Clutter.AnimationMode.EASE_OUT_QUAD
         });
-        
+
         this._startLaserAnimation();
         this.setPointerCursor('NONE');
-        
+
         if (!this._laserPointerShownOnce) {
             this._laserPointerShownOnce = true;
-            this.emit('show-osd', this._extension.FILES.ICONS.TOOL_ARROW, 
-                      _("Laser Pointer Active"), 
+            this.emit('show-osd', this._extension.FILES.ICONS.TOOL_ARROW,
+                      _("Laser Pointer Active"),
                       _("Release Shift to deactivate"), -1, true);
         }
     }
@@ -1575,22 +1578,22 @@ export const DrawingArea = GObject.registerClass({
     updateLaserPointer(x, y) {
         if (!this.laserPointerActive)
             return;
-        
+
         this.laserPointerX = x;
         this.laserPointerY = y;
-        
+
         this.laserTrailPoints.push([x, y]);
-        
+
         if (this.laserTrailPoints.length > this.laserTrailMaxLength) {
             this.laserTrailPoints.shift();
         }
-        
+
         // Clear any existing timeout
         if (this.laserTrailTimeoutId) {
             GLib.source_remove(this.laserTrailTimeoutId);
             this.laserTrailTimeoutId = null;
         }
-        
+
         // Set new timeout to clear trail after 100ms of no movement
         // Might need to lower this to 50 ms, need to test more...
         this.laserTrailTimeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
@@ -1614,16 +1617,16 @@ export const DrawingArea = GObject.registerClass({
     stopLaserPointer() {
         if (!this.laserPointerActive)
             return;
-        
+
         this.laserPointerActive = false;
         this._stopLaserAnimation();
-        
+
         // Clean up trail timeout - ADD THESE LINES
         if (this.laserTrailTimeoutId) {
             GLib.source_remove(this.laserTrailTimeoutId);
             this.laserTrailTimeoutId = null;
         }
-        
+
         this.laserLayer.ease({
             opacity: 0,
             duration: 200,
@@ -1633,14 +1636,14 @@ export const DrawingArea = GObject.registerClass({
                 this.laserTrailPoints = [];
             }
         });
-        
+
         this.updatePointerCursor();
     }
 
     _startLaserAnimation() {
         if (this.laserAnimationTimeoutId)
             return;
-        
+
         this.laserAnimationTimeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 16, () => {
             if (this.laserPointerActive) {
                 this.laserLayer.queue_repaint();
@@ -1676,17 +1679,17 @@ export const DrawingArea = GObject.registerClass({
         // Find current palette by name (not reference) since palette may come from saved config
         let currentPaletteName = this.currentPalette[0];
         let index = this.palettes.findIndex(p => p[0] === currentPaletteName);
-        
+
         // If not found, default to first palette
         if (index === -1) {
             index = 0;
         }
-        
+
         if (reverse)
             this.currentPalette = index <= 0 ? this.palettes[this.palettes.length - 1] : this.palettes[index - 1];
         else
             this.currentPalette = index == this.palettes.length - 1 ? this.palettes[0] : this.palettes[index + 1];
-        
+
         // Preserve the color index when switching palettes
         // If we had a color selected (e.g. Ctrl+1), select the same index in the new palette
         if (this.currentColorIndex !== undefined && this.colors[this.currentColorIndex]) {
@@ -1697,12 +1700,12 @@ export const DrawingArea = GObject.registerClass({
                 this._redisplay();
             }
         }
-        
+
         this.emit('show-osd', this._extension.FILES.ICONS.PALETTE, this.currentPalette[0], "", -1, false);
     }
 
     switchDash() {
-        this.dashedLine = !this.dashedLine;        
+        this.dashedLine = !this.dashedLine;
         let icon = this._extension.FILES.ICONS[this.dashedLine ? 'DASHED_LINE' : 'FULL_LINE'];
         this.emit('show-osd', icon, DisplayStrings.getDashedLine(this.dashedLine), "", -1, false);
     }
@@ -1902,13 +1905,13 @@ export const DrawingArea = GObject.registerClass({
         // Update ruler mouse position tracking
         let coords = event.get_coords();
         let [success, x, y] = this._transformStagePoint(coords[0], coords[1]);
-        
+
         if (success && this.hasGrid && this.rulerLayer.visible) {
             this.rulerMouseX = x;
             this.rulerMouseY = y;
             this.rulerLayer.queue_repaint();
         }
-        
+
         if (this.currentTool == Shape.LASER) {
             if (success) {
                 if (!this.laserPointerActive) {
@@ -1919,7 +1922,7 @@ export const DrawingArea = GObject.registerClass({
                 return Clutter.EVENT_STOP;
             }
         }
-        
+
         return Clutter.EVENT_PROPAGATE;
     }
 
@@ -1939,7 +1942,7 @@ export const DrawingArea = GObject.registerClass({
             this.laserTrailTimeoutId = null;
         }
         this.laserLayer = null;
-        
+
         // Clean up rulers
         this.rulerLayer = null;
         // End laser pointer cleanup
@@ -1949,7 +1952,7 @@ export const DrawingArea = GObject.registerClass({
         if (this._menu)
             this._menu.disable();
         delete this.areaManagerUtils;
-        
+
         super.destroy();
     }
 
@@ -1958,10 +1961,10 @@ export const DrawingArea = GObject.registerClass({
         this.buttonPressedHandler = this.connect('button-press-event', this._onButtonPressed.bind(this));
         this.keyboardPopupMenuHandler = this.connect('popup-menu', this._onKeyboardPopupMenu.bind(this));
         this.scrollHandler = this.connect('scroll-event', this._onScroll.bind(this));
-        
+
         // Add dedicated motion handler for laser pointer
         this.laserMotionHandler = this.connect('motion-event', this._onLaserMotion.bind(this));
-        
+
         this.set_background_color(this.reactive && this.hasBackground ? this.areaBackgroundColor : null);
     }
 
@@ -2119,6 +2122,7 @@ export const DrawingArea = GObject.registerClass({
                 object.font = Pango.FontDescription.from_string(object.font);
             if (object.image)
                 object.image = new Image(object.image);
+            if(!object.arrowType) object.arrowType=ArrowType.FORWARD;
             return new Elements.DrawingElement(object);
         }));
 
@@ -2174,7 +2178,7 @@ export const DrawingArea = GObject.registerClass({
             }
             return string;
         }
-        
+
         // Handle null/undefined/non-string
         if (!string || typeof string !== 'string') {
             let color = StaticColor[(fallback || 'White').toUpperCase()];
@@ -2183,11 +2187,11 @@ export const DrawingArea = GObject.registerClass({
             color.toString = () => fallback || 'White';
             return color;
         }
-        
+
         // Original string handling - Now supports rgba() format with alpha
         let [colorString, displayName] = string.split(':');
         let [success, color] = Color.from_string(colorString);
-        
+
         if (success) {
             color.toJSON = () => colorString;
             color.toString = () => displayName || colorString;

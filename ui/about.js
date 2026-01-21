@@ -17,7 +17,7 @@
  *
  * SPDX-FileCopyrightText: 2024 Dave Prowse
  * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileContributor: Modified by Dave Prowse 
+ * SPDX-FileContributor: Modified by Dave Prowse
  */
 
 /* eslint version: 9.16 (2024) */

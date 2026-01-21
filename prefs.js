@@ -18,7 +18,7 @@
  *
  * SPDX-FileCopyrightText: 2022 zhrexl
  * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileContributor: Modified by Dave Prowse 
+ * SPDX-FileContributor: Modified by Dave Prowse
  */
 
 /* eslint version: 9.16 (2024) */
@@ -32,25 +32,25 @@ import AboutPage from './ui/about.js';
 export default class DrawOnGnomeExtensionPreferences extends ExtensionPreferences {
 
     constructor(metadata) {
-        super(metadata);        
+        super(metadata);
     }
-    
-    // !!! These are the changes for E.G.O. as per their issue #3 (11/3/2025 review). 
-    // They negate the changes made for issue #2 by using "window" instead of "this". 
+
+    // !!! These are the changes for E.G.O. as per their issue #3 (11/3/2025 review).
+    // They negate the changes made for issue #2 by using "window" instead of "this".
     // REMOVE these getter methods (lines 45, 53, 61 in your file):
     // get settings() { ... }
     // get internalShortcutSettings() { ... }
     // get drawingSettings() { ... }
-    // 
+    //
     // Don't store settings as properties on THIS class (the exported one)
-    
+
     fillPreferencesWindow(window) {
         // Store settings on the WINDOW object instead of on this class
         // This satisfies both fix #2 (use _settings.get_child) and fix #3 (don't store on exported class)
         window._settings = this.getSettings();
         window._internalShortcutSettings = window._settings.get_child('internal-shortcuts');
         window._drawingSettings = window._settings.get_child('drawing');
-        
+
         window.search_enabled = true;
 
         let page1 = new PreferencesPage(this, window);
@@ -60,7 +60,7 @@ export default class DrawOnGnomeExtensionPreferences extends ExtensionPreference
         window.add(page1);
         window.add(page2);
         window.add(page3);
-        
+
         // Clean up when window closes to allow garbage collection
         window.connect('close-request', () => {
             delete window._settings;
