@@ -1528,10 +1528,10 @@ export const DrawingArea = GObject.registerClass({
         let text = DisplayStrings.Tool[tool];
 
         if(tool == Shape.ARROW) {
-            if(this.arrowType == ArrowType.FORWARD) text = text +_("(forward)");
-            if(this.arrowType == ArrowType.BACK) text = text + _("(back)");
-            if(this.arrowType == ArrowType.BOTH) text = text + _("(both sides)");
-            if(this.arrowType == ArrowType.NONE) text = text + _("(none)");
+            if(this.arrowType == ArrowType.FORWARD) text = text +".->";
+            if(this.arrowType == ArrowType.BACK) text = text + ".<-";
+            if(this.arrowType == ArrowType.BOTH) text = text + "<->";
+            if(this.arrowType == ArrowType.INVERSE) text = text + ">-<";
         }
 
         this.emit('show-osd', this._extension.FILES.ICONS[`TOOL_${Tool.getNameOf(tool)}`] || null, text, "", -1, false);
@@ -1744,7 +1744,8 @@ export const DrawingArea = GObject.registerClass({
             this.currentElement.font.set_style(this.currentFontStyle);
             this._redisplay();
         }
-        this.emit('show-osd', this._extension.FILES.ICONS.FONT_STYLE, `<span font_style="${DisplayStrings.FontStyleMarkup[this.currentFontStyle]}">` +
+        this.emit('show-osd', this._extension.FILES.ICONS.FONT_STYLE,
+            `<span font_style="${DisplayStrings.FontStyleMarkup[this.currentFontStyle]}">` +
             `${DisplayStrings.FontStyle[this.currentFontStyle]}</span>`, "", -1, false);
     }
 
@@ -1758,7 +1759,9 @@ export const DrawingArea = GObject.registerClass({
             this.currentElement.font.set_family(this.currentFontFamily);
             this._redisplay();
         }
-        this.emit('show-osd', this._extension.FILES.ICONS.FONT_FAMILY, `<span font_family="${this.currentFontFamily}">${DisplayStrings.getFontFamily(this.currentFontFamily)}</span>`, "", -1, false);
+        this.emit('show-osd', this._extension.FILES.ICONS.FONT_FAMILY,
+            `<span font_family="${this.currentFontFamily}">${DisplayStrings.getFontFamily(this.currentFontFamily)}</span>`,
+            "", -1, false);
     }
 
     switchTextAlignment() {
@@ -1796,7 +1799,8 @@ export const DrawingArea = GObject.registerClass({
             this.currentElement.color = this.currentColor;
             this._redisplay();
         }
-        this.emit('show-osd', this._extension.FILES.ICONS.COLOR, String(this.currentColor), this.currentColor.to_string().slice(0, 7), -1, false);
+        this.emit('show-osd', this._extension.FILES.ICONS.COLOR, String(this.currentColor),
+            this.currentColor.to_string().slice(0, 7), -1, false);
         this.initPointerCursor();
 
         if (this._extension.settings.get_boolean("copy-picked-hex")) {

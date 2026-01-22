@@ -9,9 +9,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Draw On GNOME\n"
-"POT-Creation-Date: 2026-01-19 19:09+0100\n"
-"PO-Revision-Date: 2026-01-21 14:19+0100\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2026-01-22 20:22+0100\n"
+"PO-Revision-Date: 2026-01-22 20:24+0100\n"
+"Last-Translator: Albert Bartoszko\n"
 "Language-Team: \n"
 "Language: pl_PL\n"
 "MIME-Version: 1.0\n"
@@ -57,22 +57,6 @@ msgstr ""
 "Naciśnij  <i>%s</i>\n"
 "aby zacząć nową linię"
 
-#: area.js:1531
-msgid "(forward)"
-msgstr "( w przód)"
-
-#: area.js:1532
-msgid "(back)"
-msgstr "(w tył)"
-
-#: area.js:1533
-msgid "(both sides)"
-msgstr "(dwustronna)"
-
-#: area.js:1534
-msgid "(none)"
-msgstr "(linia)"
-
 #: area.js:1573
 msgid "Laser Pointer Active"
 msgstr "Laser aktywny"
@@ -81,7 +65,7 @@ msgstr "Laser aktywny"
 msgid "Release Shift to deactivate"
 msgstr "Puść Shift aby deaktywować"
 
-#: area.js:1813
+#: area.js:1817
 msgctxt "osd-notification"
 msgid "Pick a color"
 msgstr "Wybierz kolor"
@@ -938,6 +922,18 @@ msgstr "Kliknij tu aby stworzyć nowy skrót...."
 #: ui/preferencespage.js:158
 msgid "Press the new shortcut..."
 msgstr "Naciśnij nowy skrót…"
+
+#~ msgid "(forward)"
+#~ msgstr "( w przód)"
+
+#~ msgid "(back)"
+#~ msgstr " (w tył)"
+
+#~ msgid "(both sides)"
+#~ msgstr " (dwustronna)"
+
+#~ msgid "(none)"
+#~ msgstr "(linia)"
 
 #~ msgid "Preferences"
 #~ msgstr "Preferencje"

@@ -48,7 +48,7 @@ export const StaticColor = {
 
 export const Shape = { NONE: 0, LINE: 1, ELLIPSE: 2, RECTANGLE: 3, TEXT: 4, POLYGON: 5, POLYLINE: 6, IMAGE: 7, ARROW: 8, LASER: 9, HIGHLIGHTER: 10 };
 export const TextAlignment = { LEFT: 0, CENTER: 1, RIGHT: 2 };
-export const ArrowType = { NONE: 0, FORWARD: 1, BACK: 2, BOTH: 3 };
+export const ArrowType = { INVERSE: 0, FORWARD: 1, BACK: 2, BOTH: 3 };
 export const Transformation = { TRANSLATION: 0, ROTATION: 1, SCALE_PRESERVE: 2, STRETCH: 3, REFLECTION: 4, INVERSION: 5, SMOOTH: 100 };
 
 export const getAllFontFamilies = function() {
@@ -301,12 +301,18 @@ const _DrawingElement = GObject.registerClass({
             if((arrowType == ArrowType.BOTH) || (arrowType == ArrowType.BACK)) {
                 drawArrowHead(cr, points[0], angle, -arrowSize);
             }
+            else if (arrowType == ArrowType.INVERSE) {
+                drawArrowHead(cr, points[0], angle + Math.PI, -arrowSize);
+            }
             // Draw the main line
             cr.moveTo(points[0][0], points[0][1]);
             cr.lineTo(points[1][0], points[1][1]);
 
             if((arrowType == ArrowType.BOTH) || (arrowType == ArrowType.FORWARD)) {
                 drawArrowHead(cr, points[1], angle, arrowSize);
+            }
+            else if (arrowType == ArrowType.INVERSE) {
+                drawArrowHead(cr, points[1], angle + Math.PI, arrowSize);
             }
 
         // Laser Method
@@ -519,21 +525,21 @@ const _DrawingElement = GObject.registerClass({
         } else if (this.shape == Shape.ARROW && points.length >= 2) {
             let angle = Math.atan2(points[1][1] - points[0][1], points[1][0] - points[0][0]);
             let arrowSize = this.line.lineWidth * 5; // Should match the Cairo version
-            let aPi6 = Math.PI/6;
             row += `<path ${attributes} d="M${points[0][0]},${points[0][1]} `;
             row += `L${points[1][0]},${points[1][1]} `;
 
-            if((this.arrowType == ArrowType.BOTH) || (this.arrowType == ArrowType.FORWARD)) {
-                row += `M${points[1][0]},${points[1][1]} `;
-                row += `L${points[1][0] - arrowSize * Math.cos(angle - aPi6)},${points[1][1] - arrowSize * Math.sin(angle - aPi6)} `;
-                row += `M${points[1][0]},${points[1][1]} `;
-                row += `L${points[1][0] - arrowSize * Math.cos(angle + aPi6)},${points[1][1] - arrowSize * Math.sin(angle + aPi6)}`;
-            }
             if((this.arrowType == ArrowType.BOTH) || (this.arrowType == ArrowType.BACK)) {
-                row += `M${points[0][0]},${points[1][1]} `;
-                row += `L${points[0][0] + arrowSize * Math.cos(angle - aPi6)},${points[0][1] + arrowSize * Math.sin(angle - aPi6)} `;
-                row += `M${points[0][0]},${points[0][1]} `;
-                row += `L${points[0][0] + arrowSize * Math.cos(angle + aPi6)},${points[0][1] + arrowSize * Math.sin(angle + aPi6)}`;
+                row += svgArrowHead(points[0], angle, -arrowSize);
+            }
+            else if(this.arrowType == ArrowType.INVERSE) {
+                row += svgArrowHead(points[0], angle + Math.PI, -arrowSize);
+            }
+ 
+            if((this.arrowType == ArrowType.BOTH) || (this.arrowType == ArrowType.FORWARD)) {
+                row += svgArrowHead(points[1], angle, arrowSize);
+            }
+            else if(this.arrowType == ArrowType.INVERSE) {
+                row += svgArrowHead(points[1], angle + Math.PI, arrowSize);
             }
             row += `${transAttribute}"/>`;
         // Laser portion
@@ -1245,9 +1251,8 @@ const getAngle = function(xO, yO, xA, yA, xB, yB) {
     return angle;
 };
 
+// Draw arrowhead
 function drawArrowHead(cr, point, angle, arrowSize) {
-            // Draw arrowhead
-
             cr.moveTo(point[0], point[1]);
             cr.lineTo(point[0] - arrowSize * Math.cos(angle - Math.PI/6),
                     point[1] - arrowSize * Math.sin(angle - Math.PI/6));
@@ -1255,3 +1260,14 @@ function drawArrowHead(cr, point, angle, arrowSize) {
             cr.lineTo(point[0] - arrowSize * Math.cos(angle + Math.PI/6),
                     point[1] - arrowSize * Math.sin(angle + Math.PI/6));
 }
+
+function svgArrowHead(point, angle, arrowSize) {
+    let aPi6 = Math.PI/6;
+    let  row = `M${point[0]},${point[1]} `;
+
+    row += `L${point[0] - arrowSize * Math.cos(angle - aPi6)},${point[1] - arrowSize * Math.sin(angle - aPi6)} `;
+    row += `M${point[0]},${point[1]} `;
+    row += `L${point[0] - arrowSize * Math.cos(angle + aPi6)},${point[1] - arrowSize * Math.sin(angle + aPi6)}`;
+    return row;
+}
+
