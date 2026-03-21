@@ -39,10 +39,10 @@ const ROWBOX_MARGIN_PARAMS = { margin_top: MARGIN / 2, margin_bottom: MARGIN / 2
 const DrawingPage = GObject.registerClass({
     GTypeName: `${UUID}-Drawing`
 }, class DrawingPage extends Adw.PreferencesPage {
-    
+
     constructor(extensionPreferences, window) {
         super({});
-        
+
         this.window = window;
         this.set_title("Drawing Page");
         this.set_name('drawing');
@@ -50,11 +50,11 @@ const DrawingPage = GObject.registerClass({
 
         // Use cached drawingSettings from extensionPreferences
         this.settings = window._drawingSettings;
-        
+
         this.schema = this.settings.settings_schema;
-    
+
         this.palettes = this.settings.get_value('palettes').deep_unpack();
-        
+
         // New constructor code above, below is the same
         this.palettes_adw_group = Adw.PreferencesGroup.new()
         this.palettes_adw_group.set_title(_("Palettes"));
@@ -76,11 +76,11 @@ const DrawingPage = GObject.registerClass({
         this.PalettesActionRow.add_suffix(addButton);
         this.PalettesActionRow.add_suffix(importButton);
         this.palettes_adw_group.add(this.PalettesActionRow);
-                
+
         this.nPalettes = [];
         this.settings.connect('changed::palettes', this._updatePalettes.bind(this));
         this._updatePalettes();
-  
+
         /* Area Group */
         let adw_groupArea = Adw.PreferencesGroup.new()
         adw_groupArea.set_title(_("Area"));
@@ -238,21 +238,21 @@ const DrawingPage = GObject.registerClass({
         /*TODO: I Should probably reutilize these widgets instead of just removing it */
         this.nPalettes.forEach((actionrow) => {
           if (actionrow){
-            this.palettes_adw_group.remove(actionrow);            
+            this.palettes_adw_group.remove(actionrow);
           }
         });
         this.nPalettes = [];
-        
+
         this.palettes.forEach((palette,index) => {
           let tmpAction = Adw.ActionRow.new();
           tmpAction.set_title(palette[0]);
           this.nPalettes.push(tmpAction);
-          
+
           let EditButton   = Gtk.Button.new_from_icon_name('edit-symbolic');
           EditButton.set_tooltip_text(_("Edit this palette colors"));
           EditButton.valign = Gtk.Align.CENTER;
           EditButton.connect('clicked', () => {this._editPalette(palette, index)});
-          
+
           let RemoveButton = Gtk.Button.new_from_icon_name('edit-delete-symbolic');
           RemoveButton.set_tooltip_text(_("Remove this palette"));
           RemoveButton.valign = Gtk.Align.CENTER;
@@ -260,13 +260,13 @@ const DrawingPage = GObject.registerClass({
             this.palettes.splice(index,1);
             this._savePalettes();
           });
-          
+
           tmpAction.add_suffix(EditButton);
           tmpAction.add_suffix(RemoveButton);
-          
+
           this.palettes_adw_group.add(this.nPalettes[index]);
         });
-        
+
     }
 
     _savePalettes() {
@@ -320,7 +320,7 @@ const DrawingPage = GObject.registerClass({
     }
     _editPalette(palette, index)
     {
-      let modal = new Gtk.Dialog({ 
+      let modal = new Gtk.Dialog({
         default_height: 400,
         default_width: 500,
         modal: true,
@@ -328,7 +328,7 @@ const DrawingPage = GObject.registerClass({
         title: 'Editing ' + palette[0] + ' palette',
         use_header_bar: true
         });
-    
+
       let contentArea = modal.get_content_area();
       let preferencesPage = Adw.PreferencesPage.new();
       let editor_palettes_group = Adw.PreferencesGroup.new()
@@ -337,40 +337,40 @@ const DrawingPage = GObject.registerClass({
       let PalettesNameActionRow = Adw.ActionRow.new();
       PalettesNameActionRow.set_title(_("Name"));
       let EntryName = Gtk.EditableLabel.new(palette[0]);
-      
+
       EntryName.connect('changed', () => {
         this._onPaletteNameChanged(index, EntryName.get_text());
       });
-      
+
       EntryName.set_alignment(1);
       PalettesNameActionRow.add_suffix(EntryName);
       editor_palettes_group.add(PalettesNameActionRow);
-      
+
       palette[1].forEach((color, colorindex)=>{
         let pActionRow = Adw.ActionRow.new();
         let [cname, title] = color.split(":");
-        
+
         let colortitle = Gtk.EditableLabel.new(title || cname);
         colortitle.connect('changed', () => {
           this.palettes[index][1][colorindex] = cname+':'+colortitle.get_text();
           this._savePalettes();
         });
-        
+
         pActionRow.add_prefix(colortitle);
         let colorEntry = new ColorStringButton({ use_alpha: true, show_editor: true,
                                                 name: cname,
                                                 tooltip_text: title || cname});
-        colorEntry.color_string = cname; 
+        colorEntry.color_string = cname;
         colorEntry.valign = Gtk.Align.CENTER;
         colorEntry.connect('notify::color-string', () => {
           this._onPaletteColorChanged(index,colorindex, colorEntry);
         });
 
-        
+
         pActionRow.add_suffix(colorEntry);
         editor_palettes_group.add(pActionRow);
       });
-    
+
       preferencesPage.add(editor_palettes_group);
       contentArea.append(preferencesPage);
       modal.show();

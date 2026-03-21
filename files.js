@@ -201,7 +201,7 @@ class Images {
     }
 
     addImagesFromClipboard(callback) {
-        // The following clipboard access only occurs when the user EXPLICITLY presses Ctrl+V to paste an image. It is not accessed silently by the extension.         
+        // The following clipboard access only occurs when the user EXPLICITLY presses Ctrl+V to paste an image. It is not accessed silently by the extension.
         St.Clipboard.get_default().get_text(St.ClipboardType.CLIPBOARD, (clipboard, text) => {
             console.debug(`DEBUG CLIPBOARD: text="${text}"`);
             if (!text) {
@@ -459,34 +459,34 @@ export const Image = GObject.registerClass({
     setCairoSource(cr, x, y, width, height, preserveAspectRatio, color) {
         let tempPath = null;
         try {
-                        
+
             // Get the appropriately scaled pixbuf
-            let pixbuf = preserveAspectRatio 
+            let pixbuf = preserveAspectRatio
                 ? this.getPixbufAtScale(width, height, color)
                 : this.getPixbuf(color).scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR);
-            
+
             // Save pixbuf to temporary PNG file
-            tempPath = `/tmp/drawon-image-${Date.now()}-${Math.random().toString(36).substring(7)}.png`;            
-            
-            pixbuf.savev(tempPath, 'png', [], []);            
-            
+            tempPath = `/tmp/drawon-image-${Date.now()}-${Math.random().toString(36).substring(7)}.png`;
+
+            pixbuf.savev(tempPath, 'png', [], []);
+
             // Check if file exists
             let file = Gio.File.new_for_path(tempPath);
             if (!file.query_exists(null)) {
                 throw new Error('Temp file was not created');
-            }            
-            
-            // Load PNG as Cairo surface            
-            let surface = Cairo.ImageSurface.createFromPNG(tempPath);            
-            
+            }
+
+            // Load PNG as Cairo surface
+            let surface = Cairo.ImageSurface.createFromPNG(tempPath);
+
             // Paint the surface to the provided Cairo context
             cr.save();
             cr.translate(x, y);
             cr.setSourceSurface(surface, 0, 0);
             cr.paint();
             cr.restore();
-            
-        } catch (e) {         
+
+        } catch (e) {
             // Fallback: draw red rectangle to show where image should be
             cr.save();
             cr.setSourceRGB(1, 0, 0);

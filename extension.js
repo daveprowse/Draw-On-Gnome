@@ -2,7 +2,7 @@
  * Copyright 2019 Abakkk
  * Copyright 2023 zhrexl
  * Copyright 2024 Dave Prowse
- 
+
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -54,22 +54,22 @@ const Indicator = GObject.registerClass(
 class Indicator extends SystemIndicator {
     _init(extension) {
         super._init();
-        
+
         this._extension = extension;
 
         this.toggle = new FeatureToggle();
         this.quickSettingsItems.push(this.toggle);
         this._addIndicator();
-        
+
         this.connect('destroy', () => {
             this.quickSettingsItems.forEach(item => item.destroy());
         });
     }
-    
+
     get_toggle() {
         return this.toggle;
     }
-    
+
     // Connect the toggle to the extension's drawing functionality
     connectToExtension(toggleDrawingCallback) {
         this.toggle.connect('clicked', toggleDrawingCallback);
@@ -86,23 +86,23 @@ export default class DrawOnGnomeExtension extends Extension {
 
     enable() {
         console.debug(`enabling ${this.metadata.name} version ${this.metadata.version}`);
-        
+
         this.settings = this.getSettings();
         this.internalShortcutSettings = this.getSettings(this.metadata['settings-schema'] + '.internal-shortcuts');
         this.drawingSettings = this.getSettings(this.metadata['settings-schema'] + '.drawing');
-        
+
         // CRITICAL: Initialize FILES before AreaManager to avoid race condition
         // AreaManager creates DrawingAreas which may try to load persistent data
         this.FILES = new Files(this);
-        
+
         this.areaManager = new AreaManager.AreaManager(this);
         this.areaManager.enable();
-        
+
         // Create indicator if GNOME version supports it and setting allows it
         this._updateIndicator();
-        
+
         // Watch for settings changes
-        this._settingsChangedId = this.settings.connect('changed::quicktoggle-disabled', 
+        this._settingsChangedId = this.settings.connect('changed::quicktoggle-disabled',
             this._updateIndicator.bind(this));
     }
 
@@ -112,13 +112,13 @@ export default class DrawOnGnomeExtension extends Extension {
             this.settings.disconnect(this._settingsChangedId);
             this._settingsChangedId = null;
         }
-        
+
         // Destroy indicator if it exists
         if (this.indicator) {
             this.indicator.destroy();
             this.indicator = null;
         }
-        
+
         this.areaManager.disable();
         delete this.areaManager;
         delete this.settings;
@@ -134,9 +134,9 @@ export default class DrawOnGnomeExtension extends Extension {
         if (SHELL_MAJOR_VERSION < 44) {
             return;
         }
-        
+
         const quicktoggleDisabled = this.settings.get_boolean('quicktoggle-disabled');
-        
+
         if (quicktoggleDisabled && this.indicator) {
             // Setting says disabled, but we have an indicator - destroy it
             this.indicator.destroy();

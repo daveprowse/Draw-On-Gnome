@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Abakkk 
+ * Copyright 2019 Abakkk
  * Copyright 2024 Dave Prowse
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,15 +46,15 @@ export class AreaManager {
 
     constructor(extension) {
     this._extension = extension;
-    
+
     // Store references to settings instances from extension
     this._settings = extension.settings;
     this._internalShortcutSettings = extension.internalShortcutSettings;
     this._drawingSettings = extension.drawingSettings;
-    
+
     this._SHELL_MAJOR_VERSION = SHELL_MAJOR_VERSION;
     this._HIDE_TIMEOUT_LONG = 2500;
-    
+
     this._DRAWING_ACTION_MODE = Math.pow(2,14);
     this._WRITING_ACTION_MODE = Math.pow(2,15);
     this._WARNING_COLOR_STYLE_CLASS_NAME = 'login-dialog-message-warning';
@@ -64,80 +64,80 @@ export class AreaManager {
         this.areas = [];
         this.activeArea = null;
         this.grab = null;
-        
+
         Main.wm.addKeybinding('toggle-drawing',
                               this._settings,
                               Meta.KeyBindingFlags.NONE,
                               Shell.ActionMode.ALL,
                               this.toggleDrawing.bind(this));
-        
+
         Main.wm.addKeybinding('toggle-modal',
                               this._settings,
                               Meta.KeyBindingFlags.NONE,
                               Shell.ActionMode.ALL,
                               this.toggleModal.bind(this));
-        
+
         Main.wm.addKeybinding('erase-drawings',
                               this._settings,
                               Meta.KeyBindingFlags.NONE,
                               Shell.ActionMode.ALL,
                               this.eraseDrawings.bind(this));
-        
+
         this.updateAreas();
         this.monitorChangedHandler = Main.layoutManager.connect('monitors-changed', this.updateAreas.bind(this));
-        
+
         this.updateIndicator();
         this.indicatorSettingHandler = this._settings.connect('changed::indicator-disabled', this.updateIndicator.bind(this));
-        
+
         this.desktopSettingHandler = this._settings.connect('changed::drawing-on-desktop', this.onDesktopSettingChanged.bind(this));
         this.persistentOverRestartsSettingHandler = this._settings.connect('changed::persistent-over-restarts', this.onPersistentOverRestartsSettingChanged.bind(this));
         this.persistentOverTogglesSettingHandler = this._settings.connect('changed::persistent-over-toggles', this.onPersistentOverTogglesSettingChanged.bind(this));
     }
-    
+
     get persistentOverToggles() {
         return this._settings.get_boolean('persistent-over-toggles');
     }
-    
+
     get persistentOverRestarts() {
         return this._settings.get_boolean('persistent-over-toggles') && this._settings.get_boolean('persistent-over-restarts');
     }
-    
+
     get onDesktop() {
         return this._settings.get_boolean('persistent-over-toggles') && this._settings.get_boolean('drawing-on-desktop');
     }
-    
+
     get toolPalette() {
         return this._extension.getSettings(this._extension.metadata['settings-schema'] + '.drawing').get_value('tool-palette').deep_unpack()
     }
-    
+
     get toolColor() {
         return this._extension.getSettings(this._extension.metadata['settings-schema'] + '.drawing').get_string("tool-color")
     }
-    
+
     get toolSize() {
         return this._extension.getSettings(this._extension.metadata['settings-schema'] + '.drawing').get_int('tool-size');
     }
-    
+
     onDesktopSettingChanged() {
         if (this.onDesktop)
             this.areas.forEach(area => area.show());
         else
             this.areas.forEach(area => area.hide());
     }
-    
+
     onPersistentOverRestartsSettingChanged() {
         if (this.persistentOverRestarts)
             this.areas[Main.layoutManager.primaryIndex].syncPersistent();
     }
-    
+
     onPersistentOverTogglesSettingChanged() {
         if (!this.persistentOverToggles && !this.activeArea)
             this.eraseDrawings();
-            
+
         this.onPersistentOverRestartsSettingChanged();
         this.onDesktopSettingChanged();
     }
-    
+
     updateIndicator() {
         if (this.indicator) {
             this.indicator.disable();
@@ -148,20 +148,20 @@ export class AreaManager {
             this.indicator.enable();
         }
     }
-    
+
     updateAreas() {
         if (this.activeArea)
             this.toggleDrawing();
         this.removeAreas();
-        
+
         this.monitors = Main.layoutManager.monitors;
-        
+
         let toolConf = {
             "toolPalette" : this.toolPalette,
             "toolColor" : this.toolColor,
             "toolSize" : this.toolSize
         };
-        
+
         for (let i = 0; i < this.monitors.length; i++) {
             let monitor = this.monitors[i];
             let helper = new Helper.DrawingHelper(this._extension, { name: 'drawOnGnomeHelper' + i }, monitor);
@@ -173,11 +173,11 @@ export class AreaManager {
                 openPreferences: this.openPreferences.bind(this)
             };
             let area = new Area.DrawingArea(this._extension, { name: 'drawOnGnomeArea' + i }, monitor, helper, areaManagerUtils, loadPersistent, toolConf);
-            
+
             Main.layoutManager._backgroundGroup.insert_child_above(area, Main.layoutManager._bgManagers[i].backgroundActor);
             if (!this.onDesktop)
                 area.hide();
-            
+
             area.set_position(monitor.x, monitor.y);
             area.set_size(monitor.width, monitor.height);
             area.leaveDrawingHandler = area.connect('leave-drawing-mode', this.toggleDrawing.bind(this));
@@ -186,7 +186,7 @@ export class AreaManager {
             this.areas.push(area);
         }
     }
-    
+
     addInternalKeybindings() {
         // unavailable when writing
         this.internalKeybindings1 = {
@@ -208,7 +208,10 @@ export class AreaManager {
             'switch-image-file-reverse' : this.activeArea.switchImageFile.bind(this.activeArea, true),
             'select-none-shape': () => this.activeArea.selectTool(Area.Tool.NONE),
             'select-line-shape': () => this.activeArea.selectTool(Area.Tool.LINE),
-            'select-arrow-shape': () => this.activeArea.selectTool(Area.Tool.ARROW),
+            'select-arrow-shape': () => {
+                this.activeArea.selectArrowType();
+                this.activeArea.selectTool(Area.Tool.ARROW);
+            },
             'select-laser-shape': () => {
                 if (this.activeArea.currentTool === Area.Tool.LASER) {
                     this.activeArea.stopLaserPointer();
@@ -228,9 +231,9 @@ export class AreaManager {
             'select-resize-tool': () => this.activeArea.selectTool(Area.Tool.RESIZE),
             'select-mirror-tool': () => this.activeArea.selectTool(Area.Tool.MIRROR)
         };
-        
+
         // available when writing
-        this.internalKeybindings2 = {            
+        this.internalKeybindings2 = {
             'export-to-svg': this.activeArea.exportToSvg.bind(this.activeArea),
             'save-as-json': this.activeArea.saveAsJson.bind(this.activeArea, true, null),
             'open-previous-json': this.activeArea.loadPreviousJson.bind(this.activeArea),
@@ -250,7 +253,7 @@ export class AreaManager {
             'toggle-help': this.activeArea.toggleHelp.bind(this.activeArea),
             'open-preferences': this.openPreferences.bind(this)
         };
-        
+
         for (let key in this.internalKeybindings1) {
             Main.wm.addKeybinding(key,
                                   this._extension.getSettings(this._extension.metadata['settings-schema'] + '.internal-shortcuts'),
@@ -258,7 +261,7 @@ export class AreaManager {
                                   this._DRAWING_ACTION_MODE,
                                   this.internalKeybindings1[key]);
         }
-        
+
         for (let key in this.internalKeybindings2) {
             Main.wm.addKeybinding(key,
                                   this._extension.getSettings(this._extension.metadata['settings-schema'] + '.internal-shortcuts'),
@@ -266,7 +269,7 @@ export class AreaManager {
                                   this._DRAWING_ACTION_MODE | this._WRITING_ACTION_MODE,
                                   this.internalKeybindings2[key]);
         }
-        
+
         for (let i = 1; i < 10; i++) {
             let iCaptured = i;
             Main.wm.addKeybinding('select-color' + i,
@@ -276,37 +279,37 @@ export class AreaManager {
                                   this.activeArea.selectColor.bind(this.activeArea, iCaptured - 1));
         }
     }
-    
+
     removeInternalKeybindings() {
         for (let key in this.internalKeybindings1)
             Main.wm.removeKeybinding(key);
-        
+
         for (let key in this.internalKeybindings2)
             Main.wm.removeKeybinding(key);
-        
+
         for (let i = 1; i < 10; i++)
             Main.wm.removeKeybinding('select-color' + i);
     }
-    
+
     openPreferences() {
         if (this.activeArea)
             this.toggleDrawing();
         this._extension.openPreferences();
     }
-    
+
     eraseDrawings() {
         this.areas.forEach(area => area.erase());
         if (this.persistentOverRestarts)
             this.areas[Main.layoutManager.primaryIndex].savePersistent();
     }
-    
+
     togglePanelAndDockOpacity() {
         if (this.hiddenList) {
             this.hiddenList.forEach(item => item.actor.set_opacity(item.oldOpacity));
             this.hiddenList = null;
         } else {
             let activeIndex = this.areas.indexOf(this.activeArea);
-            
+
             // dash-to-dock - disabled (user doesn't want dash hidden)
             let dtdContainers = [];
             // OLD CODE (kept as comment for reference):
@@ -317,7 +320,7 @@ export class AreaManager {
             //             (actor._monitorIndex !== undefined &&
             //              actor._monitorIndex == activeIndex));
             // });
-            
+
             // for simplicity, we assume that main dash-to-panel panel is displayed on primary monitor
             // and we hide all secondary panels together if the active area is not on the primary
             let name = activeIndex == Main.layoutManager.primaryIndex ? 'panelBox' : 'dashtopanelSecondaryPanelBox';
@@ -326,7 +329,7 @@ export class AreaManager {
                        // dtp v37+
                        actor.get_children().length && actor.get_children()[0].name && actor.get_children()[0].name == name;
             });
-            
+
             let actorToHide = dtdContainers.concat(panelBoxes);
             this.hiddenList = [];
             actorToHide.forEach(actor => {
@@ -335,13 +338,13 @@ export class AreaManager {
             });
         }
     }
-    
+
     toggleArea() {
         if (!this.activeArea)
             return;
-        
+
         let activeIndex = this.areas.indexOf(this.activeArea);
-        
+
         if (this.activeArea.get_parent() == Main.uiGroup) {
             Main.uiGroup.set_child_at_index(Main.layoutManager.keyboardBox, this.oldKeyboardIndex);
             Main.uiGroup.remove_child(this.activeArea);
@@ -356,7 +359,7 @@ export class AreaManager {
             Main.uiGroup.set_child_above_sibling(Main.layoutManager.keyboardBox, this.activeArea);
         }
     }
-    
+
     toggleModal(source) {
         if (!this.activeArea)
             return;
@@ -387,10 +390,10 @@ export class AreaManager {
             if (source && source == global.display)
                 this.showOsd(null, this._extension.FILES.ICONS.GRAB, _("Keyboard and pointer grabbed"), null, null, false);
         }
-        
+
         return true;
     }
-    
+
     toggleDrawing() {
         if (this.activeArea) {
             let activeIndex = this.areas.indexOf(this.activeArea);
@@ -402,7 +405,7 @@ export class AreaManager {
 
             if (this.hiddenList)
                 this.togglePanelAndDockOpacity();
-            
+
             if (this._findModal(this.grab) != -1)
                 this.toggleModal();
 
@@ -418,7 +421,7 @@ export class AreaManager {
                 this.activeArea = null;
                 return;
             }
-            
+
             this.activeArea.enterDrawingMode();
             this.osdDisabled = this._settings.get_boolean('osd-disabled');
             // <span size="medium"> is a clutter/mutter 3.38 bug workaround: https://gitlab.gnome.org/GNOME/mutter/-/issues/1467
@@ -426,46 +429,46 @@ export class AreaManager {
             let label = `<small>${_("Press <i>Ctrl+F1</i> for help").format(this.activeArea.helper.helpKeyLabel)}</small>\n\n<span size="medium">${_("Entering drawing mode")}</span>`;
             this.showOsd(null, this._extension.FILES.ICONS.ENTER, label, null, null, true);
         }
-        
+
         if (this.indicator)
             this.indicator.sync(Boolean(this.activeArea));
     }
-    
+
     // Use level -1 to set no level through a signal.
     showOsd(emitter, icon, label, color, level, long) {
         let activeIndex = this.areas.indexOf(this.activeArea);
         if (activeIndex == -1 || this.osdDisabled)
             return;
-        
+
         // let hideTimeoutSave;
         // if (long && this._GS_VERSION >= '3.28.0') {
         //     hideTimeoutSave = OsdWindow.HIDE_TIMEOUT;
         //     OsdWindow.HIDE_TIMEOUT = this._HIDE_TIMEOUT_LONG;
         // }
-        
+
         let maxLevel;
         if (level == -1)
             level = null;
         else if (level > 100)
             maxLevel = 2;
-        
+
         // GS 3.32- : bar from 0 to 100
         // GS 3.34+ : bar from 0 to 1
         if (level && this._SHELL_MAJOR_VERSION >= 3)
             level = level / 100;
-        
+
         if (!icon)
             icon = this._extension.FILES.ICONS.ENTER;
-        
+
         if (this._SHELL_MAJOR_VERSION >= 49)
             Main.osdWindowManager.showOne(activeIndex, icon, label, level, maxLevel);
         else
             Main.osdWindowManager.show(activeIndex, icon, label, level, maxLevel);
-        
+
         let osdWindow = Main.osdWindowManager._osdWindows[activeIndex];
-        
+
         osdWindow._label.get_clutter_text().set_use_markup(true);
-        
+
         if (color) {
             osdWindow._icon.set_style(`color:${color};`);
             osdWindow._label.set_style(`color:${color};`);
@@ -475,7 +478,7 @@ export class AreaManager {
                 osdWindow._label.disconnect(osdColorChangedHandler);
             });
         }
-        
+
         if (level === 0) {
             osdWindow._label.add_style_class_name(this._WARNING_COLOR_STYLE_CLASS_NAME);
             // the same label is shared by all GS OSD so the style must be removed after being used
@@ -484,32 +487,32 @@ export class AreaManager {
                 osdWindow._label.disconnect(osdLabelChangedHandler);
             });
         }
-        
+
         // if (hideTimeoutSave)
         //     OsdWindow.HIDE_TIMEOUT = hideTimeoutSave;
     }
-    
+
     setCursor(sourceActor_, cursorName) {
         // Map cursor names for GNOME 46/47 fallback compatibility
         let cursorMap = {
             'MOVE': this._SHELL_MAJOR_VERSION >= 48 ? 'MOVE' : 'DND_MOVE',
-            'POINTER': this._SHELL_MAJOR_VERSION >= 48 ? 'POINTER' : 'POINTING_HAND', 
+            'POINTER': this._SHELL_MAJOR_VERSION >= 48 ? 'POINTER' : 'POINTING_HAND',
             'NONE': this._SHELL_MAJOR_VERSION >= 48 ? 'NONE' : 'BLANK',
             'CROSSHAIR': 'CROSSHAIR',
             'TEXT': this._SHELL_MAJOR_VERSION >= 48 ? 'TEXT' : 'IBEAM',
             'DEFAULT': 'DEFAULT'
         };
-        
+
         let mappedCursorName = cursorMap[cursorName] || cursorName;
-        
+
         // Safety check: verify the cursor constant exists before using it
         if (!Meta.Cursor[mappedCursorName]) {
             // Fallback to DEFAULT if cursor doesn't exist
             console.debug(`Draw On Gnome: Cursor ${mappedCursorName} not found, using DEFAULT`);
             mappedCursorName = 'DEFAULT';
         }
-        
-        // Check display or screen (API changes)  
+
+        // Check display or screen (API changes)
         try {
             if (global.display.set_cursor)
                 global.display.set_cursor(Meta.Cursor[mappedCursorName]);
@@ -519,7 +522,7 @@ export class AreaManager {
             console.debug(`Draw On Gnome: Error setting cursor ${mappedCursorName}: ${e.message}`);
         }
     }
-    
+
     removeAreas() {
         for (const area of this.areas) {
             area.disconnect(area.leaveDrawingHandler);
@@ -528,7 +531,7 @@ export class AreaManager {
         }
         this.areas = [];
     }
-    
+
     disable() {
         if (this.monitorChangedHandler) {
             Main.layoutManager.disconnect(this.monitorChangedHandler);
@@ -550,7 +553,7 @@ export class AreaManager {
             this._settings.disconnect(this.persistentOverRestartsSettingHandler);
             this.persistentOverRestartsSettingHandler = null;
         }
-        
+
         if (this.activeArea)
             this.toggleDrawing();
         Main.wm.removeKeybinding('toggle-drawing');
@@ -581,7 +584,7 @@ export class DrawingIndicator {
         this.button = new PanelMenu.Button(menuAlignment, "Drawing Indicator", dontCreateMenu);
         this.buttonActor = this._SHELL_MAJOR_VERSION >= 3 ? this.button.actor: this.button;
         Main.panel.addToStatusArea('draw-on-gnome-indicator', this.button);
-        
+
         this.icon = new St.Icon({ icon_name: 'applications-graphics-symbolic',
                                   style_class: 'system-status-icon screencast-indicator' });
         this.buttonActor.add_child(this.icon);
@@ -591,7 +594,7 @@ export class DrawingIndicator {
     sync(visible) {
         this.buttonActor.visible = visible;
     }
-    
+
     disable() {
         this.button.destroy();
     }

@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- 
+
  * SPDX-FileCopyrightText: 2024 Dave Prowse
  * SPDX-License-Identifier: GPL-3.0-or-later
  * SPDX-FileContributor: Modified by Dave Prowse
@@ -48,7 +48,7 @@ const PreferencesPage = GObject.registerClass({
     this.set_title("Preferences");
     this.set_name('prefs');
     this.set_icon_name("preferences-system-symbolic");
-    
+
     // Use cached settings from extensionPreferences
     let settings = window._settings;
     let schema = settings.settings_schema;

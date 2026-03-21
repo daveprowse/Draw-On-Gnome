@@ -1,0 +1,942 @@
+# <language> translations for Draw On GNOME.
+# Copyright (C) 2019 Listed translators
+#
+# This file is distributed under the same license as Draw On GNOME.
+# Onno Giesmann <nutzer3105@gmail.com>, 2020-2022.
+#
+# Some words refer to SVG attributes (font, line, fill rule ...).
+# You are free to translate them or not.
+msgid ""
+msgstr ""
+"Project-Id-Version: Draw On GNOME\n"
+"POT-Creation-Date: 2026-01-22 20:22+0100\n"
+"PO-Revision-Date: 2026-01-22 20:24+0100\n"
+"Last-Translator: Albert Bartoszko\n"
+"Language-Team: \n"
+"Language: pl_PL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.8\n"
+"X-Poedit-Basepath: ../../..\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: area.js:795
+#, javascript-format
+msgid ""
+"Press <i>%s</i> to get\n"
+"a fourth control point"
+msgstr ""
+"Naciśnij <i>%s</i>\n"
+"aby uzyskać czwarty punkt"
+
+#: area.js:881
+msgid "Mark a point of symmetry"
+msgstr "Zaznacz punkt symetrii"
+
+#: area.js:881
+msgid "Draw a line of symmetry"
+msgstr "Rysuj symetralną"
+
+#: area.js:1068
+msgctxt "text-area-content"
+msgid "Text"
+msgstr "Tekst"
+
+#: area.js:1114
+#, javascript-format
+msgid "Press <i>%s</i> to mark vertices"
+msgstr "Naciśnij <i>%s</i> by zaznaczyć wierzchołki"
+
+#: area.js:1206
+#, javascript-format
+msgid ""
+"Press <i>%s</i>\n"
+"to start a new line"
+msgstr ""
+"Naciśnij  <i>%s</i>\n"
+"aby zacząć nową linię"
+
+#: area.js:1573
+msgid "Laser Pointer Active"
+msgstr "Laser aktywny"
+
+#: area.js:1574
+msgid "Release Shift to deactivate"
+msgstr "Puść Shift aby deaktywować"
+
+#: area.js:1817
+msgctxt "osd-notification"
+msgid "Pick a color"
+msgstr "Wybierz kolor"
+
+#: areamanager.js:371
+msgid "Keyboard and pointer released"
+msgstr ""
+"Klawiatura i wskaźnik\n"
+"zwolnione"
+
+#: areamanager.js:391
+msgid "Keyboard and pointer grabbed"
+msgstr "Klawiatura i wskaźnik przechwycine"
+
+#: areamanager.js:403
+msgid "Leaving drawing mode"
+msgstr "Opuszczam tryb rysowania"
+
+#: areamanager.js:429
+msgid "Press <i>Ctrl+F1</i> for help"
+msgstr "<i>%s</i>  - Pomoc"
+
+#: areamanager.js:429
+msgid "Entering drawing mode"
+msgstr "Rozpoczynam tryb rysowania"
+
+#: helper.js:93
+msgid "Global"
+msgstr "Skróty ogólne"
+
+#: helper.js:134
+msgid "Internal"
+msgstr "Skróty w programie"
+
+#: menu.js:52 schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:311
+msgid "Dashed line"
+msgstr "Linia przerywana"
+
+#: menu.js:54
+msgid "Full line"
+msgstr "Linia ciągła"
+
+#: menu.js:58
+msgid "Fill"
+msgstr "Wypełnienie"
+
+#: menu.js:60
+msgid "Outline"
+msgstr "Obrys"
+
+#: menu.js:66
+msgid "Nonzero"
+msgstr "Niezerowy"
+
+#: menu.js:66
+msgid "Evenodd"
+msgstr "Parzystość"
+
+#: menu.js:73
+msgctxt "font-family"
+msgid "Sans-Serif"
+msgstr ""
+
+#: menu.js:73
+msgctxt "font-family"
+msgid "Serif"
+msgstr ""
+
+#: menu.js:74
+msgctxt "font-family"
+msgid "Monospace"
+msgstr ""
+
+#: menu.js:74
+msgctxt "font-family"
+msgid "Cursive"
+msgstr ""
+
+#: menu.js:75
+msgctxt "font-family"
+msgid "Fantasy"
+msgstr ""
+
+#: menu.js:82
+msgctxt "font-style"
+msgid "Normal"
+msgstr ""
+
+#: menu.js:82
+msgctxt "font-style"
+msgid "Oblique"
+msgstr ""
+
+#: menu.js:82
+msgctxt "font-style"
+msgid "Italic"
+msgstr "Pochyły"
+
+#: menu.js:91
+msgctxt "font-weight"
+msgid "Thin"
+msgstr ""
+
+#: menu.js:91
+msgctxt "font-weight"
+msgid "Ultra Light"
+msgstr ""
+
+#: menu.js:91
+msgctxt "font-weight"
+msgid "Light"
+msgstr ""
+
+#: menu.js:92
+msgctxt "font-weight"
+msgid "Semi Light"
+msgstr ""
+
+#: menu.js:92
+msgctxt "font-weight"
+msgid "Book"
+msgstr ""
+
+#: menu.js:92
+msgctxt "font-weight"
+msgid "Normal"
+msgstr ""
+
+#: menu.js:93
+msgctxt "font-weight"
+msgid "Medium"
+msgstr ""
+
+#: menu.js:93
+msgctxt "font-weight"
+msgid "Semi Bold"
+msgstr ""
+
+#: menu.js:93
+msgctxt "font-weight"
+msgid "Bold"
+msgstr ""
+
+#: menu.js:94
+msgctxt "font-weight"
+msgid "Ultra Bold"
+msgstr ""
+
+#: menu.js:94
+msgctxt "font-weight"
+msgid "Heavy"
+msgstr "Mocne"
+
+#: menu.js:94
+msgctxt "font-weight"
+msgid "Ultra Heavy"
+msgstr "Bardzo mocne"
+
+#: menu.js:101
+msgctxt "stroke-linecap"
+msgid "Butt"
+msgstr ""
+
+#: menu.js:101
+msgctxt "stroke-linecap"
+msgid "Round"
+msgstr ""
+
+#: menu.js:101
+msgctxt "stroke-linecap"
+msgid "Square"
+msgstr ""
+
+#: menu.js:108
+msgctxt "stroke-linejoin"
+msgid "Miter"
+msgstr ""
+
+#: menu.js:108
+msgctxt "stroke-linejoin"
+msgid "Round"
+msgstr ""
+
+#: menu.js:108
+msgctxt "stroke-linejoin"
+msgid "Bevel"
+msgstr ""
+
+#: menu.js:114 ui/drawingpage.js:412
+#, javascript-format
+msgid "%f px"
+msgstr ""
+
+#: menu.js:120
+msgid "Left aligned"
+msgstr "Wyrównaj w lewo"
+
+#: menu.js:120
+msgid "Centered"
+msgstr "Wyśrodkuj"
+
+#: menu.js:120
+msgid "Right aligned"
+msgstr "Wyrównanie w prawo"
+
+#: menu.js:127
+msgctxt "drawing-tool"
+msgid "Free drawing"
+msgstr "Rysowanie ręczne"
+
+#: menu.js:128
+msgctxt "drawing-tool"
+msgid "Line"
+msgstr "Linia"
+
+#: menu.js:129
+msgctxt "drawing-tool"
+msgid "Ellipse"
+msgstr "Elipsa"
+
+#: menu.js:130
+msgctxt "drawing-tool"
+msgid "Rectangle"
+msgstr "Prostokąt"
+
+#: menu.js:131
+msgctxt "drawing-tool"
+msgid "Text"
+msgstr "Tekst"
+
+#: menu.js:132
+msgctxt "drawing-tool"
+msgid "Polygon"
+msgstr "Wielokąt"
+
+#: menu.js:133
+msgctxt "drawing-tool"
+msgid "Polyline"
+msgstr "Łamana"
+
+#: menu.js:134
+msgctxt "drawing-tool"
+msgid "Image"
+msgstr "Obraz"
+
+#: menu.js:135
+msgctxt "drawing-tool"
+msgid "Arrow"
+msgstr "Strzałka"
+
+#: menu.js:136
+msgctxt "drawing-tool"
+msgid "Laser Pointer"
+msgstr "Laser"
+
+#: menu.js:137
+msgctxt "drawing-tool"
+msgid "Highlighter"
+msgstr "Wyróżnienie"
+
+#: menu.js:138
+msgctxt "drawing-tool"
+msgid "Move"
+msgstr "Przesuń"
+
+#: menu.js:139
+msgctxt "drawing-tool"
+msgid "Resize"
+msgstr "Zmień rozmiar"
+
+#: menu.js:140
+msgctxt "drawing-tool"
+msgid "Mirror"
+msgstr "Odbicie lustrzane"
+
+#: menu.js:241
+msgid "Erase"
+msgstr "Usuń"
+
+#: menu.js:242
+msgid "Smooth"
+msgstr "Wygładź"
+
+#: menu.js:301
+msgid "Open drawing"
+msgstr "Otwórz rysunek"
+
+#: menu.js:302
+msgid "Save drawing as…"
+msgstr "Zapisz rysunek jako…"
+
+#: menu.js:476 menu.js:488 menu.js:489
+msgid "Palette"
+msgstr "Paleta"
+
+#: menu.js:503
+msgid "Color"
+msgstr "Kolor"
+
+#: menu.js:514 schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:193
+msgid "Pick a color"
+msgstr "Wybierz kolor"
+
+#: menu.js:704
+msgid "Add to images"
+msgstr "Dodaj do obrazów"
+
+#: menu.js:712
+msgid "Delete"
+msgstr "Usuń"
+
+#: menu.js:749
+msgid "Type a name"
+msgstr "Wpisz nazwę"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:8
+msgid "Drawing on the desktop"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:9
+msgid "<i>Draw On Gnome</i> becomes <i>Draw On Gnome Desktop</i>"
+msgstr "<i>Draw On Gnome</i> staje się <i>Draw On Gnome Desktop</i>"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:13
+msgid "Erase all drawings"
+msgstr "Usuń rysunek"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:17
+msgid "Disable panel indicator"
+msgstr "Nie wyświetlaj panelu"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:21
+msgid "Disable quick settings toggle"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:25
+msgid "Disable on-screen notifications"
+msgstr "Blokuj powiadomienia na ekranie"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:29
+msgid "Persistent over toggles"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:30
+msgid "Drawing remains when toggling drawing mode"
+msgstr "Rysunek przetrwa przełączenie trybu rysowania"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:34
+msgid "Persistent over restarts"
+msgstr "Zachowaj po restarcie"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:35
+msgid "Drawing is automatically saved to a file"
+msgstr "Automatyczne zapisywanie rysunku"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:39
+msgid "Copy picked color to clipboard"
+msgstr "Kopiuj wybrany kolor do schowka"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:40
+msgid "After using color picker, the picked value is saved to clipboard"
+msgstr "Po użyciu wyboru koloru , wybór jest zapisany do schowka"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:44
+msgid "Enter/leave drawing mode"
+msgstr "Rozpocznij/Zakończ tryb rysowania"
+
+#. Translators: there is a similar text in GNOME Boxes (https://gitlab.gnome.org/GNOME/gnome-boxes/tree/master/po)
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:49
+msgid "Grab/ungrab keyboard and pointer"
+msgstr "Przechwyć/Zwolnij klawiaturę i wskaźnik"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:56
+msgid "Background color"
+msgstr "Kolor tła"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:57
+msgid "The color of the drawing area background"
+msgstr "Kolor tła"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:61
+msgid "Automatic dash array"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:62
+msgid "Compute the lengths from the line width"
+msgstr "Wylicz długość z grubości linii"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:67
+msgid "Dash array on"
+msgstr "Włącz przerywąan strzałkę"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:68
+msgid "The dash length in pixels"
+msgstr "Długość kreski [px]"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:73
+msgid "Dash array off"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:74
+msgid "The gap between the dashes in pixels"
+msgstr "Przerwa między kreskami [px]"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:79
+msgid "Dash offset"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:80
+msgid "The dash offset in pixels"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:84
+msgid "Grid overlay color"
+msgstr "Kolor linii siatki"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:85
+msgid "The color of the lines"
+msgstr "Kolor linii"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:89
+msgid "Automatic grid overlay line"
+msgstr "Automatyczne linie siatki"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:90
+msgid "Compute the lengths from the screen size"
+msgstr "Oblicz długość z rozmiaru ekranu"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:95
+msgid "Grid overlay line spacing"
+msgstr "Odstęp linii siatki"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:96
+msgid "The gap between lines in pixels"
+msgstr "Odstęp międzyliniowy w pikselach"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:101
+msgid "Grid overlay line width"
+msgstr "Grubość linii siatki"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:102
+msgid "The line width in pixels"
+msgstr "Grubość linii w pikselach"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:106
+msgid "Image location"
+msgstr "Położenie obrazów"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:107
+msgid "The location of the directory in which the image tool picks"
+msgstr "Katalog z obrazami"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:120
+msgid "Color palettes"
+msgstr "Palety kolorów"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:121
+msgid "The palettes of drawing colors"
+msgstr "Palety kolorów"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:125
+msgid "Automatic square area size"
+msgstr "Automatyczny rozmiar pola"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:126
+msgid "Compute the area size from the screen size"
+msgstr "Wylicz pole z rozmiaru ekranu"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:131
+msgid "Square area size"
+msgstr "Pole kwadratu"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:132
+msgid "The size of the area in pixels"
+msgstr "Rozmiar obszaru w pikselach"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:136
+msgid "Tool palette"
+msgstr "Paleta narzędzi"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:137
+msgid "Color palette of tool"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:141
+msgid "Tool color"
+msgstr "Kolor narzędzia"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:142
+msgid "Color of tool"
+msgstr "Kolor narzędzia"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:146
+msgid "Tool size"
+msgstr "Rozmiar nazędzia"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:147
+msgid "Size of tool brush"
+msgstr "Rozmiar ołówka"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:153
+msgid "Decrement line width"
+msgstr "Zmniejsz grubość linii"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:157
+msgid "Decrement line width even more"
+msgstr "Zmniejsz grubość linii mocno"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:161
+msgid "Erase last brushstroke"
+msgstr "Usuń ostatni element"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:165
+msgid "Export drawing to a SVG file"
+msgstr "Eksportuj do SVG"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:169
+msgid "Increment line width"
+msgstr "Powiększ grubość linii"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:173
+msgid "Increment line width even more"
+msgstr "Powiększ grubość linii mocno"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:177
+msgid "Open next drawing"
+msgstr "Otwórz następny rysunek"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:181
+msgid "Open preferences"
+msgstr "Otwórz preferencje"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:185
+msgid "Open previous drawing"
+msgstr "Otwórz poprzedni rysunek"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:189
+msgid "Add images from the clipboard"
+msgstr "Dodaj obraz ze schowka"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:197
+msgid "Redo"
+msgstr "Przywróć ostatnią operację"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:201
+msgid "Save drawing"
+msgstr "Zapisz rysunek"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:205
+msgid "Select color 1"
+msgstr "Wybierz kolor 1"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:210
+msgid "Select color 2"
+msgstr "Wybierz kolor 2"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:214
+msgid "Select color 3"
+msgstr "Wybierz kolor 3"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:218
+msgid "Select color 4"
+msgstr "Wybierz kolor 4"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:222
+msgid "Select color 5"
+msgstr "Wybierz kolor 5"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:226
+msgid "Select color 6"
+msgstr "Wybierz kolor 6"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:230
+msgid "Select color 7"
+msgstr "Wybierz kolor 7"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:234
+msgid "Select color 8"
+msgstr "Wybierz kolor 8"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:238
+msgid "Select color 9"
+msgstr "Wybierz kolor 9"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:242
+msgid "Select ellipse tool"
+msgstr "Narzędzie Elipsa"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:246
+msgid "Select image tool"
+msgstr "Narzędzie Obraz"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:250
+msgid "Select line tool"
+msgstr "Narzędzie Linia"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:254
+msgid "Select arrow tool"
+msgstr "Narzędzie Strzałka"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:258
+msgid "Select laser tool"
+msgstr "Narzędzie Laser"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:262
+msgid "Select highlighter tool"
+msgstr "Podświetlanie"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:263
+msgid "Select yellow highlighter tool"
+msgstr "Podświetlanie na żółto"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:267
+msgid "Select mirror tool"
+msgstr "Odbicie"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:271
+msgid "Select move tool"
+msgstr "Zmień rozmiar"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:275
+msgid "Select free drawing"
+msgstr "Rysowanie ręczne"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:279
+msgid "Select polygon tool"
+msgstr "Narzędzie wielokąt"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:283
+msgid "Select polyline tool"
+msgstr "Narzędzie Łamana"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:287
+msgid "Select rectangle tool"
+msgstr "Wybierz narzędzie Prostokąt"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:291
+msgid "Select resize tool"
+msgstr "Wybierz narzędzie zmiany rozmiaru"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:295
+msgid "Select text tool"
+msgstr "Narzędzie tekst"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:299
+msgid "Smooth last brushstroke"
+msgstr "Wygładź"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:303
+msgid "Change color palette"
+msgstr "Zmień paletę kolorów"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:307
+msgid "Change color palette (reverse)"
+msgstr "Przywróć paletę kolorów"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:315
+msgid "Toggle fill/outline"
+msgstr "Wypełnij/Obrys"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:319
+msgid "Change font family"
+msgstr "Zmień rodzinę czcionki"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:323
+msgid "Change font family (reverse)"
+msgstr "Zmień rodzinę czcionki (powrót)"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:327
+msgid "Change font style"
+msgstr "Zmień styl czcionki"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:331
+msgid "Change font weight"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:335
+msgid "Change image"
+msgstr "Zmień obraz"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:339
+msgid "Change image (reverse)"
+msgstr "Zmień obraz (z powrotem)"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:343
+msgid "Change linecap"
+msgstr "Zmień końce linii"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:347
+msgid "Change linejoin"
+msgstr "Zmień połączenia linii"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:351
+msgid "Change text alignment"
+msgstr "Zmień wyrównanie tekstu"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:355
+msgid "Add a drawing background"
+msgstr "Dodaj tło rysunkowe"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:359
+msgid "Add a grid overlay"
+msgstr "Dodaj linie siatki"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:363
+msgid "Show help"
+msgstr "Pokaż Pomoc"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:367
+msgid "Hide panel"
+msgstr "Ukryj panel"
+
+#. Translators: It is an action: "Make the drawing area a square"
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:372
+msgid "Square drawing area"
+msgstr "Kwadratowy obszar rysunku"
+
+#: schemas/org.gnome.shell.extensions.draw-on-gnome.gschema.xml:376
+msgid "Undo"
+msgstr "Cofnij ostatnią operację"
+
+#: ui/about.js:41
+msgid "About"
+msgstr "O programie"
+
+#: ui/about.js:57
+msgid "Draw On Gnome"
+msgstr ""
+
+#: ui/about.js:59
+#, javascript-format
+msgid "Version %f"
+msgstr "Wersja %f"
+
+#: ui/about.js:61
+msgid ""
+"Draw on your GNOME Desktop!.\n"
+"Start by pressing 'Super+Alt+D'. Have fun! :)"
+msgstr ""
+"Rysuj na ekranie GNOME !.\n"
+"Rozpocznij naciskając  'Super+Alt+D'."
+
+#: ui/about.js:63
+msgid "GNU General Public License, version 3 or later"
+msgstr ""
+
+#: ui/about.js:65
+#, javascript-format
+msgid ""
+"This program comes with absolutely no warranty.\n"
+"See the <a href=\"%s\">%s</a> for details."
+msgstr ""
+
+#: ui/about.js:79
+msgid "Created by"
+msgstr "Stworzony przez"
+
+#: ui/about.js:88 ui/about.js:97
+msgid "Forked by"
+msgstr ""
+
+#: ui/about.js:113 ui/about.js:117
+msgid "translator-credits"
+msgstr ""
+
+#: ui/about.js:116
+msgid "Translated by"
+msgstr "Przetłumaczony przez"
+
+#: ui/drawingpage.js:60
+msgid "Palettes"
+msgstr "Palety"
+
+#: ui/drawingpage.js:64
+msgid "New Palette"
+msgstr "Nowa Plaeta"
+
+#: ui/drawingpage.js:65
+msgid "Create or Import palette"
+msgstr "Utwórz lub importuj Paletę"
+
+#: ui/drawingpage.js:67
+msgid "Add a new palette"
+msgstr "Nowa Paleta"
+
+#: ui/drawingpage.js:72 ui/drawingpage.js:297
+msgid "Select a File"
+msgstr "Wybierz plik"
+
+#: ui/drawingpage.js:86
+msgid "Area"
+msgstr "Pole"
+
+#: ui/drawingpage.js:90 ui/drawingpage.js:122 ui/drawingpage.js:174
+msgid "Auto"
+msgstr ""
+
+#: ui/drawingpage.js:120
+msgid "Grid overlay line"
+msgstr "Linie siatki"
+
+#: ui/drawingpage.js:168
+msgid "Tools"
+msgstr "Narzędzia"
+
+#: ui/drawingpage.js:172
+msgid "Dash array"
+msgstr "Przerywana strzałka"
+
+#: ui/drawingpage.js:224 ui/preferencespage.js:109
+msgid "Reset settings"
+msgstr "Reset ustawień"
+
+#: ui/drawingpage.js:252
+msgid "Edit this palette colors"
+msgstr "Edycja kolorów plaety"
+
+#: ui/drawingpage.js:257
+msgid "Remove this palette"
+msgstr "Usuń paletę"
+
+#: ui/drawingpage.js:291
+msgid "New palette"
+msgstr "Nowa paleta"
+
+#: ui/drawingpage.js:301 ui/drawingpage.js:499
+msgid "_Cancel"
+msgstr "Rezygnuj"
+
+#: ui/drawingpage.js:302
+msgid "_Open"
+msgstr "_Otwórz"
+
+#: ui/drawingpage.js:335
+msgid "Customize Palette"
+msgstr "Dopasuj Paletę"
+
+#: ui/drawingpage.js:338
+msgid "Name"
+msgstr "Nazwa"
+
+#: ui/drawingpage.js:487
+msgid "(None)"
+msgstr "(Brak)"
+
+#: ui/drawingpage.js:500
+msgid "_Select"
+msgstr "Wybierz"
+
+#: ui/preferencespage.js:143
+msgid "Click here to set new shortcut..."
+msgstr "Kliknij tu aby stworzyć nowy skrót...."
+
+#: ui/preferencespage.js:158
+msgid "Press the new shortcut..."
+msgstr "Naciśnij nowy skrót…"
+
+#~ msgid "(forward)"
+#~ msgstr "( w przód)"
+
+#~ msgid "(back)"
+#~ msgstr " (w tył)"
+
+#~ msgid "(both sides)"
+#~ msgstr " (dwustronna)"
+
+#~ msgid "(none)"
+#~ msgstr "(linia)"
+
+#~ msgid "Preferences"
+#~ msgstr "Preferencje"
+
+#~ msgid "Drawing Page"
+#~ msgstr "Rysunek"
