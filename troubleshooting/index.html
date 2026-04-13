@@ -700,6 +700,7 @@
 <p>This will give any important errors/messages about the GNOME shell in general. In some cases, you might need to preface the command with <code>sudo</code>. The beauty of the <code>-f</code> parameter is that it will run continuously until you stop it. During that time you can run the extension and track any errors that might be occurring.</p>
 <p>For checking the log after the fact (for example, after the GNOME shell has crashed):</p>
 <p><code>journalctl -b /usr/bin/gnome-shell</code></p>
+<p>That will show all logs from the current boot session all the way back to the last login.</p>
 <p>To check the extension logs:</p>
 <p><code>journalctl -f | grep "draw-on-gnome"</code>  (<code>-f</code> for real-time monitoring)</p>
 <p><code>journalctl -b | grep draw-on-gnome</code></p>
