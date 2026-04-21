@@ -721,15 +721,15 @@
 <p><strong>If you have any ideas or suggestions, feel free to post them <a href="https://github.com/daveprowse/Draw-On-Gnome/discussions/categories/ideas" target="_blank">here</a></strong>.</p>
 <div class="admonition example">
 <p class="admonition-title">Consider committing code to the project!</p>
-<p class="annotate">If you are interested in contributing, take a look at the list below and add your distinctiveness to our own!(1)</p>
+<p class="annotate">If you are interested in contributing, read through the <a href="https://github.com/daveprowse/Draw-On-Gnome/blob/main/CONTRIBUTING.md">contributing</a> document, and then take a look at the list below and add your distinctiveness to our own!(1)</p>
 <ol>
 <li><img alt="🙋‍♂️" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f64b-200d-2642-fe0f.svg" title=":man_raising_hand:"> You can begin a <a href="https://github.com/daveprowse/Draw-On-Gnome/pulls" target="_blank">pull request here</a> or contact me at my <a href="https://discord.com/invite/mggw8VGzUp" target="_blank">Discord Server</a> to strike up a conversation.</li>
 </ol>
 </div>
 <h2 id="primary-goals">Primary Goals</h2>
 <ul>
-<li>E.G.O. version 10 for GNOMEv50</li>
-<li>New arrow support (from PR49) in version 10.0.</li>
+<li>E.G.O. version 11 approval for GNOMEv50</li>
+<li>New arrow support (from PR49) in version 11.0. I will have to modify this to work with GNOMEv50</li>
 </ul>
 <h2 id="issues">Issues</h2>
 <ul>
@@ -748,7 +748,7 @@ The ideas is for toggling on any tool with the end result being returning to the
 <h3 id="clip-bin">Clip bin</h3>
 <p>When enabled this would  show a clip bin on the right side where we could click and drag icons or images to our drawing. The bin would have to be populated beforehand. Could be really good to quickly add shapes, icons, tokens, etc... We could pre-populate it with basic, common icons.</p>
 <h3 id="random-die-roll">Random Die Roll</h3>
-<p>This would allow a person to roll a die on the screen (similar to D&amp;D Beyond). Perhaps a variety of dice. Requires pseudorandom generator, possible within GJS.</p>
+<p>This would allow a person to roll a die on the screen (similar to D&amp;D Beyond). Perhaps a variety of dice. Requires pseudorandom generator, possible within GJS. This is a big project and kind of "pie-in-the-sky" so it's very backburner for me!</p>
 <h3 id="touchscreen-support">Touchscreen support</h3>
 <p>See <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/3" target="_blank">this link</a> for the GitHub Issue. </p>
 <p>My plan for this would be to incorporate the following:</p>
@@ -761,6 +761,9 @@ The ideas is for toggling on any tool with the end result being returning to the
 <li>Icon would change back to idle. </li>
 </ul>
 <p>Should work??? It will require some heavy duty programming and testing though... </p>
+<p><strong>Cursors</strong></p>
+<p>I'm talking about pointer, hand, crosshair, etc... As of early 2026 this is not possible with GNOMEv50 because there is no API for it. GNOMEv50 uses Wayland only. When they write an API for it, I will embrace it - because it was awesome in x11! </p>
+<p><strong>MORE</strong></p>
 <ul>
 <li>a timer. This could be a great function for live training. The problem with the extension is that you cannot run things simultaenously. Well, you can I suppose, build your drawing, then press <code>Super+Ctrl+Alt+D</code> to access the keyboard and mouse, start a timer in a terminal (and make it always on top) and press <code>Super+Ctrl+Alt+D</code> again to return to the drawing (and draw while the timer is running). However, a built in timer would be super-duper... OpenBoard has this functionality and I used to like it...</li>
 <li>Overwrite save? Currently, when you press <code>Ctrl+S</code>, the extension will save with an automatically generated name (based on the date and time). If a user saves often, this can create a lot of clutter files. My thought is to change it so that the default <code>Ctrl+S</code> action will be to <em>overwrite</em> (like most applications out there), and the auto-generated name would only happen the first time. If a user wants to save as a differnt file, they would have to open the right-click menu or press <code>Ctrl+Shift+S</code> to save as a new file. It seems logical. As part of this, I would like to modify how the "Persistent over Restarts" option saves the file. As is, it saves in the default location as <code>undefined.json</code>. I'm waiting on fixing this until auto-save works properly. It probably entails ensuring that <code>metadata['persistent-file-name']</code> is properly defined. We'll see!</li>
