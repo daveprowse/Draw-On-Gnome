@@ -377,18 +377,9 @@ export class AreaManager {
             // add Shell.ActionMode.NORMAL to keep system keybindings enabled (e.g. Alt + F2 ...)
             let actionMode = (this.activeArea.isWriting ? this._WRITING_ACTION_MODE : this._DRAWING_ACTION_MODE) | Shell.ActionMode.NORMAL  | Shell.ActionMode.OVERVIEW;
             this.grab = Main.pushModal(this.activeArea, { actionMode: actionMode });
-            // GNOME 50 removed get_seat_state() from Clutter.Grab; fall back to _findModal check
-            if (this.grab.get_seat_state) {
-                if (this.grab.get_seat_state() === Clutter.GrabState.NONE) {
-                    Main.popModal(this.grab);
-                    return false;
-                }
-            } else {
-                if (this._findModal(this.grab) === -1) {
-                    return false;
-                }
-            // End new GNOMEv50 code
-    
+            if (this.grab.get_seat_state() === Clutter.GrabState.NONE) {
+                Main.popModal(this.grab);
+                return false;
             }
             this.addInternalKeybindings();
             this.activeArea.reactive = true;
@@ -499,10 +490,6 @@ export class AreaManager {
     }
     
     setCursor(sourceActor_, cursorName) {
-        // Meta.Cursor and display.set_cursor() were removed in GNOME 50 (X11 removal)
-        if (!Meta.Cursor)
-            return;
-            
         // Map cursor names for GNOME 46/47 fallback compatibility
         let cursorMap = {
             'MOVE': this._SHELL_MAJOR_VERSION >= 48 ? 'MOVE' : 'DND_MOVE',

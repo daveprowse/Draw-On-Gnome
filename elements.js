@@ -1083,9 +1083,6 @@ const ImageElement = GObject.registerClass({
     _drawCairo(cr, params) {
         if (this.points.length < 2)
             return;
-
-        if (!this.image)
-        return;
         
         let points = this.points;
         let [x, y] = [Math.min(points[0][0], points[1][0]), Math.min(points[0][1], points[1][1])];

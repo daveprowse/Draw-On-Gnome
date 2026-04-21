@@ -6,9 +6,12 @@
     "gettext-domain": "draw-on-gnome", 
     "settings-schema": "org.gnome.shell.extensions.draw-on-gnome",
     "data-dir": "draw-on-gnome",    
-    "shell-version": [                        
-        "50"      
+    "shell-version": [                
+        "46",
+        "47",
+        "48", 
+        "49"        
     ],    
-    "version-name": "11.0",
-    "version": 11
+    "version-name": "9.0",
+    "version": 9    
 }

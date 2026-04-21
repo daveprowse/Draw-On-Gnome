@@ -2184,39 +2184,19 @@ export const DrawingArea = GObject.registerClass({
             return color;
         }
         
-        // Original string handling
+        // Original string handling - Now supports rgba() format with alpha
         let [colorString, displayName] = string.split(':');
-
-        // Cogl.Color (GNOME 50+) does not support CSS named colors - map to hex first
-        const CSS_COLOR_NAME_MAP = {
-            'white':       '#ffffff',
-            'black':       '#000000',
-            'red':         '#ff0000',
-            'green':       '#008000',
-            'blue':        '#0000ff',
-            'yellow':      '#ffff00',
-            'transparent': '#00000000'
-        };
-        let lowerName = colorString.toLowerCase();
-        let parseStr = CSS_COLOR_NAME_MAP[lowerName] !== undefined
-            ? CSS_COLOR_NAME_MAP[lowerName]
-            : lowerName;
-
-        let [success, color] = Color.from_string(parseStr);
-        // toJSON stores hex so reloads always parse cleanly (avoids named-color cycle)
-        color.toJSON = () => parseStr;
-        color.toString = () => displayName || colorString;
-        if (success)
+        let [success, color] = Color.from_string(colorString);
+        
+        if (success) {
+            color.toJSON = () => colorString;
+            color.toString = () => displayName || colorString;
             return color;
+        }
 
-        console.log(`${this._extension.metadata.uuid}: "${string}" color cannot be parsed.`);
-
-        // Fallback: store hex in toJSON to break the cycle on next save/load
-        const FALLBACK_HEX = { 'WHITE': '#ffffff', 'BLACK': '#000000', 'RED': '#ff0000', 'BLUE': '#0000ff' };
-        let fallbackKey = (fallback || 'White').toUpperCase();
-        let fallbackHex = FALLBACK_HEX[fallbackKey] || '#ffffff';
-        color = StaticColor[fallbackKey] || StaticColor.WHITE;
-        color.toJSON = () => fallbackHex;   // hex, not name — breaks the reload cycle
+        console.warn(`${this._extension.metadata.uuid}: "${string}" color cannot be parsed.`);
+        color = StaticColor[fallback.toUpperCase()];
+        color.toJSON = () => fallback;
         color.toString = () => fallback;
         return color;
     }

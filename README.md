@@ -22,16 +22,11 @@ Thank you to all the contributors! 😎
 
 ## Installation Options
 
-### Option 1: Install from GNOME Extensions (ver. 49/48/47/46) ---NOT 50!!
+### Option 1: Install from GNOME Extensions (ver. 48/49)
 
 [<img src="https://daveprowse.github.io/Draw-On-Gnome/images/gnome-extensions.png" height="100">](https://extensions.gnome.org/extension/7921/draw-on-gnome/)
 
-> **IMPORTANT!!**: Currently, this will *only* install to GNOMEv46 through v49. If you need the extension for another version of GNOME, see Option 2.
->
-> To check your version of gnome type `gnome-shell --version`.
->
-> Note: E.G.O. reviews are currently delayed, so GitHub releases are the fastest way to get the latest version.
-
+> **IMPORTANT!!**: Currently, this will *only* install to GNOMEv48 and v49. If you need the extension for another version of GNOME, see Option 2.
 
 ### Option 2: Use the Automated Script
 
@@ -43,7 +38,7 @@ Thank you to all the contributors! 😎
 
    The script will attempt to identify your version of GNOME and install the correct version of the extension automatically. 
    
-   > Note: Currently, the script will identify GNOME v50 through v40 and back all the way to v3.xx. 
+   > Note: Currently, the script will identify GNOME v49 through v40 and back all the way to v3.xx.
 
    > Note: You may need to enter your sudo password during the install. Make sure you are a sudoer!
 
