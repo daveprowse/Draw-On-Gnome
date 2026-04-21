@@ -365,6 +365,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#gnome-v50" class="md-nav__link">
+    <span class="md-ellipsis">
+      GNOME v50
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#gnome-v49484746" class="md-nav__link">
     <span class="md-ellipsis">
       GNOME v49/48/47/46
@@ -692,10 +701,10 @@
 <h2 id="option-1-install-from-gnome-extensions-ver-49484746">Option 1: Install from GNOME Extensions (ver. 49/48/47/46)</h2>
 <p><a href="https://extensions.gnome.org/extension/7921/draw-on-gnome/"><img src="https://daveprowse.github.io/Draw-On-Gnome/images/gnome-extensions.png" width="250"></a></p>
 <blockquote>
-<p><strong>IMPORTANT!!</strong>: Currently, this will only install to GNOMEv46 through v49. If you need the extension for an earlier version of GNOME, see Option 2.</p>
+<p><strong>IMPORTANT!!</strong>: Currently, this will only install to GNOMEv46 through v49. Not 50. If you need the extension for another version of GNOME, see Option 2.</p>
 </blockquote>
 <h2 id="option-2-use-the-automated-script">Option 2: Use the Automated Script</h2>
-<p>This method will work for any version of GNOME from v40 - v49, and v3.24 - v.3.38</p>
+<p>This method will work for any version of GNOME from v40 - v50, and v3.24 - v.3.38</p>
 <ol>
 <li>
 <p>Copy the following command to your <em>Bash</em> terminal and press <code>enter</code> to run it:</p>
@@ -768,18 +777,48 @@
 <hr>
 <h2 id="option-3-install-manually-from-the-release-or-repository-branch">Option 3: Install Manually from the Release or Repository Branch</h2>
 <p>For those of you who would rather install manually, find your version of GNOME and follow the directions.</p>
+<h3 id="gnome-v50">GNOME v50</h3>
+<ol>
+<li>
+<p>Download or clone the extension.</p>
+<p><strong>Download option:</strong></p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="go">wget https://github.com/daveprowse/Draw-On-Gnome/releases/download/D.O.G.-ver-11.0/Draw-On-Gnome-ver-11-0.tar.xz</span>
+</span></code></pre></div>
+<p>Then, decompress the tar file:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="go">tar -xvf Draw-On-Gnome-ver-11-0.tar.xz</span>
+</span></code></pre></div>
+<p><strong>Clone option (GIVES LATEST WORKING VERSION):</strong></p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="go">git clone https://github.com/daveprowse/Draw-On-Gnome</span>
+</span></code></pre></div>
+</li>
+<li>
+<p>Place the directory (the one that contains <code>metadata.json</code>) in <code>~/.local/share/gnome-shell/extensions</code> (If the extensions directory doesn't exist, create it inside of gnome-shell/.)</p>
+</li>
+<li>Change the directory name to <code>draw-on-gnome@daveprowse.github.io</code></li>
+<li>
+<p>Restart your session:</p>
+<ul>
+<li>(Wayland) - Log out and log back in</li>
+<li>(Xorg) - Type <code>alt + F2</code> and <code>r</code> to restart the gnome-shell</li>
+</ul>
+</li>
+<li>
+<p>Enable the extension with GNOME Extensions command or application</p>
+</li>
+<li><code>Super + Alt + D</code> to test. For basic usage, see <a href="../basic-usage/">this link</a>.</li>
+</ol>
+<p><em>Issues?</em> Let us know at <a href="https://github.com/daveprowse/Draw-On-Gnome/issues">this link</a>.</p>
+<p><strong>ENJOY!</strong></p>
+<hr>
 <h3 id="gnome-v49484746">GNOME v49/48/47/46</h3>
 <ol>
 <li>
 <p>Download or clone the extension.</p>
 <p><strong>Download option:</strong></p>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="go">wget https://github.com/daveprowse/Draw-On-Gnome/releases/download/D.O.G.-ver-9.0/Draw-On-Gnome-ver-9-0.tar.xz</span>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="go">wget https://github.com/daveprowse/Draw-On-Gnome/releases/download/D.O.G.-ver-9.0/Draw-On-Gnome-ver-9-0.tar.xz</span>
 </span></code></pre></div>
 <p>Then, decompress the tar file:</p>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="go">tar -xvf Draw-On-Gnome-ver-7-0.tar.xz</span>
-</span></code></pre></div>
-<p><strong>Clone option (GIVES LATEST WORKING VERSION):</strong></p>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="go">git clone https://github.com/daveprowse/Draw-On-Gnome</span>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="go">tar -xvf Draw-On-Gnome-ver-7-0.tar.xz</span>
 </span></code></pre></div>
 </li>
 <li>
@@ -806,7 +845,7 @@
 <ul>
 <li>
 <p>Download option:</p>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="go">wget https://github.com/daveprowse/Draw-On-Gnome/releases/download/v14.0-GNOME-v45/GNOMEv45.tar.xz</span>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="go">wget https://github.com/daveprowse/Draw-On-Gnome/releases/download/v14.0-GNOME-v45/GNOMEv45.tar.xz</span>
 </span></code></pre></div>
 </li>
 </ul>
@@ -814,7 +853,7 @@
 <ul>
 <li>
 <p>Clone option:</p>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="go">git clone -b GNOMEv45 https://github.com/daveprowse/Draw-On-Gnome</span>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="go">git clone -b GNOMEv45 https://github.com/daveprowse/Draw-On-Gnome</span>
 </span></code></pre></div>
 </li>
 </ul>
@@ -824,13 +863,13 @@
 <ul>
 <li>
 <p>Download option:</p>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="go">wget https://github.com/daveprowse/Draw-On-Gnome/releases/download/v13.0-GNOME-v42-v44/GNOMEv42.tar.xz</span>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="go">wget https://github.com/daveprowse/Draw-On-Gnome/releases/download/v13.0-GNOME-v42-v44/GNOMEv42.tar.xz</span>
 </span></code></pre></div>
 <p>Then, decompress the tar file: <code>tar -xvf GNOMEv42.tar.xz</code></p>
 </li>
 <li>
 <p>Clone option:</p>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="go">git clone -b GNOMEv42 https://github.com/daveprowse/Draw-On-Gnome</span>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="go">git clone -b GNOMEv42 https://github.com/daveprowse/Draw-On-Gnome</span>
 </span></code></pre></div>
 </li>
 </ul>
@@ -840,13 +879,13 @@
 <ul>
 <li>
 <p>Download option:</p>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="go">wget https://github.com/daveprowse/Draw-On-Gnome/releases/download/v11.2/GNOMEv41.tar.xz</span>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="go">wget https://github.com/daveprowse/Draw-On-Gnome/releases/download/v11.2/GNOMEv41.tar.xz</span>
 </span></code></pre></div>
 <p>Then, decompress the tar file: <code>tar -xvf GNOMEv41.tar.xz</code></p>
 </li>
 <li>
 <p>Clone option:</p>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="go">git clone -b GNOMEv41 https://github.com/daveprowse/Draw-On-Gnome</span>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="go">git clone -b GNOMEv41 https://github.com/daveprowse/Draw-On-Gnome</span>
 </span></code></pre></div>
 </li>
 </ul>
