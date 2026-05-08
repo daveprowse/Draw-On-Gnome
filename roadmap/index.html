@@ -569,6 +569,24 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#toggle-for-all-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Toggle for all tools
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arrow-toggle" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arrow Toggle
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#default-font" class="md-nav__link">
     <span class="md-ellipsis">
       Default Font
@@ -578,9 +596,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#toggle-for-all-tools" class="md-nav__link">
+  <a href="#touchscreen-support" class="md-nav__link">
     <span class="md-ellipsis">
-      Toggle for all tools
+      Touchscreen support
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#different-laser-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Different Laser Types
     </span>
   </a>
   
@@ -608,15 +635,6 @@
   <a href="#random-die-roll" class="md-nav__link">
     <span class="md-ellipsis">
       Random Die Roll
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#touchscreen-support" class="md-nav__link">
-    <span class="md-ellipsis">
-      Touchscreen support
     </span>
   </a>
   
@@ -733,22 +751,19 @@
 </ul>
 <h2 id="issues">Issues</h2>
 <ul>
-<li>None right now</li>
+<li>Need the Polish translation included in Ver11 and ver9</li>
+<li>When switching from text mode to drawing mode, a color change will change the last typed text!</li>
 </ul>
 <h2 id="planned-features-long-term">Planned Features (long-term)</h2>
 <p>Here are the planned features:</p>
-<h3 id="default-font">Default Font</h3>
-<p>Right now, it appears that D.O.G. defaults to a font and stays on whatever you choose with <code>Ctrl+F</code> for the session. But if you restart, it goes back to the default font (Serif?). It would be nice to set a default font in the preferences that it always defaults to.</p>
 <h3 id="toggle-for-all-tools">Toggle for all tools</h3>
 <p>This is for better functionality and economy of movement. It's already being done with the Laser tool.
 The ideas is for toggling on any tool with the end result being returning to the drawing tool. So for example, you are using the drawing tool (<code>Ctrl+P</code>) and then move to the arrow tool (<code>Ctrl+A</code>). Draw an arrow. Then, press <code>Ctrl+A</code> again to toggle the arrow tool off and return to the drawing tool. The main drawing tool would be the default for any tool... </p>
 <p>This way, a person could quickly access one tool with the left hand (for example, arrow, ellipse, rectangle) while drawing with the right. Then, toggle it off easily and return to the drawing tool without having to move the left hand.</p>
-<h3 id="fade-out-option">Fade-out option</h3>
-<p>Toggle that enables the fade out option for drawing - (Similar to macOS ScreenBrush). For example, if you draw an arrow pointing to an element, the arrow would fade out after x seconds. see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/23" target="_blank">this link</a></p>
-<h3 id="clip-bin">Clip bin</h3>
-<p>When enabled this would  show a clip bin on the right side where we could click and drag icons or images to our drawing. The bin would have to be populated beforehand. Could be really good to quickly add shapes, icons, tokens, etc... We could pre-populate it with basic, common icons.</p>
-<h3 id="random-die-roll">Random Die Roll</h3>
-<p>This would allow a person to roll a die on the screen (similar to D&amp;D Beyond). Perhaps a variety of dice. Requires pseudorandom generator, possible within GJS. This is a big project and kind of "pie-in-the-sky" so it's very backburner for me!</p>
+<h3 id="arrow-toggle">Arrow Toggle</h3>
+<p>Allows for four arrow types (instead of just one): Forward, backward, Both, and Inverse. My plan is to implement this using the <code>Ctrl+Alt+A</code> shortcut as well as within the drop-down menu. This shortcut will replace the text alignment option (which I fee is not often used). </p>
+<h3 id="default-font">Default Font</h3>
+<p>Right now, it appears that D.O.G. defaults to a font and stays on whatever you choose with <code>Ctrl+F</code> for the session. But if you restart, it goes back to the default font (Serif?). It would be nice to set a default font in the preferences that it always defaults to.</p>
 <h3 id="touchscreen-support">Touchscreen support</h3>
 <p>See <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/3" target="_blank">this link</a> for the GitHub Issue. </p>
 <p>My plan for this would be to incorporate the following:</p>
@@ -761,6 +776,14 @@ The ideas is for toggling on any tool with the end result being returning to the
 <li>Icon would change back to idle. </li>
 </ul>
 <p>Should work??? It will require some heavy duty programming and testing though... </p>
+<h3 id="different-laser-types">Different Laser Types</h3>
+<p>I designed the laser pointer to work with <code>Ctrl+Q</code> but it was a quick design. The laser is okay, but I would like to design a couple of others and give people the ability to use each variant by pressing <code>Ctrl+Alt+Q</code></p>
+<h3 id="fade-out-option">Fade-out option</h3>
+<p>Toggle that enables the fade out option for drawing - (Similar to macOS ScreenBrush). For example, if you draw an arrow pointing to an element, the arrow would fade out after x seconds. see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/23" target="_blank">this link</a></p>
+<h3 id="clip-bin">Clip bin</h3>
+<p>When enabled this would  show a clip bin on the right side where we could click and drag icons or images to our drawing. The bin would have to be populated beforehand. Could be really good to quickly add shapes, icons, tokens, etc... We could pre-populate it with basic, common icons.</p>
+<h3 id="random-die-roll">Random Die Roll</h3>
+<p><code>Ctrl+D</code>. This would allow a person to roll a die on the screen (similar to D&amp;D Beyond). Perhaps a variety of dice. Requires pseudorandom generator, possible within GJS. This is a big project and kind of "pie-in-the-sky" so it's very backburner for me!</p>
 <p><strong>Cursors</strong></p>
 <p>I'm talking about pointer, hand, crosshair, etc... As of early 2026 this is not possible with GNOMEv50 because there is no API for it. GNOMEv50 uses Wayland only. When they write an API for it, I will embrace it - because it was awesome in x11! </p>
 <p><strong>MORE</strong></p>
