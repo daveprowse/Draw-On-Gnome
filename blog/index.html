@@ -591,6 +591,113 @@
     <div class="md-post__meta md-meta">
       <ul class="md-meta__list">
         <li class="md-meta__item">
+          <time datetime="2026-05-08 00:00:00+00:00">May 8, 2026</time></li>
+        
+        
+          
+          <li class="md-meta__item">
+            
+              2 min read
+            
+          </li>
+        
+      </ul>
+      
+    </div>
+  </header>
+  <div class="md-post__content md-typeset">
+    <h2 id="version-111-minor-release"><a class="toclink" href="2026/05/08/version-111---minor-release/">VERSION 11.1 - Minor Release</a></h2>
+<p>Got some fixes and new features. These are included in the main repo and are being released on GitHub as 11.1. However, they won't be available on GNOME (E.G.O.) until we release version 12 (when GNOME 51 comes out).</p>
+<h3 id="polish-translation-added"><a class="toclink" href="2026/05/08/version-111---minor-release/#polish-translation-added">Polish Translation Added</a></h3>
+<h4 id="summary"><a class="toclink" href="2026/05/08/version-111---minor-release/#summary">Summary</a></h4>
+<p>Added Polish (<code>pl_PL</code>) translation contributed by Albert Bartoszko (gicural7).
+The translation covers menus, OSD notifications, keyboard shortcut descriptions,
+preferences, and schema strings.</p>
+<h4 id="notes"><a class="toclink" href="2026/05/08/version-111---minor-release/#notes">Notes</a></h4>
+<ul>
+<li>Color palette display names (e.g. "White", "HotPink") remain in English —
+  these are user-defined labels stored in GSettings, not translatable strings</li>
+<li>A small number of strings related to the arrow type feature are included in
+  the translation file but will be dormant until that feature is implemented
+  in a future version</li>
+<li>Tested on GNOME 50 (Manjaro) with system locale set to Polski (<code>pl_PL</code>)</li>
+</ul>
+<h4 id="files-added"><a class="toclink" href="2026/05/08/version-111---minor-release/#files-added">Files Added</a></h4>
+<ul>
+<li><code>po/pl_PL/LC_MESSAGES/draw-on-gnome.po</code> — translation source</li>
+<li><code>locale/pl_PL/LC_MESSAGES/draw-on-gnome.mo</code> — compiled binary</li>
+</ul>
+<h4 id="credit"><a class="toclink" href="2026/05/08/version-111---minor-release/#credit">Credit</a></h4>
+<p>Translation by Albert Bartoszko (gicural7) — contributed via
+<a href="https://github.com/daveprowse/Draw-On-Gnome/pull/49">PR #49</a>.</p>
+<h3 id="bug-fix-text-tool-color-bleed"><a class="toclink" href="2026/05/08/version-111---minor-release/#bug-fix-text-tool-color-bleed">Bug Fix: Text Tool Color Bleed</a></h3>
+<h4 id="summary_1"><a class="toclink" href="2026/05/08/version-111---minor-release/#summary_1">Summary</a></h4>
+<p>Fixed a bug where changing the drawing color after using the text tool would
+retroactively change the color of the last typed text.</p>
+<h4 id="steps-to-reproduce-before-fix"><a class="toclink" href="2026/05/08/version-111---minor-release/#steps-to-reproduce-before-fix">Steps to Reproduce (before fix)</a></h4>
+<ol>
+<li>Select the text tool (<code>Ctrl+T</code>), draw a text box, type some text (e.g. in blue)</li>
+<li>Press <code>Ctrl+P</code> to switch to the drawing tool</li>
+<li>Change color (e.g. to orange)</li>
+<li>The previously typed text changes to orange</li>
+</ol>
+<h4 id="root-cause"><a class="toclink" href="2026/05/08/version-111---minor-release/#root-cause">Root Cause</a></h4>
+<p>When switching tools via keyboard shortcut, <code>selectTool()</code> in <code>area.js</code> was
+called directly without first checking whether the text tool was still active
+and writing. This left <code>this.currentElement</code> pointing at the finished text
+element rather than setting it to <code>null</code>.</p>
+<p>When <code>selectColor()</code> subsequently ran, it found a non-null <code>currentElement</code>
+and updated its color — hitting the already-committed text element directly.</p>
+<p>Button-click tool changes were unaffected because <code>_onButtonPressed()</code> already
+had a guard:</p>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">currentElement</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">currentElement</span><span class="p">.</span><span class="nx">shape</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nx">Shape</span><span class="p">.</span><span class="nx">TEXT</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">isWriting</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">_stopWriting</span><span class="p">();</span>
+</span></code></pre></div>
+<p>But <code>selectTool()</code> had no equivalent check.</p>
+<h4 id="fix"><a class="toclink" href="2026/05/08/version-111---minor-release/#fix">Fix</a></h4>
+<p>One guard added to <code>selectTool()</code> in <code>area.js</code>:</p>
+<p><strong>Before:</strong>
+</p><div class="language-js highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nx">selectTool</span><span class="p">(</span><span class="nx">tool</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">currentTool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">tool</span><span class="p">;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">'show-osd'</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">_extension</span><span class="p">.</span><span class="nx">FILES</span><span class="p">.</span><span class="nx">ICONS</span><span class="p">[</span><span class="sb">`TOOL_</span><span class="si">${</span><span class="nx">Tool</span><span class="p">.</span><span class="nx">getNameOf</span><span class="p">(</span><span class="nx">tool</span><span class="p">)</span><span class="si">}</span><span class="sb">`</span><span class="p">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="nx">DisplayStrings</span><span class="p">.</span><span class="nx">Tool</span><span class="p">[</span><span class="nx">tool</span><span class="p">],</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">updatePointerCursor</span><span class="p">();</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
+</span></code></pre></div><p></p>
+<p><strong>After:</strong>
+</p><div class="language-js highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nx">selectTool</span><span class="p">(</span><span class="nx">tool</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isWriting</span><span class="p">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">_stopWriting</span><span class="p">();</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">currentTool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">tool</span><span class="p">;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">'show-osd'</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">_extension</span><span class="p">.</span><span class="nx">FILES</span><span class="p">.</span><span class="nx">ICONS</span><span class="p">[</span><span class="sb">`TOOL_</span><span class="si">${</span><span class="nx">Tool</span><span class="p">.</span><span class="nx">getNameOf</span><span class="p">(</span><span class="nx">tool</span><span class="p">)</span><span class="si">}</span><span class="sb">`</span><span class="p">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="nx">DisplayStrings</span><span class="p">.</span><span class="nx">Tool</span><span class="p">[</span><span class="nx">tool</span><span class="p">],</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">updatePointerCursor</span><span class="p">();</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">}</span>
+</span></code></pre></div><p></p>
+<p>When <code>_stopWriting()</code> is called, it pushes the completed text element into
+<code>this.elements</code> and sets <code>this.currentElement = null</code>. Subsequent color changes
+then find no active element to modify.</p>
+<h4 id="files-changed"><a class="toclink" href="2026/05/08/version-111---minor-release/#files-changed">Files Changed</a></h4>
+<ul>
+<li><code>area.js</code> — <code>selectTool()</code> method</li>
+</ul>
+<h3 id="thats-it-enjoy"><a class="toclink" href="2026/05/08/version-111---minor-release/#thats-it-enjoy"><strong>That's it! ENJOY!</strong> 😀</a></h3>
+    
+  </div>
+</article>
+      
+        <article class="md-post md-post--excerpt">
+  <header class="md-post__header">
+    
+      <nav class="md-post__authors md-typeset">
+        
+          <span class="md-author">
+            <img src="https://avatars.githubusercontent.com/u/65040686" alt="Dave Prowse">
+          </span>
+        
+      </nav>
+    
+    <div class="md-post__meta md-meta">
+      <ul class="md-meta__list">
+        <li class="md-meta__item">
           <time datetime="2026-04-21 00:00:00+00:00">Apr 21, 2026</time></li>
         
         
