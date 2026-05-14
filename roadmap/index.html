@@ -614,6 +614,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#potential-cursors-using-the-eyedropper-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      Potential cursors using the eyedropper approach
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#fade-out-option" class="md-nav__link">
     <span class="md-ellipsis">
       Fade-out option
@@ -752,8 +761,9 @@
 </ul>
 <h2 id="issues">Issues</h2>
 <ul>
-<li>Need the Polish translation for upcoming V12</li>
-<li>When switching from text mode to drawing mode, a color change will change the last typed text!</li>
+<li>Need the Polish translation for upcoming V11.1 and V12</li>
+<li>When switching from text mode to drawing mode, a color change will change the last typed text! (This is fixed in 11.1 but not shipped yet.)</li>
+<li>Sometimes, when the eyedropper tool is used, you can't select another tool (like the drawing tool), the <code>esc</code> key has to be pressed to get out of eyedropper mode. </li>
 </ul>
 <h2 id="planned-features-long-term">Planned Features (long-term)</h2>
 <p>Here are the planned features:</p>
@@ -779,6 +789,8 @@ The ideas is for toggling on any tool with the end result being returning to the
 <p>Should work??? It will require some heavy duty programming and testing though... </p>
 <h3 id="different-laser-types">Different Laser Types</h3>
 <p>I designed the laser pointer to work with <code>Ctrl+Q</code> but it was a quick design. The laser is okay, but I would like to design a couple of others and give people the ability to use each variant by pressing <code>Ctrl+Alt+Q</code></p>
+<h3 id="potential-cursors-using-the-eyedropper-approach">Potential cursors using the eyedropper approach</h3>
+<p>We might be able to solve the cursors issues and create crosshair, I-beam, and others with our own code, emulating that which is used ny the eyedropper. However, there can be some lag and offset, which I don't want. Need to investigate further. This is not high priority as most people are fine with the default cursor. </p>
 <h3 id="fade-out-option">Fade-out option</h3>
 <p>Toggle that enables the fade out option for drawing - (Similar to macOS ScreenBrush). For example, if you draw an arrow pointing to an element, the arrow would fade out after x seconds. see <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/23" target="_blank">this link</a></p>
 <h3 id="clip-bin">Clip bin</h3>
