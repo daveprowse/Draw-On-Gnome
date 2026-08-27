@@ -554,6 +554,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#my-draw-on-gnome-extension-stopped-working-after-an-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      My Draw On Gnome extension stopped working after an upgrade!
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -792,6 +801,22 @@ The path to the DB is <code>~/.config/dconf/user</code>.</p>
 </ul>
 <h3 id="other-drawing-apps-can-cause-conflicts">Other Drawing Apps can cause Conflicts</h3>
 <p>If you use other drawing apps it is possible that they can conflict with Draw On Gnome. One reported example was with the Flatpak version of <code>gromit-mpx</code>. In these cases I suggest using the <code>apt</code> package manager to install the other program. Uninstall and reinstall if necessary.</p>
+<h3 id="my-draw-on-gnome-extension-stopped-working-after-an-upgrade">My Draw On Gnome extension stopped working after an upgrade!</h3>
+<p>This can happen if you upgrade your Linux distrobution and the GNOME desktop is upgraded to a new version. In some cases the extension might still work, or it might partially work. However, the best option is to seek out the latest version of the extension for your version of GNOME. Do the following:</p>
+<ul>
+<li>
+<p>Find out your current version of GNOME</p>
+<p><code>gnome-shell --version</code></p>
+</li>
+<li>
+<p>(Optional) Backup your current extension. For example, in <code>~/.local/share/gnome-shell/extensions</code> type the following command:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="go">cp -r draw-on-gnome@daveprowse.github.io draw-on-gnome@daveprowse.github.io.bak</span>
+</span></code></pre></div>
+</li>
+<li>
+<p>Install the latest extension for your version of GNOME from https://extensions.gnome.org/extension/7921/draw-on-gnome/.</p>
+</li>
+</ul>
 
 
 
