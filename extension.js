@@ -27,6 +27,7 @@ import GObject from 'gi://GObject';
 
 import { QuickToggle, SystemIndicator } from 'resource:///org/gnome/shell/ui/quickSettings.js';
 
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as Panel from 'resource:///org/gnome/shell/ui/panel.js';
 
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
@@ -149,7 +150,9 @@ export default class DrawOnGnomeExtension extends Extension {
     }
 
     _toggleDrawing() {
-        Panel.closeQuickSettings();
+        // closeQuickSettings() is a method on the Panel INSTANCE, not a module export:
+        // the shell calls Main.panel.closeQuickSettings() everywhere (panel.js:615).
+        Main.panel.closeQuickSettings();
         if (this.indicator) {
             this.indicator.get_toggle().set_checked(false);
         }
