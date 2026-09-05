@@ -122,7 +122,8 @@ export const DrawingArea = GObject.registerClass({
     Signals: {
         'show-osd': { param_types: [Gio.Icon.$gtype, GObject.TYPE_STRING, GObject.TYPE_STRING, GObject.TYPE_DOUBLE, GObject.TYPE_BOOLEAN] },
         'pointer-cursor-changed': { param_types: [GObject.TYPE_STRING] },
-        'leave-drawing-mode': {}
+        'leave-drawing-mode': {},
+        'writing-mode-changed': { param_types: [GObject.TYPE_BOOLEAN] }
     },
 }, class DrawingArea extends St.Widget {
 
@@ -1272,6 +1273,8 @@ export const DrawingArea = GObject.registerClass({
 
             return Clutter.EVENT_PROPAGATE;
         });
+
+        this.emit('writing-mode-changed', true);
     }
 
     _stopWriting() {
@@ -1284,6 +1287,8 @@ export const DrawingArea = GObject.registerClass({
         // Store textEntry reference before destroying
         const textEntry = this.textEntry;
         delete this.textEntry;
+
+        this.emit('writing-mode-changed', false);
         
         // Defer focus grab to avoid GNOME Shell 48.3/48.4 crash
         // This ensures the text entry is fully destroyed before regaining focus
