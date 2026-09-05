@@ -183,6 +183,7 @@ export class AreaManager {
             area.leaveDrawingHandler = area.connect('leave-drawing-mode', this.toggleDrawing.bind(this));
             area.pointerCursorChangedHandler = area.connect('pointer-cursor-changed', this.setCursor.bind(this));
             area.showOsdHandler = area.connect('show-osd', this.showOsd.bind(this));
+            area.writingModeChangedHandler = area.connect('writing-mode-changed', this.onWritingModeChanged.bind(this));
             this.areas.push(area);
         }
     }
@@ -251,13 +252,7 @@ export class AreaManager {
             'open-preferences': this.openPreferences.bind(this)
         };
         
-        for (let key in this.internalKeybindings1) {
-            Main.wm.addKeybinding(key,
-                                  this._extension.getSettings(this._extension.metadata['settings-schema'] + '.internal-shortcuts'),
-                                  Meta.KeyBindingFlags.NONE,
-                                  this._DRAWING_ACTION_MODE,
-                                  this.internalKeybindings1[key]);
-        }
+        this.addDrawingOnlyKeybindings();
         
         for (let key in this.internalKeybindings2) {
             Main.wm.addKeybinding(key,
@@ -277,9 +272,49 @@ export class AreaManager {
         }
     }
     
-    removeInternalKeybindings() {
+    // The drawing-only shortcuts are added and removed on their own, because they must
+    // go away while the user is writing text. See onWritingModeChanged().
+    addDrawingOnlyKeybindings() {
+        if (this.drawingOnlyKeybindingsAdded)
+            return;
+
+        for (let key in this.internalKeybindings1) {
+            Main.wm.addKeybinding(key,
+                                  this._extension.getSettings(this._extension.metadata['settings-schema'] + '.internal-shortcuts'),
+                                  Meta.KeyBindingFlags.NONE,
+                                  this._DRAWING_ACTION_MODE,
+                                  this.internalKeybindings1[key]);
+        }
+
+        this.drawingOnlyKeybindingsAdded = true;
+    }
+
+    removeDrawingOnlyKeybindings() {
+        if (!this.drawingOnlyKeybindingsAdded)
+            return;
+
         for (let key in this.internalKeybindings1)
             Main.wm.removeKeybinding(key);
+
+        this.drawingOnlyKeybindingsAdded = false;
+    }
+
+    // The action mode passed to Main.pushModal() is computed once, when drawing mode is
+    // entered, so it still says _DRAWING_ACTION_MODE while the user writes. Rather than
+    // re-pushing the grab, drop the drawing-only shortcuts for as long as writing lasts,
+    // which is what `// unavailable when writing` above always meant to say.
+    onWritingModeChanged(area, isWriting) {
+        if (area != this.activeArea || this._findModal(this.grab) == -1)
+            return;
+
+        if (isWriting)
+            this.removeDrawingOnlyKeybindings();
+        else
+            this.addDrawingOnlyKeybindings();
+    }
+
+    removeInternalKeybindings() {
+        this.removeDrawingOnlyKeybindings();
         
         for (let key in this.internalKeybindings2)
             Main.wm.removeKeybinding(key);
@@ -537,6 +572,7 @@ export class AreaManager {
         for (const area of this.areas) {
             area.disconnect(area.leaveDrawingHandler);
             area.disconnect(area.showOsdHandler);
+            area.disconnect(area.writingModeChangedHandler);
             area.destroy();
         }
         this.areas = [];
