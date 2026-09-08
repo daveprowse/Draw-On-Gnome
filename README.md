@@ -88,7 +88,7 @@ It's back to the drawing board my friends! Enjoy! 😎
 
 ## Deep Dive Tutorial
 
-[![Watch the video](https://youtube.com)](https://www.youtube.com/watch?v=3d7UrRNri6Q)
+[![WATCH THE VIDEO HERE](https://img.youtube.com/vi/3d7UrRNri6Q/0.jpg)](https://www.youtube.com/watch?v=3d7UrRNri6Q)
 
 ---
 
