@@ -86,6 +86,12 @@ It's back to the drawing board my friends! Enjoy! 😎
 
 ---
 
+## Deep Dive Tutorial
+
+[![Watch the video](https://youtube.com)](https://www.youtube.com/watch?v=3d7UrRNri6Q)
+
+---
+
 Thanks to the original author and past maintainers:
 
 - Forked from: https://github.com/zhrexl/DrawOnYourScreen2
