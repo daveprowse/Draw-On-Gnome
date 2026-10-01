@@ -59,6 +59,8 @@ const MOTION_TIME = 1; // ms, time accuracy for free drawing, max is about 33 ms
 const TEXT_CURSOR_TIME = 600; // ms
 const ELEMENT_GRABBER_TIME = 80; // ms, default is about 16 ms
 const TOGGLE_ANIMATION_DURATION = 300; // ms
+const TOUCH_LONG_PRESS_TIME = 550; // ms, a touch long press opens the menu (touch equivalent of a right click)
+const TOUCH_LONG_PRESS_THRESHOLD = 16; // px, movement above this cancels the long press
 const GRID_TILES_HORIZONTAL_NUMBER = 30;
 const COLOR_PICKER_EXTENSION_UUID = 'color-picker@tuberry';
 
@@ -671,11 +673,200 @@ export const DrawingArea = GObject.registerClass({
         return this.layerContainer.transform_stage_point(stageX, stageY);
     }
 
+    // Returns the physical device of an event, whatever the GNOME version.
+    _getEventDevice(event) {
+        try {
+            if (event.get_source_device) {
+                let device = event.get_source_device();
+                if (device)
+                    return device;
+            }
+        } catch (e) {}
+
+        try {
+            if (event.get_device)
+                return event.get_device();
+        } catch (e) {}
+
+        return null;
+    }
+
+    // True for every device that drives the ordinary pointer cursor.
+    // Unknown or unsupported enum values are treated as pointer-like, so a
+    // missing API can never break drawing on another GNOME version.
+    _isPointerLikeDevice(device) {
+        let types = Clutter.InputDeviceType;
+        if (!types)
+            return true;
+
+        let type;
+        try {
+            if (!device.get_device_type)
+                return true;
+            type = device.get_device_type();
+        } catch (e) {
+            return true;
+        }
+
+        // Devices owning a separate cursor are the only ones that must not be
+        // mixed with the pointer.
+        let ownCursor = [
+            types.TOUCHSCREEN_DEVICE,
+            types.PEN_DEVICE,
+            types.ERASER_DEVICE,
+            types.TABLET_DEVICE,
+        ];
+
+        return !ownCursor.some(t => t !== undefined && t === type);
+    }
+
+    // The previous test rejected motion as soon as the two device wrappers
+    // were not strictly identical. That breaks common hardware: on ThinkPads
+    // the physical buttons belong to the TrackPoint device while motion comes
+    // from the Synaptics touchpad, so press and motion never match and nothing
+    // is ever drawn.
+    //
+    // Several physical devices legitimately share a single pointer cursor and
+    // must all be accepted. Only devices owning a separate cursor (touchscreen,
+    // pen, tablet) are still filtered out, which is what the Wayland
+    // two-cursor guard was actually meant to do.
+    _isSameDevice(clickedDevice, event) {
+        if (!clickedDevice)
+            return true;
+
+        let device = this._getEventDevice(event);
+        if (!device || device === clickedDevice)
+            return true;
+
+        try {
+            if (device.get_device_name && clickedDevice.get_device_name &&
+                device.get_device_name() === clickedDevice.get_device_name())
+                return true;
+        } catch (e) {}
+
+        // Mouse, touchpad, trackpoint and trackball all move the same cursor.
+        if (this._isPointerLikeDevice(clickedDevice) && this._isPointerLikeDevice(device))
+            return true;
+
+        return false;
+    }
+
+    /* ------------------------------------------------------------------ *
+     * Touch support (touchscreens, tablets, phones).
+     *
+     * Clutter does not synthesize pointer events from touch for plain actors,
+     * so a touch sequence is translated here into the very same button-press /
+     * motion / button-release signals the pointer code path already listens
+     * to. Everything downstream stays unchanged.
+     * ------------------------------------------------------------------ */
+
+    _isTouchEvent(event) {
+        let type = event.type ? event.type() : null;
+        return type == Clutter.EventType.TOUCH_BEGIN ||
+               type == Clutter.EventType.TOUCH_UPDATE ||
+               type == Clutter.EventType.TOUCH_END ||
+               type == Clutter.EventType.TOUCH_CANCEL;
+    }
+
+    _removeTouchLongPressTimeout() {
+        if (this.touchLongPressTimeoutId) {
+            GLib.source_remove(this.touchLongPressTimeoutId);
+            this.touchLongPressTimeoutId = null;
+        }
+    }
+
+    _startTouchLongPressTimeout(x, y) {
+        this._removeTouchLongPressTimeout();
+
+        this.touchLongPressTimeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, TOUCH_LONG_PRESS_TIME, () => {
+            this.touchLongPressTimeoutId = null;
+
+            if (this.touchFingerCount > 0 && !this.touchMoved) {
+                // Long press behaves like a right click: drop what has just
+                // been started and open the menu.
+                this.touchLongPressed = true;
+                this._stopAll();
+                this.menu.open(x, y);
+            }
+
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+
+    _onTouchEvent(actor, event) {
+        if (!this.reactive)
+            return Clutter.EVENT_PROPAGATE;
+
+        let type = event.type ? event.type() : null;
+        let [x, y] = event.get_coords();
+
+        if (type == Clutter.EventType.TOUCH_BEGIN) {
+            this.touchFingerCount = (this.touchFingerCount || 0) + 1;
+
+            // Only the first finger draws, extra fingers pause the stroke.
+            if (this.touchFingerCount > 1)
+                return Clutter.EVENT_STOP;
+
+            this.touchMoved = false;
+            this.touchLongPressed = false;
+            this.touchStartCoords = [x, y];
+            this._startTouchLongPressTimeout(x, y);
+
+            this.emit('button-press-event', event);
+            return Clutter.EVENT_STOP;
+
+        } else if (type == Clutter.EventType.TOUCH_UPDATE) {
+            if (!this.touchFingerCount || this.touchLongPressed)
+                return Clutter.EVENT_STOP;
+
+            if (!this.touchMoved && this.touchStartCoords) {
+                let dx = x - this.touchStartCoords[0];
+                let dy = y - this.touchStartCoords[1];
+                if (Math.hypot(dx, dy) > TOUCH_LONG_PRESS_THRESHOLD) {
+                    this.touchMoved = true;
+                    this._removeTouchLongPressTimeout();
+                }
+            }
+
+            // Freeze the stroke while several fingers are down (scroll and
+            // zoom gestures, palm rejection).
+            if (this.touchFingerCount > 1)
+                return Clutter.EVENT_STOP;
+
+            this.emit('motion-event', event);
+            return Clutter.EVENT_STOP;
+
+        } else if (type == Clutter.EventType.TOUCH_END || type == Clutter.EventType.TOUCH_CANCEL) {
+            this.touchFingerCount = Math.max((this.touchFingerCount || 1) - 1, 0);
+
+            if (this.touchFingerCount > 0)
+                return Clutter.EVENT_STOP;
+
+            this._removeTouchLongPressTimeout();
+
+            if (this.touchLongPressed) {
+                this.touchLongPressed = false;
+                return Clutter.EVENT_STOP;
+            }
+
+            if (type == Clutter.EventType.TOUCH_CANCEL)
+                this._stopAll();
+            else
+                this.emit('button-release-event', event);
+
+            return Clutter.EVENT_STOP;
+        }
+
+        return Clutter.EVENT_PROPAGATE;
+    }
+
     _onButtonPressed(actor, event) {
         if (this.spaceKeyPressed)
             return Clutter.EVENT_PROPAGATE;
 
-        let button = event.get_button();
+        // Touch events are re-emitted through this handler (see _onTouchEvent).
+        // They carry no button, so treat them as a left click.
+        let button = this._isTouchEvent(event) ? 1 : event.get_button();
         let [x, y] = event.get_coords();
         let controlPressed = event.has_control_modifier();
         let shiftPressed = event.has_shift_modifier();
@@ -701,7 +892,7 @@ export const DrawingArea = GObject.registerClass({
                 if (this.grabbedElement)
                     this._startTransforming(x, y, controlPressed, shiftPressed);
             } else {
-                this._startDrawing(x, y, shiftPressed, (event.get_device ? event.get_device() : null) || event.get_source_device());
+                this._startDrawing(x, y, shiftPressed, this._getEventDevice(event));
             }
             return Clutter.EVENT_STOP;
             // End Laser Button Press Handling Code
@@ -1040,7 +1231,7 @@ export const DrawingArea = GObject.registerClass({
                 if (!s)
                     return;
                 
-                if (clickedDevice != (event.get_device ? event.get_device() : null) && clickedDevice != event.get_source_device())
+                if (!this._isSameDevice(clickedDevice, event))
                     return Clutter.EVENT_PROPAGATE;
 
                 if (this.spaceKeyPressed)
@@ -1144,9 +1335,9 @@ export const DrawingArea = GObject.registerClass({
                 return;
             
             // To avoid painting due to the wrong device (2 cursors wayland support)
-            //Modified for GNOME 46/47 support
-            if (clickedDevice != (event.get_device ? event.get_device() : null) && clickedDevice != event.get_source_device())
-                return Clutter.EVENT_PROPAGATE;            
+            // Modified for GNOME 46+ and for multi-device pointers.
+            if (!this._isSameDevice(clickedDevice, event))
+                return Clutter.EVENT_PROPAGATE;
 
             if (this.spaceKeyPressed)
                 return;
@@ -1945,6 +2136,8 @@ export const DrawingArea = GObject.registerClass({
         this.rulerLayer = null;
         // End laser pointer cleanup
 
+        this._removeTouchLongPressTimeout();
+
         this._extension.drawingSettings.disconnect(this.drawingSettingsChangedHandler);
         this.erase();
         if (this._menu)
@@ -1962,7 +2155,13 @@ export const DrawingArea = GObject.registerClass({
         
         // Add dedicated motion handler for laser pointer
         this.laserMotionHandler = this.connect('motion-event', this._onLaserMotion.bind(this));
-        
+
+        // Touchscreen / tablet / phone support
+        this.touchHandler = this.connect('touch-event', this._onTouchEvent.bind(this));
+        this.touchFingerCount = 0;
+        this.touchMoved = false;
+        this.touchLongPressed = false;
+
         this.set_background_color(this.reactive && this.hasBackground ? this.areaBackgroundColor : null);
     }
 
@@ -1988,6 +2187,15 @@ export const DrawingArea = GObject.registerClass({
             this.disconnect(this.laserMotionHandler);
             this.laserMotionHandler = null;
         }
+        // Touch cleanup
+        if (this.touchHandler) {
+            this.disconnect(this.touchHandler);
+            this.touchHandler = null;
+        }
+        this._removeTouchLongPressTimeout();
+        this.touchFingerCount = 0;
+        this.touchMoved = false;
+        this.touchLongPressed = false;
         // Clean up laser pointer
         if (this.laserPointerActive) {
             this.stopLaserPointer();
