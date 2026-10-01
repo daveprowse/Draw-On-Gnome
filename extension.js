@@ -1,7 +1,7 @@
 /*
  * Copyright 2019 Abakkk
  * Copyright 2023 zhrexl
- * Copyright 2024 Dave Prowse
+ * Copyright 2024-2026 Dave Prowse
  
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,22 +24,15 @@
 /* eslint version: 9.16 (2024) */
 
 import GObject from 'gi://GObject';
-
 import { QuickToggle, SystemIndicator } from 'resource:///org/gnome/shell/ui/quickSettings.js';
-
-import * as Panel from 'resource:///org/gnome/shell/ui/panel.js';
-
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
-
 import { Files } from './files.js';
-
 import * as AreaManager from './areamanager.js';
 
-import { SHELL_MAJOR_VERSION } from './utils.js';
-
-
-const FeatureToggle = GObject.registerClass(
-class FeatureToggle extends QuickToggle {
+/* ── Quick Settings toggle tile ────────────────────────────── */
+const DrawingToggle = GObject.registerClass(
+class DrawingToggle extends QuickToggle {
     _init() {
         super._init({
             title: 'Drawing Mode',
@@ -49,110 +42,106 @@ class FeatureToggle extends QuickToggle {
     }
 });
 
-
-const Indicator = GObject.registerClass(
-class Indicator extends SystemIndicator {
-    _init(extension) {
+/* ── Panel indicator + toggle container ─────────────────────── */
+const DrawingIndicator = GObject.registerClass(
+class DrawingIndicator extends SystemIndicator {
+    _init(settings) {
         super._init();
-        
-        this._extension = extension;
+        this._settings = settings;
 
-        this.toggle = new FeatureToggle();
-        this.quickSettingsItems.push(this.toggle);
-        this._addIndicator();
-        
-        this.connect('destroy', () => {
-            this.quickSettingsItems.forEach(item => item.destroy());
-        });
+        // Panel icon — passive status indicator (always visible while loaded)
+        this._panelIcon = this._addIndicator();
+        this._panelIcon.icon_name = 'applications-graphics-symbolic';
+        this._panelIcon.visible = true;
+
+        // Quick Settings tile
+        this._toggle = new DrawingToggle();
+        this.quickSettingsItems.push(this._toggle);
     }
-    
-    get_toggle() {
-        return this.toggle;
+
+    get toggle() { return this._toggle; }
+
+    /** Call from the extension to keep the toggle in sync with drawing state. */
+    sync(active) {
+        this._toggle.set_checked(active);
     }
-    
-    // Connect the toggle to the extension's drawing functionality
-    connectToExtension(toggleDrawingCallback) {
-        this.toggle.connect('clicked', toggleDrawingCallback);
+
+    destroy() {
+        this.quickSettingsItems.forEach(item => item.destroy());
+        super.destroy();
     }
 });
 
-
+/* ── Extension ───────────────────────────────────────────────── */
 export default class DrawOnGnomeExtension extends Extension {
-
     constructor(metadata) {
         super(metadata);
-        this.indicator = null;
+        this._indicator = null;
+        this._settingsChangedId = null;
     }
 
     enable() {
-        console.debug(`enabling ${this.metadata.name} version ${this.metadata.version}`);
-        
         this.settings = this.getSettings();
-        this.internalShortcutSettings = this.getSettings(this.metadata['settings-schema'] + '.internal-shortcuts');
-        this.drawingSettings = this.getSettings(this.metadata['settings-schema'] + '.drawing');
-        
-        // CRITICAL: Initialize FILES before AreaManager to avoid race condition
-        // AreaManager creates DrawingAreas which may try to load persistent data
+        this.internalShortcutSettings = this.getSettings(
+            this.metadata['settings-schema'] + '.internal-shortcuts');
+        this.drawingSettings = this.getSettings(
+            this.metadata['settings-schema'] + '.drawing');
+
         this.FILES = new Files(this);
-        
         this.areaManager = new AreaManager.AreaManager(this);
         this.areaManager.enable();
-        
-        // Create indicator if GNOME version supports it and setting allows it
-        this._updateIndicator();
-        
-        // Watch for settings changes
-        this._settingsChangedId = this.settings.connect('changed::quicktoggle-disabled', 
-            this._updateIndicator.bind(this));
+
+        this._setupIndicator();
+        this._settingsChangedId = this.settings.connect(
+            'changed::quicktoggle-disabled',
+            this._setupIndicator.bind(this));
     }
 
     disable() {
-        // Disconnect settings signal
         if (this._settingsChangedId) {
             this.settings.disconnect(this._settingsChangedId);
             this._settingsChangedId = null;
         }
-        
-        // Destroy indicator if it exists
-        if (this.indicator) {
-            this.indicator.destroy();
-            this.indicator = null;
-        }
-        
+        this._destroyIndicator();
         this.areaManager.disable();
-        delete this.areaManager;
-        delete this.settings;
-        delete this.internalShortcutSettings;
-        this.FILES = null;
-        this.drawingSettings = null;
         this.areaManager = null;
+        this.settings = null;
         this.internalShortcutSettings = null;
+        this.drawingSettings = null;
+        this.FILES = null;
     }
 
-    _updateIndicator() {
-        // Only create indicator on GNOME 44+
-        if (SHELL_MAJOR_VERSION < 44) {
+    _setupIndicator() {
+        const disabled = this.settings.get_boolean('quicktoggle-disabled');
+        if (disabled) {
+            this._destroyIndicator();
             return;
         }
-        
-        const quicktoggleDisabled = this.settings.get_boolean('quicktoggle-disabled');
-        
-        if (quicktoggleDisabled && this.indicator) {
-            // Setting says disabled, but we have an indicator - destroy it
-            this.indicator.destroy();
-            this.indicator = null;
-        } else if (!quicktoggleDisabled && !this.indicator) {
-            // Setting says enabled, but we don't have an indicator - create it
-            this.indicator = new Indicator(this);
-            this.indicator.connectToExtension(this._toggleDrawing.bind(this));
+        if (!this._indicator) {
+            this._indicator = new DrawingIndicator(this.settings);
+            this._indicator.toggle.connect('clicked', this._onToggleClicked.bind(this));
+            // This is the call that was missing — registers both the panel icon
+            // and the Quick Settings tile in one step.
+            Main.panel.statusArea.quickSettings.addExternalIndicator(this._indicator);
         }
     }
 
-    _toggleDrawing() {
-        Panel.closeQuickSettings();
-        if (this.indicator) {
-            this.indicator.get_toggle().set_checked(false);
+    _destroyIndicator() {
+        if (this._indicator) {
+            this._indicator.destroy();
+            this._indicator = null;
         }
+    }
+
+    /** Called by AreaManager whenever drawing state changes. */
+    syncIndicator(active) {
+        if (this._indicator)
+            this._indicator.sync(active);
+    }
+
+    _onToggleClicked() {
+        // Close the panel before toggling — instance method, not a module export
+        Main.panel.closeQuickSettings();
         this.areaManager.toggleDrawing();
     }
 }

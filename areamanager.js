@@ -30,7 +30,6 @@ import Clutter from 'gi://Clutter';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as OsdWindow from 'resource:///org/gnome/shell/ui/osdWindow.js';
-import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 
 import {gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 
@@ -85,10 +84,7 @@ export class AreaManager {
         
         this.updateAreas();
         this.monitorChangedHandler = Main.layoutManager.connect('monitors-changed', this.updateAreas.bind(this));
-        
-        this.updateIndicator();
-        this.indicatorSettingHandler = this._settings.connect('changed::indicator-disabled', this.updateIndicator.bind(this));
-        
+                
         this.desktopSettingHandler = this._settings.connect('changed::drawing-on-desktop', this.onDesktopSettingChanged.bind(this));
         this.persistentOverRestartsSettingHandler = this._settings.connect('changed::persistent-over-restarts', this.onPersistentOverRestartsSettingChanged.bind(this));
         this.persistentOverTogglesSettingHandler = this._settings.connect('changed::persistent-over-toggles', this.onPersistentOverTogglesSettingChanged.bind(this));
@@ -436,8 +432,7 @@ export class AreaManager {
             this.showOsd(null, this._extension.FILES.ICONS.ENTER, label, null, null, true);
         }
         
-        if (this.indicator)
-            this.indicator.sync(Boolean(this.activeArea));
+        this._extension.syncIndicator(Boolean(this.activeArea));        
     }
     
     // Use level -1 to set no level through a signal.
@@ -542,15 +537,11 @@ export class AreaManager {
         this.areas = [];
     }
     
-    disable() {
+    disable() {        
         if (this.monitorChangedHandler) {
             Main.layoutManager.disconnect(this.monitorChangedHandler);
             this.monitorChangedHandler = null;
-        }
-        if (this.indicatorSettingHandler) {
-            this._settings.disconnect(this.indicatorSettingHandler);
-            this.indicatorSettingHandler = null;
-        }
+        }        
         if (this.desktopSettingHandler) {
             this._settings.disconnect(this.desktopSettingHandler);
             this.desktopSettingHandler = null;
@@ -571,9 +562,7 @@ export class AreaManager {
         Main.wm.removeKeybinding('erase-drawings');
         this.removeAreas();
         // this._extension.FILES.IMAGES.disable();
-        // this._extension.FILES.JSONS.disable();
-        if (this.indicator)
-            this.indicator.disable();
+        // this._extension.FILES.JSONS.disable();        
     }
 
     /**
@@ -582,32 +571,8 @@ export class AreaManager {
      */
     _findModal(grab) {
         return Main.modalActorFocusStack.findIndex(modal => modal.grab === grab);
-    }
+    }    
 
-};
-
-
-export class DrawingIndicator {
-
-    enable() {
-        let [menuAlignment, dontCreateMenu] = [0, true];
-        this.button = new PanelMenu.Button(menuAlignment, "Drawing Indicator", dontCreateMenu);
-        this.buttonActor = this._SHELL_MAJOR_VERSION >= 3 ? this.button.actor: this.button;
-        Main.panel.addToStatusArea('draw-on-gnome-indicator', this.button);
-        
-        this.icon = new St.Icon({ icon_name: 'applications-graphics-symbolic',
-                                  style_class: 'system-status-icon screencast-indicator' });
-        this.buttonActor.add_child(this.icon);
-        this.buttonActor.visible = false;
-    }
-
-    sync(visible) {
-        this.buttonActor.visible = visible;
-    }
-    
-    disable() {
-        this.button.destroy();
-    }
 };
 
 

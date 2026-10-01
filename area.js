@@ -746,7 +746,7 @@ export const DrawingArea = GObject.registerClass({
             // Right Alt key for laser pointer
             this.laserKeyPressed = true;
             if (!this.laserPointerActive) {
-                let [x, y] = global.get_pointer();
+                let [x, y] = global.display.get_pointer();
                 let [success, localX, localY] = this._transformStagePoint(x, y);
                 if (success) {
                     this.startLaserPointer(localX, localY);

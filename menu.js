@@ -301,10 +301,34 @@ export const DrawingMenu = GObject.registerClass({
         
         this._addDrawingNameItem(this.menu);
         this._addOpenDrawingSubMenuItem(this.menu, _("Open drawing"), 'document-open-symbolic');
+        
+        // 10-2026 Pop-up menu exit addition
         this._addSaveDrawingSubMenuItem(this.menu, _("Save drawing as…"), 'document-save-as-symbolic');
         this._addSeparator(this.menu);
-        
+
+        // Exit Drawing Mode — above action buttons
+        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem(' '));
+        let exitItem = new PopupMenu.PopupBaseMenuItem();
+        exitItem.add_child(new St.Icon({
+            icon_name: 'application-exit-symbolic',
+            style_class: 'popup-menu-icon',
+            y_align: Clutter.ActorAlign.CENTER,
+        }));
+        exitItem.add_child(new St.Label({
+            text: _('Exit Drawing Mode'),
+            style: 'font-weight: bold;',
+            y_align: Clutter.ActorAlign.CENTER,
+        }));
+        exitItem.connect('activate', () => {
+            this.menu.close();
+            this._extension.areaManager.toggleDrawing();
+        });
+        this.menu.addMenuItem(exitItem);
+        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem(' '));
+
         groupItem = new PopupMenu.PopupBaseMenuItem({ reactive: false, can_focus: false, style_class: 'draw-on-gnome-menu-group-item' });
+        // end 10-2026 changes
+
         this.saveButton = new ActionButton(this._getSummary('save-as-json'), 'document-save-symbolic', this.area.saveAsJson.bind(this.area, false, this._onDrawingSaved.bind(this)), null);
         this.svgButton = new ActionButton(this._getSummary('export-to-svg'), this._extension.FILES.ICONS.DOCUMENT_EXPORT, this.area.exportToSvg.bind(this.area), null);
         this.prefsButton = new ActionButton(this._getSummary('open-preferences'), 'document-page-setup-symbolic', this.areaManagerUtils.openPreferences, null);
