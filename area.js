@@ -671,6 +671,84 @@ export const DrawingArea = GObject.registerClass({
         return this.layerContainer.transform_stage_point(stageX, stageY);
     }
 
+    // Returns the physical device of an event, whatever the GNOME version.
+    _getEventDevice(event) {
+        try {
+            if (event.get_source_device) {
+                let device = event.get_source_device();
+                if (device)
+                    return device;
+            }
+        } catch (e) {}
+
+        try {
+            if (event.get_device)
+                return event.get_device();
+        } catch (e) {}
+
+        return null;
+    }
+
+    // True for every device that drives the ordinary pointer cursor.
+    // Unknown or unsupported enum values are treated as pointer-like, so a
+    // missing API can never break drawing on another GNOME version.
+    _isPointerLikeDevice(device) {
+        let types = Clutter.InputDeviceType;
+        if (!types)
+            return true;
+
+        let type;
+        try {
+            if (!device.get_device_type)
+                return true;
+            type = device.get_device_type();
+        } catch (e) {
+            return true;
+        }
+
+        // Devices owning a separate cursor are the only ones that must not be
+        // mixed with the pointer.
+        let ownCursor = [
+            types.TOUCHSCREEN_DEVICE,
+            types.PEN_DEVICE,
+            types.ERASER_DEVICE,
+            types.TABLET_DEVICE,
+        ];
+
+        return !ownCursor.some(t => t !== undefined && t === type);
+    }
+
+    // The previous test rejected motion as soon as the two device wrappers
+    // were not strictly identical. That breaks common hardware: on ThinkPads
+    // the physical buttons belong to the TrackPoint device while motion comes
+    // from the Synaptics touchpad, so press and motion never match and nothing
+    // is ever drawn.
+    //
+    // Several physical devices legitimately share a single pointer cursor and
+    // must all be accepted. Only devices owning a separate cursor (touchscreen,
+    // pen, tablet) are still filtered out, which is what the Wayland
+    // two-cursor guard was actually meant to do.
+    _isSameDevice(clickedDevice, event) {
+        if (!clickedDevice)
+            return true;
+
+        let device = this._getEventDevice(event);
+        if (!device || device === clickedDevice)
+            return true;
+
+        try {
+            if (device.get_device_name && clickedDevice.get_device_name &&
+                device.get_device_name() === clickedDevice.get_device_name())
+                return true;
+        } catch (e) {}
+
+        // Mouse, touchpad, trackpoint and trackball all move the same cursor.
+        if (this._isPointerLikeDevice(clickedDevice) && this._isPointerLikeDevice(device))
+            return true;
+
+        return false;
+    }
+
     _onButtonPressed(actor, event) {
         if (this.spaceKeyPressed)
             return Clutter.EVENT_PROPAGATE;
@@ -701,7 +779,7 @@ export const DrawingArea = GObject.registerClass({
                 if (this.grabbedElement)
                     this._startTransforming(x, y, controlPressed, shiftPressed);
             } else {
-                this._startDrawing(x, y, shiftPressed, (event.get_device ? event.get_device() : null) || event.get_source_device());
+                this._startDrawing(x, y, shiftPressed, this._getEventDevice(event));
             }
             return Clutter.EVENT_STOP;
             // End Laser Button Press Handling Code
@@ -1040,7 +1118,7 @@ export const DrawingArea = GObject.registerClass({
                 if (!s)
                     return;
                 
-                if (clickedDevice != (event.get_device ? event.get_device() : null) && clickedDevice != event.get_source_device())
+                if (!this._isSameDevice(clickedDevice, event))
                     return Clutter.EVENT_PROPAGATE;
 
                 if (this.spaceKeyPressed)
@@ -1144,9 +1222,9 @@ export const DrawingArea = GObject.registerClass({
                 return;
             
             // To avoid painting due to the wrong device (2 cursors wayland support)
-            //Modified for GNOME 46/47 support
-            if (clickedDevice != (event.get_device ? event.get_device() : null) && clickedDevice != event.get_source_device())
-                return Clutter.EVENT_PROPAGATE;            
+            // Modified for GNOME 46+ and for multi-device pointers.
+            if (!this._isSameDevice(clickedDevice, event))
+                return Clutter.EVENT_PROPAGATE;
 
             if (this.spaceKeyPressed)
                 return;
