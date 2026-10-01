@@ -606,23 +606,22 @@
     </div>
   </header>
   <div class="md-post__content md-typeset">
-    <h2 id="version-112"><a class="toclink" href="2026/10/01/version-112/">Version 11.2</a></h2>
-<h3 id="version-112-minor-release"><a class="toclink" href="2026/10/01/version-112/#version-112-minor-release">VERSION 11.2 - Minor Release</a></h3>
+    <h2 id="version-112-minor-release"><a class="toclink" href="2026/10/01/version-112---minor-release/">VERSION 11.2 - Minor Release</a></h2>
 <p>This release fixes the touchscreen functionality! as well as compatibility fixes. Available in the main repository, releases, and bash installation script. GNOME (E.G.O.) availability waits for version 12 which will include support for GNOME 51.</p>
 <hr>
-<h4 id="fix-quicksettings-panel-indicator"><a class="toclink" href="2026/10/01/version-112/#fix-quicksettings-panel-indicator">Fix: QuickSettings Panel Indicator</a></h4>
+<h3 id="fix-quicksettings-panel-indicator"><a class="toclink" href="2026/10/01/version-112---minor-release/#fix-quicksettings-panel-indicator">Fix: QuickSettings Panel Indicator</a></h3>
 <p>Updated the extension to use the modern GNOME QuickSettings API (<code>QuickToggle</code> / <code>SystemIndicator</code> / <code>addExternalIndicator()</code>), replacing the deprecated <code>PanelMenu.Button</code> approach. The Drawing Mode indicator now appears correctly in the panel and the Quick Settings toggle works as expected.</p>
 <p><strong>Files Modified:</strong> <code>extension.js</code>, <code>areamanager.js</code></p>
 <hr>
-<h4 id="fix-drawing-mode-and-laser-pointer"><a class="toclink" href="2026/10/01/version-112/#fix-drawing-mode-and-laser-pointer">Fix: Drawing Mode and Laser Pointer</a></h4>
+<h3 id="fix-drawing-mode-and-laser-pointer"><a class="toclink" href="2026/10/01/version-112---minor-release/#fix-drawing-mode-and-laser-pointer">Fix: Drawing Mode and Laser Pointer</a></h3>
 <p>Replaced the removed <code>global.get_pointer()</code> call (deprecated in GNOME 47) with <code>global.display.get_pointer()</code>. This restores correct behavior for Drawing on Desktop mode and the Laser Pointer tool.</p>
 <p><strong>File Modified:</strong> <code>area.js</code></p>
 <hr>
-<h4 id="new-exit-drawing-mode-menu-item"><a class="toclink" href="2026/10/01/version-112/#new-exit-drawing-mode-menu-item">New: Exit Drawing Mode Menu Item</a></h4>
+<h3 id="new-exit-drawing-mode-menu-item"><a class="toclink" href="2026/10/01/version-112---minor-release/#new-exit-drawing-mode-menu-item">New: Exit Drawing Mode Menu Item</a></h3>
 <p>Added an <strong>Exit Drawing Mode</strong> option to the right-click popup menu, above the action button row. Useful for touchscreen users who can two-finger tap to access the menu and exit drawing mode without needing a keyboard shortcut.</p>
 <p><strong>File Modified:</strong> <code>menu.js</code></p>
 <hr>
-<h4 id="thanks"><a class="toclink" href="2026/10/01/version-112/#thanks">Thanks</a></h4>
+<h3 id="thanks"><a class="toclink" href="2026/10/01/version-112---minor-release/#thanks">Thanks</a></h3>
 <p>Big thanks to <a href="https://github.com/aarushlohit">@aarushlohit</a> for the help tracking down the Drawing Mode error and the <code>get_pointer</code> fix (issue <a href="https://github.com/daveprowse/Draw-On-Gnome/issues/62">#62</a>). ❤️</p>
 <hr>
 <p><strong>That's it! LOVE IT!!</strong> 😀</p>
