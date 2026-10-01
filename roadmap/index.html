@@ -587,9 +587,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#show-colors-change-to-right-click-menu" class="md-nav__link">
+  <a href="#feature-idea-radial-color-picker-touch-friendly" class="md-nav__link">
     <span class="md-ellipsis">
-      Show colors change to right-click menu
+      Feature Idea: Radial Color Picker (Touch-Friendly)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-if-we-cant-get-the-previous-concept-to-work-show-colors-change-to-right-click-menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      (Optional if we can't get the previous concept to work) Show colors change to right-click menu
     </span>
   </a>
   
@@ -800,7 +809,22 @@
 <p>This is for better functionality and economy of movement. It's already being done with the Laser tool.
 The ideas is for toggling on any tool with the end result being returning to the drawing tool. So for example, you are using the drawing tool (<code>Ctrl+P</code>) and then move to the arrow tool (<code>Ctrl+A</code>). Draw an arrow. Then, press <code>Ctrl+A</code> again to toggle the arrow tool off and return to the drawing tool. The main drawing tool would be the default for any tool... </p>
 <p>This way, a person could quickly access one tool with the left hand (for example, arrow, ellipse, rectangle) while drawing with the right. Then, toggle it off easily and return to the drawing tool without having to move the left hand.</p>
-<h3 id="show-colors-change-to-right-click-menu">Show colors change to right-click menu</h3>
+<h3 id="feature-idea-radial-color-picker-touch-friendly">Feature Idea: Radial Color Picker (Touch-Friendly)</h3>
+<p>A compact, non-invasive color selection widget for touchscreen users</p>
+<p><strong>Concept:</strong>
+A small circle widget rendered as a persistent on-screen overlay while drawing mode is active. At rest it displays only a colored outline (or subtle fill) reflecting the current color — unobtrusive and informative. Tapping the circle fans out a radial color wheel around it; tapping any color in the wheel applies it, collapses the wheel, and updates the circle's indicator color.</p>
+<p><strong>Why it works for touch:</strong></p>
+<p>No menu to open, no submenu to scroll
+Each color option is equidistant from the tap that opened the wheel — ergonomically natural
+Collapses cleanly when not in use</p>
+<p><strong>Implementation notes:</strong></p>
+<p>Rendered on Main.layoutManager.uiGroup like the exit button
+Radial positioning calculated with standard trig (each swatch offset from center point)
+Colors sourced from the same palette as the existing color submenu
+Could share a corner widget area with the exit button, or be combined into a single corner HUD</p>
+<p><strong>Preferences:</strong>
+Gated behind a new toggle in preferences (e.g. color-wheel-enabled, default false), following the same pattern as exit-button-enabled.</p>
+<h3 id="optional-if-we-cant-get-the-previous-concept-to-work-show-colors-change-to-right-click-menu">(Optional if we can't get the previous concept to work) Show colors change to right-click menu</h3>
 <p>Proposed change: when right-clicking, the menu comes up as usual, but the Color sub-menu should be opened automatically. This way, changing colors with the mouse or stylus is only one click instead of two. </p>
 <p>Also, add droplets for the colors in front of the name to make them more visible.</p>
 <h3 id="spacebar-for-menu-functionality">Spacebar for menu functionality</h3>
