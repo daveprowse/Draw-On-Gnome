@@ -59,6 +59,8 @@ const MOTION_TIME = 1; // ms, time accuracy for free drawing, max is about 33 ms
 const TEXT_CURSOR_TIME = 600; // ms
 const ELEMENT_GRABBER_TIME = 80; // ms, default is about 16 ms
 const TOGGLE_ANIMATION_DURATION = 300; // ms
+const TOUCH_LONG_PRESS_TIME = 550; // ms, a touch long press opens the menu (touch equivalent of a right click)
+const TOUCH_LONG_PRESS_THRESHOLD = 16; // px, movement above this cancels the long press
 const GRID_TILES_HORIZONTAL_NUMBER = 30;
 const COLOR_PICKER_EXTENSION_UUID = 'color-picker@tuberry';
 
@@ -749,11 +751,122 @@ export const DrawingArea = GObject.registerClass({
         return false;
     }
 
+    /* ------------------------------------------------------------------ *
+     * Touch support (touchscreens, tablets, phones).
+     *
+     * Clutter does not synthesize pointer events from touch for plain actors,
+     * so a touch sequence is translated here into the very same button-press /
+     * motion / button-release signals the pointer code path already listens
+     * to. Everything downstream stays unchanged.
+     * ------------------------------------------------------------------ */
+
+    _isTouchEvent(event) {
+        let type = event.type ? event.type() : null;
+        return type == Clutter.EventType.TOUCH_BEGIN ||
+               type == Clutter.EventType.TOUCH_UPDATE ||
+               type == Clutter.EventType.TOUCH_END ||
+               type == Clutter.EventType.TOUCH_CANCEL;
+    }
+
+    _removeTouchLongPressTimeout() {
+        if (this.touchLongPressTimeoutId) {
+            GLib.source_remove(this.touchLongPressTimeoutId);
+            this.touchLongPressTimeoutId = null;
+        }
+    }
+
+    _startTouchLongPressTimeout(x, y) {
+        this._removeTouchLongPressTimeout();
+
+        this.touchLongPressTimeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, TOUCH_LONG_PRESS_TIME, () => {
+            this.touchLongPressTimeoutId = null;
+
+            if (this.touchFingerCount > 0 && !this.touchMoved) {
+                // Long press behaves like a right click: drop what has just
+                // been started and open the menu.
+                this.touchLongPressed = true;
+                this._stopAll();
+                this.menu.open(x, y);
+            }
+
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+
+    _onTouchEvent(actor, event) {
+        if (!this.reactive)
+            return Clutter.EVENT_PROPAGATE;
+
+        let type = event.type ? event.type() : null;
+        let [x, y] = event.get_coords();
+
+        if (type == Clutter.EventType.TOUCH_BEGIN) {
+            this.touchFingerCount = (this.touchFingerCount || 0) + 1;
+
+            // Only the first finger draws, extra fingers pause the stroke.
+            if (this.touchFingerCount > 1)
+                return Clutter.EVENT_STOP;
+
+            this.touchMoved = false;
+            this.touchLongPressed = false;
+            this.touchStartCoords = [x, y];
+            this._startTouchLongPressTimeout(x, y);
+
+            this.emit('button-press-event', event);
+            return Clutter.EVENT_STOP;
+
+        } else if (type == Clutter.EventType.TOUCH_UPDATE) {
+            if (!this.touchFingerCount || this.touchLongPressed)
+                return Clutter.EVENT_STOP;
+
+            if (!this.touchMoved && this.touchStartCoords) {
+                let dx = x - this.touchStartCoords[0];
+                let dy = y - this.touchStartCoords[1];
+                if (Math.hypot(dx, dy) > TOUCH_LONG_PRESS_THRESHOLD) {
+                    this.touchMoved = true;
+                    this._removeTouchLongPressTimeout();
+                }
+            }
+
+            // Freeze the stroke while several fingers are down (scroll and
+            // zoom gestures, palm rejection).
+            if (this.touchFingerCount > 1)
+                return Clutter.EVENT_STOP;
+
+            this.emit('motion-event', event);
+            return Clutter.EVENT_STOP;
+
+        } else if (type == Clutter.EventType.TOUCH_END || type == Clutter.EventType.TOUCH_CANCEL) {
+            this.touchFingerCount = Math.max((this.touchFingerCount || 1) - 1, 0);
+
+            if (this.touchFingerCount > 0)
+                return Clutter.EVENT_STOP;
+
+            this._removeTouchLongPressTimeout();
+
+            if (this.touchLongPressed) {
+                this.touchLongPressed = false;
+                return Clutter.EVENT_STOP;
+            }
+
+            if (type == Clutter.EventType.TOUCH_CANCEL)
+                this._stopAll();
+            else
+                this.emit('button-release-event', event);
+
+            return Clutter.EVENT_STOP;
+        }
+
+        return Clutter.EVENT_PROPAGATE;
+    }
+
     _onButtonPressed(actor, event) {
         if (this.spaceKeyPressed)
             return Clutter.EVENT_PROPAGATE;
 
-        let button = event.get_button();
+        // Touch events are re-emitted through this handler (see _onTouchEvent).
+        // They carry no button, so treat them as a left click.
+        let button = this._isTouchEvent(event) ? 1 : event.get_button();
         let [x, y] = event.get_coords();
         let controlPressed = event.has_control_modifier();
         let shiftPressed = event.has_shift_modifier();
@@ -2023,6 +2136,8 @@ export const DrawingArea = GObject.registerClass({
         this.rulerLayer = null;
         // End laser pointer cleanup
 
+        this._removeTouchLongPressTimeout();
+
         this._extension.drawingSettings.disconnect(this.drawingSettingsChangedHandler);
         this.erase();
         if (this._menu)
@@ -2040,7 +2155,13 @@ export const DrawingArea = GObject.registerClass({
         
         // Add dedicated motion handler for laser pointer
         this.laserMotionHandler = this.connect('motion-event', this._onLaserMotion.bind(this));
-        
+
+        // Touchscreen / tablet / phone support
+        this.touchHandler = this.connect('touch-event', this._onTouchEvent.bind(this));
+        this.touchFingerCount = 0;
+        this.touchMoved = false;
+        this.touchLongPressed = false;
+
         this.set_background_color(this.reactive && this.hasBackground ? this.areaBackgroundColor : null);
     }
 
@@ -2066,6 +2187,15 @@ export const DrawingArea = GObject.registerClass({
             this.disconnect(this.laserMotionHandler);
             this.laserMotionHandler = null;
         }
+        // Touch cleanup
+        if (this.touchHandler) {
+            this.disconnect(this.touchHandler);
+            this.touchHandler = null;
+        }
+        this._removeTouchLongPressTimeout();
+        this.touchFingerCount = 0;
+        this.touchMoved = false;
+        this.touchLongPressed = false;
         // Clean up laser pointer
         if (this.laserPointerActive) {
             this.stopLaserPointer();
