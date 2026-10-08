@@ -791,13 +791,12 @@
 </div>
 <h2 id="primary-goals">Primary Goals</h2>
 <ul>
-<li>Work on Version 12 (for upcoming GNOMEv51)</li>
-<li>New arrow support (from PR49) in version 12.0. I will have to modify this to work with GNOMEv50+</li>
-<li>Addition of touchscreen code from PR 56 and PR 57.</li>
+<li>Work on Version 12 (for upcoming GNOMEv51. I'm waiting on this because we uncovered a bug with the eyedropper tool that is GNOME-related. You can run D.O.G. on GNOME 51 but the eyedropper tool (<code>Ctrl+0</code>) will crash GNOME for now. Hoping for a fix soon.</li>
 <li>Other new tools as listed below in Planned Features</li>
 </ul>
 <h2 id="issues">Issues</h2>
 <ul>
+<li>The eyedropper tool (<code>Ctrl+0</code>) is failing in GNOME 51.0. It works fine in GNOME 50.4. I've traced it to one of several commits but can't lock down the exact problem and there are no GNOME-shell errors in the log. For now, I have a fallback for GNOME 51 saying that the eyedropper tool is not functional in 51 (sad). But I am posting it as a bug, and will continue to monitor the situation. Hopefully a fix presents itself in 51.1. </li>
 <li>When switching from text mode to drawing mode, a color change will change the last typed text! (This is fixed in 11.1 but not shipped to E.G.O. yet.)</li>
 <li>Sometimes, when the eyedropper tool is used, you can't select another tool (like the drawing tool), the <code>esc</code> key has to be pressed to get out of eyedropper mode. </li>
 </ul>
