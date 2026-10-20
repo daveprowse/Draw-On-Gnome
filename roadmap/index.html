@@ -796,9 +796,11 @@
 </ul>
 <h2 id="issues">Issues</h2>
 <ul>
+<li>As of GNOME 50, the laser pointer also shows the default cursor instead of making the cursor invisible. This is due to the changes in Wayland/Mutter/GNOME. This, and the issue of not being able to create other cursors (crosshair, hand, none, etc...) have been documented. It's something we will return to later. </li>
 <li>The eyedropper tool (<code>Ctrl+0</code>) is failing in GNOME 51.0. It works fine in GNOME 50.4. I've traced it to one of several commits but can't lock down the exact problem and there are no GNOME-shell errors in the log. For now, I have a fallback for GNOME 51 saying that the eyedropper tool is not functional in 51 (sad). But I am posting it as a bug, and will continue to monitor the situation. Hopefully a fix presents itself in 51.1. </li>
 <li>When switching from text mode to drawing mode, a color change will change the last typed text! (This is fixed in 11.1 but not shipped to E.G.O. yet.)</li>
 <li>Sometimes, when the eyedropper tool is used, you can't select another tool (like the drawing tool), the <code>esc</code> key has to be pressed to get out of eyedropper mode. </li>
+<li>pop-up menu drop downs are contained in a small space (especially if you ar eon 1080p or lower resolution). Propose changing that so that the entire drop down can be seen when clicked - which requires covering other parts of the menu.</li>
 </ul>
 <h2 id="planned-features-long-term">Planned Features (long-term)</h2>
 <p>Here are the planned features:</p>
