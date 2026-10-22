@@ -591,6 +591,74 @@
     <div class="md-post__meta md-meta">
       <ul class="md-meta__list">
         <li class="md-meta__item">
+          <time datetime="2026-10-22 00:00:00+00:00">Oct 22, 2026</time></li>
+        
+        
+          
+          <li class="md-meta__item">
+            
+              2 min read
+            
+          </li>
+        
+      </ul>
+      
+    </div>
+  </header>
+  <div class="md-post__content md-typeset">
+    <h2 id="version-120-major-release-for-gnome-51-compatibility"><a class="toclink" href="2026/10/22/version-120---major-release-for-gnome-51-compatibility/">VERSION 12.0 - Major Release for GNOME 51 Compatibility</a></h2>
+<p>This is a major release focused on GNOME 51 compatibility, with targeted fixes for the color picker, text tool, and preferences dialog. This version has been approved by GNOME Extensions (E.G.O.) and is available there: </p>
+<p>https://extensions.gnome.org/extension/7921/draw-on-gnome/ </p>
+<p>and is also available at:</p>
+<ul>
+<li>GitHub releases:</li>
+<li>Bash installation script</li>
+<li>Main repository (which will have minor releases as well as they come out.)</li>
+</ul>
+<p>If you are using GNOME 50+, you want version 12.</p>
+<p>If you are using GNOME 46-49, you want version 9.</p>
+<hr>
+<h3 id="fix-color-picker-eyedropper"><a class="toclink" href="2026/10/22/version-120---major-release-for-gnome-51-compatibility/#fix-color-picker-eyedropper">Fix: Color Picker (Eyedropper)</a></h3>
+<p>Restored native color picker functionality for GNOME 50+. The eyedropper overlay now correctly uses the Clutter actor cursor API (<code>set_cursor_type</code>) and properly manages modal focus with <code>Main.pushModal</code> / <code>Main.popModal</code>, replacing removed X11-era display cursor calls.</p>
+<blockquote>
+<p>Note: The "look" is not as appealing as it was in X11 versions of GNOME. That is because the special cursors (hand, crosshair, eyedropper, none) that functioned in X11 do not function in Wayland. The GNOME development team, as of today, does not have a timeline for new cursors in Wayland. This is something I hope is integrated into GNOME 52.</p>
+</blockquote>
+<p><strong>File Modified:</strong> <code>area.js</code></p>
+<hr>
+<h3 id="fix-text-tool-enter-key"><a class="toclink" href="2026/10/22/version-120---major-release-for-gnome-51-compatibility/#fix-text-tool-enter-key">Fix: Text Tool Enter Key</a></h3>
+<p>In GNOME 51, <code>ClutterText</code>'s default Enter → newline behavior changed. Added explicit handling of <code>Clutter.KEY_Return</code> and <code>Clutter.KEY_KP_Enter</code> in the text entry key handler, calling <code>insert_unichar('\n')</code> directly. Newlines now work correctly in the text tool on both GNOME 50 and 51.</p>
+<p><strong>File Modified:</strong> <code>area.js</code></p>
+<hr>
+<h3 id="fix-preferences-dialog-error"><a class="toclink" href="2026/10/22/version-120---major-release-for-gnome-51-compatibility/#fix-preferences-dialog-error">Fix: Preferences Dialog Error</a></h3>
+<p><code>openPreferences()</code> returns a <code>Promise</code> in GNOME 51 but <code>undefined</code> in GNOME 50. Added optional-chaining catch (<code>?.catch()</code>) to handle the unhandled rejection that appeared when attempting to open preferences while a dialog was already showing.</p>
+<p><strong>File Modified:</strong> <code>areamanager.js</code></p>
+<hr>
+<h3 id="cleanup-removed-unused-import"><a class="toclink" href="2026/10/22/version-120---major-release-for-gnome-51-compatibility/#cleanup-removed-unused-import">Cleanup: Removed Unused Import</a></h3>
+<p>Removed a leftover unused <code>GrabHelper</code> import that was no longer referenced anywhere in the file.</p>
+<p><strong>File Modified:</strong> <code>area.js</code></p>
+<hr>
+<h3 id="known-limitation-laser-pointer-cursor"><a class="toclink" href="2026/10/22/version-120---major-release-for-gnome-51-compatibility/#known-limitation-laser-pointer-cursor">Known Limitation: Laser Pointer Cursor</a></h3>
+<p>On GNOME 50+, the system cursor remains visible while the laser pointer tool is active. This is due to the removal of <code>Meta.Cursor</code> / <code>display.set_cursor()</code> in GNOME 50 (X11 removal). The replacement Wayland cursor APIs behave inconsistently across environments. This is a known limitation pending a proper upstream API solution.</p>
+<hr>
+<p><strong>That's it! ENJOY!!</strong> 😀</p>
+    
+  </div>
+</article>
+      
+        <article class="md-post md-post--excerpt">
+  <header class="md-post__header">
+    
+      <nav class="md-post__authors md-typeset">
+        
+          <span class="md-author">
+            <img src="https://avatars.githubusercontent.com/u/65040686" alt="Dave Prowse">
+          </span>
+        
+      </nav>
+    
+    <div class="md-post__meta md-meta">
+      <ul class="md-meta__list">
+        <li class="md-meta__item">
           <time datetime="2026-10-01 00:00:00+00:00">Oct 1, 2026</time></li>
         
         
@@ -1108,61 +1176,6 @@ Available for GNOME v48 and v49.</p>
   </div>
 </article>
       
-        <article class="md-post md-post--excerpt">
-  <header class="md-post__header">
-    
-      <nav class="md-post__authors md-typeset">
-        
-          <span class="md-author">
-            <img src="https://avatars.githubusercontent.com/u/65040686" alt="Dave Prowse">
-          </span>
-        
-      </nav>
-    
-    <div class="md-post__meta md-meta">
-      <ul class="md-meta__list">
-        <li class="md-meta__item">
-          <time datetime="2024-12-10 00:00:00+00:00">Dec 10, 2024</time></li>
-        
-        
-          
-          <li class="md-meta__item">
-            
-              1 min read
-            
-          </li>
-        
-      </ul>
-      
-    </div>
-  </header>
-  <div class="md-post__content md-typeset">
-    <h2 id="doys3-is-live"><a class="toclink" href="2024/12/10/doys3-is-live/">DOYS3 is LIVE!</a></h2>
-<p>Hello fellow screen artists! Welcome to this first blog post.</p>
-<p>I've been hard at work with DOYS3. It's been a fun adventure so far! 😎</p>
-<p>Here's what I've been up to:</p>
-<ul>
-<li>Configured three versions of DOYS for the various versions of GNOME.</li>
-<li>Wrote a bash script to automatically install the correct version based on the identified GNOME version. See the <strong><a href="../installation/">Installation Page</a></strong> for more information. </li>
-<li>
-<p>Created this documentation site. Thanks to squidfunk and the amazing Material for Mkdocs. I've been using this software for years and it keeps getting better. Check it out!</p>
-<p><a href="https://squidfunk.github.io/mkdocs-material/" target="_blank"><img alt="Built with Material for MkDocs" src="https://img.shields.io/badge/Material_for_MkDocs-526CFE?style=for-the-badge&amp;logo=MaterialForMkDocs&amp;logoColor=white"></a></p>
-</li>
-<li>
-<p>Began the process of getting GNOME to officially accept the extension on extensions.gnome.org.</p>
-</li>
-</ul>
-<div class="admonition warning">
-<p class="admonition-title">MAIN branch is frozen</p>
-<p>I froze the main branch until we either: get approval from E.G.O, or a major update is required for GNOMEv48, whichever comes first. The current working branch is <a href="https://github.com/daveprowse/DrawOnYourScreen3/tree/E.G.O.-v15.1-alpha" target="_blank">E.G.O.-v15.1-alpha</a> which will be merged into main once approval is complete.</p>
-</div>
-<p>Looking forward to the alpha version of GNOMEv48 in January. Hoping that we don't have to make too many modifications to the code this time! 🙏</p>
-<p>That's it. I'll be posting here with anything new that we are working on. Happy Holidays to you! 🎉</p>
-<hr>
-    
-  </div>
-</article>
-      
       
         
           
@@ -1170,7 +1183,7 @@ Available for GNOME v48 and v49.</p>
 
 
 <nav class="md-pagination">
-  
+  <span class="md-pagination__current">1</span> <a class="md-pagination__link" href="page/2/">2</a>
 </nav>
         
       
