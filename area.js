@@ -46,9 +46,10 @@ import St from 'gi://St';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as Screenshot from 'resource:///org/gnome/shell/ui/screenshot.js';
 
+
 import { gettext as _, pgettext } from 'resource:///org/gnome/shell/extensions/extension.js';
 
-import { CURATED_UUID as UUID } from './utils.js';
+import { CURATED_UUID as UUID, SHELL_MAJOR_VERSION } from './utils.js';
 import * as Elements from './elements.js'
 import { Image } from './files.js'
 import * as Menu from './menu.js'
@@ -1347,7 +1348,11 @@ export const DrawingArea = GObject.registerClass({
                 this._stopWriting();
                 return Clutter.EVENT_STOP;
             }
-
+            if (event.get_key_symbol() == Clutter.KEY_Return ||
+                event.get_key_symbol() == Clutter.KEY_KP_Enter) {
+                clutterText.insert_unichar('\n');
+                return Clutter.EVENT_STOP;
+            }
             return Clutter.EVENT_PROPAGATE;
         });
     }
@@ -1404,6 +1409,7 @@ export const DrawingArea = GObject.registerClass({
             this.setPointerCursor('CROSSHAIR');
             return;
         }
+                
         // End laser cursor handling
 
         if (this.currentTool == Manipulation.MIRROR && this.grabbedElementLocked)
@@ -1902,6 +1908,13 @@ export const DrawingArea = GObject.registerClass({
             return;
         }
 
+        // Screenshot.PickPixel triggers a C-level fatal crash in GNOME 51+
+        // (clutter_cursor_type_to_name assertion in grabHelper). Cannot be caught with try/catch.
+        if (SHELL_MAJOR_VERSION >= 51) {
+            this._pickColorNative();
+            return;
+        }
+
         try {
             let screenshot = new Shell.Screenshot();
             let pickPixel = new Screenshot.PickPixel(screenshot);
@@ -1937,6 +1950,103 @@ export const DrawingArea = GObject.registerClass({
             console.error(`${this._extension.metadata.uuid}: color picker failed: ${e.message}`);
             this.initPointerCursor();
         }
+    
+            
+    }
+
+    // 10-2026 eyedropper for GNOME 51 attempt
+           
+    async _pickColorNative() {
+        let screenshot = new Shell.Screenshot();
+        let pickedColor = null;
+
+        let overlay = new St.Widget({ reactive: true, visible: false });
+        overlay.add_constraint(new Clutter.BindConstraint({
+            source: global.stage,
+            coordinate: Clutter.BindCoordinate.ALL,
+        }));
+        overlay.set_cursor_type(Clutter.CursorType.CROSSHAIR);
+        global.stage.add_child(overlay);
+        overlay.show();
+
+        let previewSwatch = new St.Widget({
+            width: 48,
+            height: 48,
+            reactive: false,
+            style: 'border-radius: 24px; border: 3px solid white; ' +
+                'box-shadow: 0 2px 6px rgba(0,0,0,0.7); background-color: transparent;',
+        });
+        global.stage.add_child(previewSwatch);
+
+        // Stack a modal grab on top of the drawing area's existing grab.
+        // Without this, all pointer events still route to the drawing area
+        // via its Main.pushModal and the ClickGesture never fires.
+        let grab = Main.pushModal(overlay, { actionMode: Shell.ActionMode.NORMAL });
+        if (!grab) {
+            overlay.destroy();
+            previewSwatch.destroy();
+            this.initPointerCursor();
+            return;
+        }
+        // pushModal grabs the pointer; we also need key focus for Escape.
+        global.stage.set_key_focus(overlay);
+
+        // Throttle: only one pick_color in-flight at a time
+        let picking = false;
+        let motionController = new Clutter.MotionController();
+        motionController.connect('motion', () => {
+            let [x, y] = global.get_pointer();
+            previewSwatch.set_position(x + 16, y + 8);
+
+            if (picking) return;
+            picking = true;
+            screenshot.pick_color(x, y).then(([color]) => {
+                picking = false;
+                let hex = color.to_string().slice(0, 7);
+                previewSwatch.set_style(
+                    `border-radius: 24px; border: 3px solid white; ` +
+                    `box-shadow: 0 2px 6px rgba(0,0,0,0.7); ` +
+                    `background-color: ${hex};`
+                );
+            }).catch(() => { picking = false; });
+        });
+        overlay.add_action(motionController);
+
+        try {
+            await new Promise((resolve) => {
+                let clickGesture = new Clutter.ClickGesture();
+                clickGesture.connect('recognize', async () => {
+                    const { x, y } = clickGesture.get_coords_abs();
+                    try {
+                        [pickedColor] = await screenshot.pick_color(x, y);
+                    } catch(e) {
+                        console.error(`${this._extension.metadata.uuid}: pick_color failed: ${e.message}`);
+                    }
+                    resolve();
+                });
+                overlay.add_action(clickGesture);
+
+                // Handle Escape directly — no GrabHelper needed
+                overlay.connect('key-press-event', (actor, event) => {
+                    if (event.get_key_symbol() == Clutter.KEY_Escape)
+                        resolve();
+                    return Clutter.EVENT_STOP;
+                });
+            });
+        } finally {
+            // Restore key focus before destroying the overlay — otherwise
+            // destroying a focused actor leaves key focus null, breaking
+            // the text tool's Enter key until the extension is restarted.
+            this.grab_key_focus();
+            Main.popModal(grab);
+            overlay.destroy();
+            previewSwatch.destroy();
+        }
+
+        if (pickedColor)
+            this._onColorPicked(pickedColor);
+        else
+            this.initPointerCursor();
     }
 
     toggleHelp() {

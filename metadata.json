@@ -7,8 +7,9 @@
     "settings-schema": "org.gnome.shell.extensions.draw-on-gnome",
     "data-dir": "draw-on-gnome",    
     "shell-version": [                        
-        "50"      
+        "50",
+        "51"      
     ],    
-    "version-name": "11.3",
-    "version": 11
+    "version-name": "12.0",
+    "version": 12
 }

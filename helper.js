@@ -88,17 +88,17 @@ export const DrawingHelper = GObject.registerClass({
     }
 
     _populate() {
-        this.vbox = new St.BoxLayout({ vertical: true });
+        this.vbox = new St.BoxLayout({ orientation: Clutter.Orientation.VERTICAL });
         this.add_child(this.vbox);
         this.vbox.add_child(new St.Label({ text: _("Global") }));
 
         Shortcuts.GLOBAL_KEYBINDINGS.forEach((settingKeys) => {
-            this.vbox.add_child(new St.BoxLayout({ vertical: false, style_class: 'draw-on-gnome-helper-separator' }));
+            this.vbox.add_child(new St.BoxLayout({ style_class: 'draw-on-gnome-helper-separator' }));
 
             if (!this._extension.settings.get_strv(settingKeys)[0])
                 return;
 
-            let hbox = new St.BoxLayout({ vertical: false });
+            let hbox = new St.BoxLayout({});
             let shortcut = this._extension.settings.get_strv(settingKeys)[0];
             // Convert modifier keys
             shortcut = shortcut.replace(/<Primary>/g, 'Ctrl+')
@@ -130,16 +130,16 @@ export const DrawingHelper = GObject.registerClass({
             this.vbox.add_child(hbox);
         });
 
-        this.vbox.add_child(new St.BoxLayout({ vertical: false, style_class: 'draw-on-gnome-helper-separator' }));
+        this.vbox.add_child(new St.BoxLayout({ style_class: 'draw-on-gnome-helper-separator' }));
         this.vbox.add_child(new St.Label({ text: _("Internal") }));
 
         // Shortcuts.OTHERS.forEach((pairs, index) => {
         //     if (index)
-        //         this.vbox.add_child(new St.BoxLayout({ vertical: false, style_class: 'draw-on-gnome-helper-separator' }));
+        //         this.vbox.add_child(new St.BoxLayout({ style_class: 'draw-on-gnome-helper-separator' }));
 
         //     pairs.forEach(pair => {
         //         let [action, shortcut] = pair;
-        //         let hbox = new St.BoxLayout({ vertical: false });
+        //         let hbox = new St.BoxLayout({});
         //         hbox.add_child(new St.Label({ text: action }));
         //         hbox.add_child(new St.Label({ text: shortcut, x_expand: true }).get_clutter_text().set_use_markup(true));
 
@@ -148,15 +148,15 @@ export const DrawingHelper = GObject.registerClass({
         //     });
         // });
 
-        // this.vbox.add_child(new St.BoxLayout({ vertical: false, style_class: 'draw-on-gnome-helper-separator' }));
+        // this.vbox.add_child(new St.BoxLayout({ style_class: 'draw-on-gnome-helper-separator' }));
 
         Shortcuts.INTERNAL_KEYBINDINGS.forEach((settingKeys) => {
-            this.vbox.add_child(new St.BoxLayout({ vertical: false, style_class: 'draw-on-gnome-helper-separator' }));
+            this.vbox.add_child(new St.BoxLayout({ style_class: 'draw-on-gnome-helper-separator' }));
 
             if (!this._extension.internalShortcutSettings.get_strv(settingKeys)[0])
                 return;
 
-            let hbox = new St.BoxLayout({ vertical: false });
+            let hbox = new St.BoxLayout({});
             let shortcut = this._extension.internalShortcutSettings.get_strv(settingKeys)[0];
             // Convert modifier keys
             shortcut = shortcut.replace(/<Primary>/g, 'Ctrl+')

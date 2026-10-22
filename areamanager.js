@@ -287,7 +287,10 @@ export class AreaManager {
     openPreferences() {
         if (this.activeArea)
             this.toggleDrawing();
-        this._extension.openPreferences();
+        this._extension.openPreferences()?.catch(e => {
+            if (!e.message?.includes('Already showing'))
+                console.error(`draw-on-gnome: openPreferences failed: ${e.message}`);
+        });
     }
     
     eraseDrawings() {
@@ -494,10 +497,10 @@ export class AreaManager {
     }
     
     setCursor(sourceActor_, cursorName) {
-        // Meta.Cursor and display.set_cursor() were removed in GNOME 50 (X11 removal)
+        // Meta.Cursor and display.set_cursor() were removed in GNOME 50 (X11 removal)        
         if (!Meta.Cursor)
-            return;
-            
+            return;                
+
         // Map cursor names for GNOME 46/47 fallback compatibility
         let cursorMap = {
             'MOVE': this._SHELL_MAJOR_VERSION >= 48 ? 'MOVE' : 'DND_MOVE',
