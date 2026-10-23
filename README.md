@@ -22,11 +22,11 @@ Want to contribute? Read [this](https://github.com/daveprowse/Draw-On-Gnome/blob
 
 ## Installation Options
 
-### Option 1: Install from GNOME Extensions (ver. 50/49/48/47/46)
+### Option 1: Install from GNOME Extensions (ver. 51/50/49/48/47/46)
 
 [<img src="https://daveprowse.github.io/Draw-On-Gnome/images/gnome-extensions.png" height="100">](https://extensions.gnome.org/extension/7921/draw-on-gnome/)
 
-> **IMPORTANT!!**: Currently, this will *only* install to GNOMEv46 through v50. If you need the extension for another version of GNOME, see Option 2.
+> **IMPORTANT!!**: Currently, this will *only* install to GNOMEv46 through v51. If you need the extension for another version of GNOME, see Option 2.
 >
 > To check your version of gnome type `gnome-shell --version`.
 
@@ -40,7 +40,7 @@ Want to contribute? Read [this](https://github.com/daveprowse/Draw-On-Gnome/blob
 
    The script will attempt to identify your version of GNOME and install the correct version of the extension automatically. 
    
-   > Note: Currently, the script will identify GNOME v50 through v40 and back all the way to v3.xx. 
+   > Note: Currently, the script will identify GNOME v51 through v40 and back all the way to v3.xx. 
 
    > Note: You may need to enter your sudo password during the install. Make sure you are a sudoer!
 
