@@ -2150,7 +2150,30 @@ export const DrawingArea = GObject.registerClass({
         
         // Add dedicated motion handler for laser pointer
         this.laserMotionHandler = this.connect('motion-event', this._onLaserMotion.bind(this));
-        
+
+        // TESTING!!  Touch support for touchscreen finger input
+        this._touchSequence = null;
+        this.touchHandler = this.connect('touch-event', (actor, event) => {
+            let type = event.type();
+            let [x, y] = event.get_coords();
+
+            if (type == Clutter.EventType.TOUCH_BEGIN) {
+                if (!this._touchSequence) {
+                    this._touchSequence = event.get_event_sequence();
+                    if (this.hasManipulationTool)
+                        this._startTransforming(x, y, false, false);
+                    else
+                        this._startDrawing(x, y, false, this._getEventDevice(event));
+                }
+            } else if (type == Clutter.EventType.TOUCH_END || type == Clutter.EventType.TOUCH_CANCEL) {
+                if (this._touchSequence) {
+                    this._touchSequence = null;
+                    this._stopDrawing();
+                }
+            }
+            return Clutter.EVENT_STOP;
+        });
+
         this.set_background_color(this.reactive && this.hasBackground ? this.areaBackgroundColor : null);
     }
 
@@ -2176,6 +2199,14 @@ export const DrawingArea = GObject.registerClass({
             this.disconnect(this.laserMotionHandler);
             this.laserMotionHandler = null;
         }
+
+        // TESTING! for finger input on touchscreen
+        if (this.touchHandler) {
+            this.disconnect(this.touchHandler);
+            this.touchHandler = null;
+        }
+        this._touchSequence = null;
+
         // Clean up laser pointer
         if (this.laserPointerActive) {
             this.stopLaserPointer();
