@@ -2152,9 +2152,22 @@ export const DrawingArea = GObject.registerClass({
         this.laserMotionHandler = this.connect('motion-event', this._onLaserMotion.bind(this));
 
         // TESTING!!  Touch support for touchscreen finger input
+          // Touch support for touchscreen finger input (stage-level capture
+          // needed because GNOME Shell's gesture recognizer consumes touch
+          // events before they reach actor-level signals like 'touch-event')
         this._touchSequence = null;
-        this.touchHandler = this.connect('touch-event', (actor, event) => {
+        this.touchHandler = global.stage.connect('captured-event', (actor, event) => {
             let type = event.type();
+            if (type !== Clutter.EventType.TOUCH_BEGIN &&
+                type !== Clutter.EventType.TOUCH_UPDATE &&
+                type !== Clutter.EventType.TOUCH_END &&
+                type !== Clutter.EventType.TOUCH_CANCEL)
+                return Clutter.EVENT_PROPAGATE;
+
+            // Only handle when this drawing area is active
+            if (!this.reactive)
+                return Clutter.EVENT_PROPAGATE;
+
             let [x, y] = event.get_coords();
 
             if (type == Clutter.EventType.TOUCH_BEGIN) {
@@ -2164,6 +2177,12 @@ export const DrawingArea = GObject.registerClass({
                         this._startTransforming(x, y, false, false);
                     else
                         this._startDrawing(x, y, false, this._getEventDevice(event));
+                }
+            } else if (type == Clutter.EventType.TOUCH_UPDATE) {
+                if (this._touchSequence && this.currentElement) {
+                    let [s, lx, ly] = this._transformStagePoint(x, y);
+                    if (s)
+                        this._updateDrawing(lx, ly, false);
                 }
             } else if (type == Clutter.EventType.TOUCH_END || type == Clutter.EventType.TOUCH_CANCEL) {
                 if (this._touchSequence) {
@@ -2202,11 +2221,11 @@ export const DrawingArea = GObject.registerClass({
 
         // TESTING! for finger input on touchscreen
         if (this.touchHandler) {
-            this.disconnect(this.touchHandler);
+            global.stage.disconnect(this.touchHandler);
             this.touchHandler = null;
         }
         this._touchSequence = null;
-
+        
         // Clean up laser pointer
         if (this.laserPointerActive) {
             this.stopLaserPointer();
